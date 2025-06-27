@@ -7,7 +7,7 @@ const {
   registerStep1,
   registerStep2,
   resetPassword
-} = require('../controllers/authController');
+} = require('../controller/authController');
 
 router.post('/register-step1', registerStep1);
 router.post('/register-step2', registerStep2);

@@ -11,6 +11,10 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 // Acá agregarás recipeRoutes y userRoutes también
 
+app.get('/test', (req, res) => {
+    res.send('funcionó');
+  });
+
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);
 });
