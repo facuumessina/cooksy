@@ -1,1 +1,1 @@
-export { useColorScheme } from 'react-native';
+const { useColorScheme } = require('react-native');

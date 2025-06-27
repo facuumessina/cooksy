@@ -1,5 +1,12 @@
-import api from './api';
-import { handleApiError } from './errorHandler';
+import api from '../api';
+import { handleApiError } from '../errorHandler';
+
+export interface Usuario {
+  id: string;
+  email: string;
+  alias: string;
+  nombre: string;
+}
 
 export const getSavedRecipes = async (userId: string) => {
   try {
