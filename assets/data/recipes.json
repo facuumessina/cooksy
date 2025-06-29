@@ -1,0 +1,2117 @@
+[
+    {
+        "id": "1",
+        "name": "Pasta Carbonara",
+        "ingredients": [
+            {
+                "ingredientId": 2,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 3,
+                "quantity": 100,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 4,
+                "quantity": 100,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 5,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 1,
+                "quantity": 150,
+                "unit": "GRAM"
+            }
+        ],
+        "steps": [
+            "Cocinar la pasta según las instrucciones del paquete.",
+            "Freir el panceta en una sartén.",
+            "Mezclar la pasta con el huevo, el queso y la panceta.",
+            "Agregar sal y pimienta al gusto."
+        ],
+        "image": "1.jpg",
+        "restrictions": [
+            "NO_SUGAR"
+        ],
+        "calories_per_serving": 200,
+        "nutrition_facts": {
+            "protein": 10,
+            "carbohydrates": 30,
+            "fat": 5,
+            "fiber": 2
+        },
+        "cuisine": "ITALIAN",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "pasta",
+            "italian",
+            "main course",
+            "bacon",
+            "carbonara",
+            "pasta carbonara"
+        ],
+        "price": 5400,
+        "dietType": ["HIPERCALORICA"]
+    },
+    {
+        "id": "2",
+        "name": "Guacamole",
+        "ingredients": [
+            {
+                "ingredientId": 7,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 0.25,
+                "unit": "KILOGRAM"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 0.5,
+                "unit": "KILOGRAM"
+            },
+            {
+                "ingredientId": 10,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 11,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Cortar la palta, la cebolla y el tomate en cubos pequeños.",
+            "Picar el cilantro y mezclar con el resto de los ingredientes.",
+            "Exprimir la lima y agregar el jugo a la mezcla.",
+            "Agregar sal y mezclar."
+        ],
+        "image": "2.jpg",
+        "restrictions": [
+            "CELIAC",
+            "LACTOSE_INTOLERANT",
+            "DIABETIC",
+            "VEGAN"
+        ],
+        "calories_per_serving": 160,
+        "nutrition_facts": {
+            "protein": 2,
+            "carbohydrates": 9,
+            "fat": 15,
+            "fiber": 6
+        },
+        "cuisine": "MEXICAN",
+        "category": "SNACK",
+        "tags": [
+            "mexican",
+            "appetizer",
+            "dip",
+            "healthy"
+        ],
+        "price": 3000,
+        "dietType": ["BALANCEADA", "CETOGENICA"]
+    },
+    {
+        "id": "3",
+        "name": "Ensalada Mediterranea",
+        "ingredients": [
+            {
+                "ingredientId": 9,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 13,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 14,
+                "quantity": 0.25,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 15,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cortar los tomates y pepinos en cubos.",
+            "Agregar las aceitunas y el queso feta.",
+            "Agregar aceite de oliva y mezclar."
+        ],
+        "image": "3.webp",
+        "restrictions": [
+            "NO_SUGAR",
+            "VEGETARIAN"
+        ],
+        "calories_per_serving": 100,
+        "nutrition_facts": {
+            "protein": 2.5,
+            "carbohydrates": 5,
+            "fat": 8,
+            "fiber": 1.5
+        },
+        "cuisine": "MEDITERRANEAN",
+        "category": "LUNCH",
+        "tags": [
+            "mediterranean",
+            "salad",
+            "healthy",
+            "vegetarian"
+        ],
+        "price": 5700,
+        "dietType": ["BALANCEADA"]
+    },
+    {
+        "id": "4",
+        "name": "Smoothie de Frutillas y Banana",
+        "ingredients": [
+            {
+                "ingredientId": 16,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 17,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 36,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 18,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cortar la banana y las frutillas.",
+            "Licuar con el yogurt y la miel."
+        ],
+        "image": "4.webp",
+        "restrictions": [
+            "NONE"
+        ],
+        "calories_per_serving": 85,
+        "nutrition_facts": {
+            "protein": 3,
+            "carbohydrates": 15,
+            "fat": 1,
+            "fiber": 2
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "BREAKFAST",
+        "tags": [
+            "smoothie",
+            "fruit",
+            "breakfast",
+            "healthy"
+        ],
+        "price": 5300,
+        "dietType": ["BALANCEADA", "HIPOCALORICA"]
+    },
+    {
+        "id": "5",
+        "name": "Arroz con Pollo",
+        "ingredients": [
+            {
+                "ingredientId": 19,
+                "quantity": 150,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 20,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 21,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 0.5,
+                "unit": "KILOGRAM"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cocinar el arroz según las instrucciones.",
+            "Cortar el pollo en cubos y cocinar.",
+            "Saltear las verduras.",
+            "Mezclar todo y servir."
+        ],
+        "image": "5.jpg",
+        "restrictions": [
+            "NO_SUGAR"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 20,
+            "fat": 3,
+            "fiber": 1
+        },
+        "cuisine": "LATIN",
+        "category": "DINNER",
+        "tags": [
+            "rice",
+            "chicken",
+            "main course",
+            "healthy"
+        ],
+        "price": 4000,
+        "dietType": ["BALANCEADA", "HIPERCALORICA"]
+    },
+    {
+        "id": "6",
+        "name": "Ensalada Caesar",
+        "ingredients": [
+            {
+                "ingredientId": 22,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 19,
+                "quantity": 150,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 4,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 23,
+                "quantity": 1,
+                "unit": "SLICE"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 27,
+                "quantity": 1,
+                "unit": "UNIT"
+            }
+        ],
+        "steps": [
+            "Cortar la lechuga y el pollo en trozos.",
+            "Tostar el pan y cortar en cubos.",
+            "Mezclar todos los ingredientes y agregar el aderezo caesar."
+        ],
+        "image": "6.jpg",
+        "restrictions": [
+            "NO_SUGAR"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 20,
+            "fat": 3,
+            "fiber": 1
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "LUNCH",
+        "tags": [
+            "salad",
+            "chicken",
+            "healthy"
+        ],
+        "price": 4500,
+        "dietType": ["BALANCEADA", "HIPOCALORICA"]
+    },
+    {
+        "id": "7",
+        "name": "Wrap de Salmón",
+        "ingredients": [
+            {
+                "ingredientId": 28,
+                "quantity": 150,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 29,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 22,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 30,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cocinar el salmón a la plancha.",
+            "Calentar la tortilla.",
+            "Colocar la lechuga, el tomate y el salmón en la tortilla.",
+            "Agregar mayonesa y enrollar."
+        ],
+        "image": "7.jpg",
+        "restrictions": [
+            "NO_SUGAR"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 20,
+            "fat": 3,
+            "fiber": 1
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "LUNCH",
+        "tags": [
+            "salmon",
+            "wrap",
+            "healthy",
+            "fish"
+        ],
+        "price": 7500,
+        "dietType": ["BALANCEADA"]
+    },
+    {
+        "id": "8",
+        "name": "Hamburguesa de Lentejas",
+        "ingredients": [
+            {
+                "ingredientId": 34,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 35,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 1,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 2,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 23,
+                "quantity": 2,
+                "unit": "SLICE"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 22,
+                "quantity": 1,
+                "unit": "UNIT"
+            }
+        ],
+        "steps": [
+            "Cocinar las lentejas y escurrir.",
+            "Picar la cebolla y el ajo y sofreír.",
+            "Mezclar las lentejas con la cebolla, el ajo, el huevo y el pan rallado.",
+            "Formar hamburguesas y cocinar en una sartén.",
+            "Armar la hamburguesa con el pan, la lechuga y el tomate."
+        ],
+        "image": "8.jpg",
+        "restrictions": [
+            "NO_SUGAR",
+            "VEGETARIAN"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 20,
+            "fat": 3,
+            "fiber": 1
+        },
+        "cuisine": "VEGGIE",
+        "category": "DINNER",
+        "tags": [
+            "burger",
+            "vegetarian",
+            "lentils",
+            "healthy"
+        ],
+        "price": 6500,
+        "dietType": ["BALANCEADA"]
+    },
+    {
+        "id": "9",
+        "name": "Tacos de Pollo",
+        "ingredients": [
+            {
+                "ingredientId": 19,
+                "quantity": 150,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 29,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 22,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 7,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 11,
+                "quantity": 1,
+                "unit": "UNIT"
+            }
+        ],
+        "steps": [
+            "Cocinar el pollo y desmenuzar.",
+            "Calentar la tortilla.",
+            "Colocar el pollo, la cebolla, el tomate y la lechuga en la tortilla.",
+            "Preparar el guacamole con la palta y el limón y agregar a los tacos."
+        ],
+        "image": "9.jpg",
+        "restrictions": [
+            "NO_SUGAR"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 20,
+            "fat": 3,
+            "fiber": 1
+        },
+        "cuisine": "MEXICAN",
+        "category": "DINNER",
+        "tags": [
+            "mexican",
+            "tacos",
+            "chicken",
+            "healthy"
+        ],
+        "price": 7000,
+        "dietType": ["BALANCEADA", "PALEO"]
+    },
+    {
+        "id": "10",
+        "name": "Ensalada de Quinoa y Garbanzos",
+        "ingredients": [
+            {
+                "ingredientId": 75,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 13,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 11,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Cocinar la quinoa según las instrucciones del paquete.",
+            "En un bol, mezclar la quinoa cocida, los garbanzos, el pepino y los tomates cherry.",
+            "Aderezar con aceite de oliva, jugo de limón y sal."
+        ],
+        "image": "10.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 150,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 20,
+            "fat": 5,
+            "fiber": 5
+        },
+        "cuisine": "MEDITERRANEAN",
+        "category": "LUNCH",
+        "tags": [
+            "healthy",
+            "salad",
+            "quinoa",
+            "chickpeas",
+            "vegan"
+        ],
+        "price": 6000,
+        "dietType": ["BALANCEADA"]
+    },
+    {
+        "id": "11",
+        "name": "Tacos de Lentejas",
+        "ingredients": [
+            {
+                "ingredientId": 29,
+                "quantity": 4,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 34,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 70,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 7,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 61,
+                "quantity": 1,
+                "unit": "TEASPOON"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Freir muy poco la cebolla y el pimiento en una sartén.",
+            "Agregar las lentejas y el comino, cocinar por 5 minutos.",
+            "Servir la mezcla en las tortillas y añadir aguacate."
+        ],
+        "image": "11.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 200,
+        "nutrition_facts": {
+            "protein": 10,
+            "carbohydrates": 30,
+            "fat": 7,
+            "fiber": 8
+        },
+        "cuisine": "MEXICAN",
+        "category": "DINNER",
+        "tags": [
+            "mexican",
+            "tacos",
+            "lentils",
+            "healthy",
+            "vegan"
+        ],
+        "price": 4300,
+        "dietType": ["BALANCEADA"]
+    },
+    {
+        "id": "12",
+        "name": "Sopa de Calabaza y Jengibre",
+        "ingredients": [
+            {
+                "ingredientId": 66,
+                "quantity": 500,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 1,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 40,
+                "quantity": 4,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Freir la cebolla y el jengibre en aceite de oliva.",
+            "Agregar la calabaza y el caldo de verduras, cocinar hasta que la calabaza esté tierna.",
+            "Triturar la mezcla hasta obtener una crema suave."
+        ],
+        "image": "12.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 70,
+        "nutrition_facts": {
+            "protein": 2,
+            "carbohydrates": 12,
+            "fat": 3,
+            "fiber": 3
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "SIDE",
+        "tags": [
+            "soup",
+            "pumpkin",
+            "healthy",
+            "vegan"
+        ],
+        "price": 3500,
+        "dietType": ["HIPOCALORICA", "DETOX", "BALANCEADA"]
+    },
+    {
+        "id": "13",
+        "name": "Bowl de Arroz Integral y Verduras",
+        "ingredients": [
+            {
+                "ingredientId": 52,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 53,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 21,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 54,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 55,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 56,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cocinar el arroz integral según las instrucciones del paquete.",
+            "Saltear las verduras en aceite de sésamo hasta que estén tiernas.",
+            "Mezclar el arroz con las verduras y añadir salsa de soja al gusto."
+        ],
+        "image": "13.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 150,
+        "nutrition_facts": {
+            "protein": 5,
+            "carbohydrates": 30,
+            "fat": 5,
+            "fiber": 4
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "LUNCH",
+        "tags": [
+            "healthy",
+            "bowl",
+            "rice",
+            "vegetables",
+            "asian"
+        ],
+        "price": 3950,
+        "dietType": ["HIPOCALORICA", "BALANCEADA"]
+    },
+    {
+        "id": "14",
+        "name": "Batido Verde Detox",
+        "ingredients": [
+            {
+                "ingredientId": 22,
+                "quantity": 2,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 16,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 16,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 65,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 57,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Colocar todos los ingredientes en una licuadora.",
+            "Mezclar hasta obtener una consistencia suave.",
+            "Servir inmediatamente."
+        ],
+        "image": "14.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 80,
+        "nutrition_facts": {
+            "protein": 3,
+            "carbohydrates": 15,
+            "fat": 1,
+            "fiber": 5
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "DRINK",
+        "tags": [
+            "smoothie",
+            "healthy",
+            "detox",
+            "breakfast",
+            "drink"
+        ],
+        "price": 3500,
+        "dietType": ["DETOX"]
+    },
+    {
+        "id": "15",
+        "name": "Guiso de Garbanzos y Espinacas",
+        "ingredients": [
+            {
+                "ingredientId": 75,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 22,
+                "quantity": 2,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 2,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 60,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 61,
+                "quantity": 1,
+                "unit": "TEASPOON"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Freir muy poco la cebolla y el ajo en aceite de oliva.",
+            "Agregar el tomate triturado y cocinar por 5 minutos.",
+            "Incorporar los garbanzos, espinacas y comino, cocinar hasta que las espinacas estén tiernas."
+        ],
+        "image": "15.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 15,
+            "fat": 5,
+            "fiber": 4
+        },
+        "cuisine": "MEDITERRANEAN",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "healthy",
+            "stew",
+            "legumes",
+            "Mediterranean",
+            "vegan"
+        ],
+        "price": 4500
+    },
+    {
+        "id": "16",
+        "name": "Pasta Integral con Salsa de Tomate y Albahaca",
+        "ingredients": [
+            {
+                "ingredientId": 69,
+                "quantity": 200,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 60,
+                "quantity": 400,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 67,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 2,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Cocinar la pasta integral según las instrucciones del paquete.",
+            "Freir poco el ajo en aceite de oliva, añadir el tomate triturado y cocinar a fuego lento.",
+            "Agregar la albahaca y la sal, y mezclar con la pasta cocida."
+        ],
+        "image": "16.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 180,
+        "nutrition_facts": {
+            "protein": 7,
+            "carbohydrates": 30,
+            "fat": 4,
+            "fiber": 5
+        },
+        "cuisine": "ITALIAN",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "pasta",
+            "italian",
+            "healthy",
+            "vegan"
+        ],
+        "price": 4000
+    },
+    {
+        "id": "17",
+        "name": "Chili Vegano",
+        "ingredients": [
+            {
+                "ingredientId": 79,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 79,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 59,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 60,
+                "quantity": 400,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 73,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 61,
+                "quantity": 1,
+                "unit": "TEASPOON"
+            },
+            {
+                "ingredientId": 62,
+                "quantity": 1,
+                "unit": "TEASPOON"
+            }
+        ],
+        "steps": [
+            "Freir poco la cebolla y el pimiento en una olla.",
+            "Agregar los frijoles, el maíz, el tomate triturado y las especias.",
+            "Cocinar a fuego lento durante 20 minutos."
+        ],
+        "image": "17.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 150,
+        "nutrition_facts": {
+            "protein": 8,
+            "carbohydrates": 25,
+            "fat": 2,
+            "fiber": 6
+        },
+        "cuisine": "MEXICAN",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "mexican",
+            "chili",
+            "beans",
+            "healthy",
+            "vegan"
+        ],
+        "price": 5400
+    },
+    {
+        "id": "18",
+        "name": "Tortitas de Avena y Plátano",
+        "ingredients": [
+            {
+                "ingredientId": 64,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 16,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 63,
+                "quantity": 0.5,
+                "unit": "CUP"
+            }
+        ],
+        "steps": [
+            "Aplastar el plátano y mezclarlo con la avena, la leche de almendras, el polvo de hornear y la canela.",
+            "Calentar una sartén antiadherente y verter un poco de la mezcla para formar las tortitas.",
+            "Cocinar por 2-3 minutos de cada lado hasta que estén doradas."
+        ],
+        "image": "18.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 4,
+            "carbohydrates": 20,
+            "fat": 2,
+            "fiber": 3
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "BREAKFAST",
+        "tags": [
+            "breakfast",
+            "pancakes",
+            "healthy",
+            "oatmeal"
+        ],
+        "price": 2300
+    },
+    {
+        "id": "19",
+        "name": "Buddha Bowl de Tofu y Verduras",
+        "ingredients": [
+            {
+                "ingredientId": 58,
+                "quantity": 200,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 52,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 53,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 21,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 55,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cocinar el arroz integral según las instrucciones del paquete.",
+            "Saltear el brócoli y la zanahoria en una sartén.",
+            "Cocinar el tofu en cubos hasta que esté dorado y añadir salsa de soja.",
+            "Servir el arroz en un bol, agregar las verduras y el tofu, y espolvorear con semillas de sésamo."
+        ],
+        "image": "19.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 200,
+        "nutrition_facts": {
+            "protein": 10,
+            "carbohydrates": 30,
+            "fat": 6,
+            "fiber": 5
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "LUNCH",
+        "tags": [
+            "bowl",
+            "healthy",
+            "asian",
+            "tofu",
+            "rice"
+        ],
+        "price": 6900
+    },
+    {
+        "id": "20",
+        "name": "Smoothie Bowl de Frutas",
+        "ingredients": [
+            {
+                "ingredientId": 16,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 17,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 65,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 57,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 64,
+                "quantity": 0.25,
+                "unit": "CUP"
+            }
+        ],
+        "steps": [
+            "Colocar la banana, las fresas y la leche de coco en una licuadora y mezclar hasta obtener una textura suave.",
+            "Añadir la mezcla en un tazón.",
+            "Decorar con semillas de chía y granola."
+        ],
+        "image": "20.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 150,
+        "nutrition_facts": {
+            "protein": 3,
+            "carbohydrates": 25,
+            "fat": 5,
+            "fiber": 4
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "BREAKFAST",
+        "tags": [
+            "smoothie",
+            "breakfast",
+            "fruits",
+            "healthy",
+            "bowl"
+        ],
+        "price": 4200
+    },
+    {
+        "id": "21",
+        "name": "Tortilla Española",
+        "ingredients": [
+            {
+                "ingredientId": 41,
+                "quantity": 3,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 2,
+                "quantity": 4,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Pelar y cortar las papas en rodajas finas.",
+            "Freír las papas y la cebolla en aceite hasta dorarse.",
+            "Batir los huevos con sal y añadir las papas.",
+            "Cocinar la mezcla en una sartén hasta cuajar."
+        ],
+        "image": "21.jpeg",
+        "restrictions": [
+            "NONE"
+        ],
+        "calories_per_serving": 150,
+        "nutrition_facts": {
+            "protein": 6,
+            "carbohydrates": 20,
+            "fat": 10,
+            "fiber": 2
+        },
+        "cuisine": "SPANISH",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "spanish",
+            "egg",
+            "potato",
+            "main course"
+        ],
+        "price": 3900
+    },
+    {
+        "id": "22",
+        "name": "Chili con Carne",
+        "ingredients": [
+            {
+                "ingredientId": 19,
+                "quantity": 200,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 79,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 70,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 2,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 61,
+                "quantity": 1,
+                "unit": "TEASPOON"
+            },
+            {
+                "ingredientId": 5,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Dorar la carne en una sartén con cebolla y ajo.",
+            "Añadir los tomates picados y los frijoles.",
+            "Cocinar con pimienta y servir caliente."
+        ],
+        "image": "22.jpg",
+        "restrictions": [
+            "NONE"
+        ],
+        "calories_per_serving": 200,
+        "nutrition_facts": {
+            "protein": 15,
+            "carbohydrates": 15,
+            "fat": 8,
+            "fiber": 3
+        },
+        "cuisine": "MEXICAN",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "mexican",
+            "meat",
+            "spicy",
+            "main course"
+        ],
+        "price": 5500
+    },
+    {
+        "id": "23",
+        "name": "Crema de Calabaza",
+        "ingredients": [
+            {
+                "ingredientId": 66,
+                "quantity": 400,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 21,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Cortar y cocinar la calabaza, cebolla y zanahoria en agua.",
+            "Procesar hasta lograr una crema suave y servir."
+        ],
+        "image": "23.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 80,
+        "nutrition_facts": {
+            "protein": 1,
+            "carbohydrates": 8,
+            "fat": 2,
+            "fiber": 2
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "SIDE",
+        "tags": [
+            "soup",
+            "pumpkin",
+            "healthy",
+            "SIDE"
+        ],
+        "price": 3500
+    },
+    {
+        "id": "24",
+        "name": "Ensalada Caprese",
+        "ingredients": [
+            {
+                "ingredientId": 9,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 45,
+                "quantity": 100,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 67,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Cortar los tomates y la mozzarella en rodajas.",
+            "Disponer en capas y añadir albahaca, aceite y sal."
+        ],
+        "image": "24.webp",
+        "restrictions": [
+            "CELIAC",
+            "VEGETARIAN"
+        ],
+        "calories_per_serving": 120,
+        "nutrition_facts": {
+            "protein": 5,
+            "carbohydrates": 3,
+            "fat": 10,
+            "fiber": 1
+        },
+        "cuisine": "ITALIAN",
+        "category": "SIDE",
+        "tags": [
+            "italian",
+            "salad",
+            "cheese",
+            "SIDE"
+        ],
+        "price": 4500
+    },
+    {
+        "id": "25",
+        "name": "Sopa de Pollo",
+        "ingredients": [
+            {
+                "ingredientId": 19,
+                "quantity": 200,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 21,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 68,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 12,
+                "quantity": 1,
+                "unit": "PINCH"
+            }
+        ],
+        "steps": [
+            "Cocinar el pollo con cebolla, zanahoria y apio.",
+            "Servir caliente con sal al gusto."
+        ],
+        "image": "25.jpg",
+        "restrictions": [
+            "CELIAC"
+        ],
+        "calories_per_serving": 80,
+        "nutrition_facts": {
+            "protein": 10,
+            "carbohydrates": 2,
+            "fat": 2,
+            "fiber": 1
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "SIDE",
+        "tags": [
+            "soup",
+            "chicken",
+            "healthy",
+            "SIDE"
+        ],
+        "price": 3500
+    },
+    {
+        "id": "26",
+        "name": "Espaguetis al Pesto",
+        "ingredients": [
+            {
+                "ingredientId": 69,
+                "quantity": 200,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 67,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 3,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 2,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 4,
+                "quantity": 50,
+                "unit": "GRAM"
+            }
+        ],
+        "steps": [
+            "Cocinar los espaguetis y reservar.",
+            "Preparar el pesto con albahaca, ajo, aceite y queso.",
+            "Mezclar con los espaguetis y servir."
+        ],
+        "image": "26.jpg",
+        "restrictions": [
+            "VEGETARIAN"
+        ],
+        "calories_per_serving": 180,
+        "nutrition_facts": {
+            "protein": 5,
+            "carbohydrates": 25,
+            "fat": 8,
+            "fiber": 2
+        },
+        "cuisine": "ITALIAN",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "italian",
+            "pasta",
+            "herb",
+            "main course"
+        ],
+        "price": 4000
+    },
+    {
+        "id": "27",
+        "name": "Ratatouille",
+        "ingredients": [
+            {
+                "ingredientId": 71,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 72,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 70,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cortar todas las verduras en rodajas finas.",
+            "Cocinar en una sartén con aceite hasta ablandar.",
+            "Servir caliente."
+        ],
+        "image": "27.jpg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 90,
+        "nutrition_facts": {
+            "protein": 2,
+            "carbohydrates": 8,
+            "fat": 5,
+            "fiber": 3
+        },
+        "cuisine": "FRENCH",
+        "category": "MAIN_COURSE",
+        "tags": [
+            "french",
+            "vegetable",
+            "healthy",
+            "main course"
+        ],
+        "price": 4500
+    },
+    {
+        "id": "28",
+        "name": "Omelette",
+        "ingredients": [
+            {
+                "ingredientId": 2,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 74,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 45,
+                "quantity": 50,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 73,
+                "quantity": 0.5,
+                "unit": "UNIT"
+            }
+        ],
+        "steps": [
+            "Batir los huevos con leche y cocinar.",
+            "Agregar el queso y el pimiento, doblar y servir."
+        ],
+        "image": "28.jpg",
+        "restrictions": [
+            "VEGETARIAN"
+        ],
+        "calories_per_serving": 180,
+        "nutrition_facts": {
+            "protein": 10,
+            "carbohydrates": 1,
+            "fat": 15,
+            "fiber": 1
+        },
+        "cuisine": "FRENCH",
+        "category": "BREAKFAST",
+        "tags": [
+            "breakfast",
+            "egg",
+            "quick",
+            "main course"
+        ],
+        "price": 1500
+    },
+    {
+        "id": "29",
+        "name": "Hummus",
+        "ingredients": [
+            {
+                "ingredientId": 75,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 2,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 76,
+                "quantity": 3,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 11,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Procesar todos los ingredientes hasta obtener una crema.",
+            "Servir con pan o vegetales."
+        ],
+        "image": "29.jpeg",
+        "restrictions": [
+            "VEGAN",
+            "CELIAC"
+        ],
+        "calories_per_serving": 150,
+        "nutrition_facts": {
+            "protein": 5,
+            "carbohydrates": 15,
+            "fat": 8,
+            "fiber": 4
+        },
+        "cuisine": "MEDITERRANEAN",
+        "category": "SIDE",
+        "tags": [
+            "dip",
+            "middle eastern",
+            "healthy",
+            "SIDE"
+        ],
+        "price": 3500
+    },
+    {
+        "id": "30",
+        "name": "Tabulé",
+        "ingredients": [
+            {
+                "ingredientId": 77,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 78,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 8,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 11,
+                "quantity": 0.5,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cocinar el cuscús y dejar enfriar.",
+            "Mezclar con tomate, perejil, cebolla, limón y aceite."
+        ],
+        "image": "30.jpg",
+        "restrictions": [
+            "VEGETARIAN",
+            "VEGAN"
+        ],
+        "calories_per_serving": 110,
+        "nutrition_facts": {
+            "protein": 3,
+            "carbohydrates": 20,
+            "fat": 3,
+            "fiber": 2
+        },
+        "cuisine": "MEDITERRANEAN",
+        "category": "SIDE",
+        "tags": [
+            "middle eastern",
+            "salad",
+            "healthy",
+            "SIDE"
+        ],
+        "price": 3900,
+        "dietType": ["HIPOCALORICA", "BALANCEADA"]
+    },
+    {
+        "id": 32,
+        "name": "Papas con Queso y Bacon",
+        "ingredients": [
+            {
+                "ingredientId": 41,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 42,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 3,
+                "quantity": 3,
+                "unit": "STRIPS"
+            },
+            {
+                "ingredientId": 43,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 44,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            }
+        ],
+        "steps": [
+            "Cortar las papas en rodajas y freír hasta dorar.",
+            "Freír el bacon hasta que esté crujiente y cortar en trozos.",
+            "Colocar el queso sobre las papas calientes para que se derrita.",
+            "Agregar el bacon y un poco de crema agria.",
+            "Espolvorear con cebolla verde."
+        ],
+        "calories_per_serving": 300,
+        "nutrition_facts": {
+            "protein": 8,
+            "carbohydrates": 25,
+            "fat": 30,
+            "fiber": 3
+        },
+        "restrictions": [
+            "none"
+        ],
+        "image": "32.jpg",
+        "tags": [
+            "snack",
+            "potato",
+            "bacon",
+            "cheese",
+            "comfort food"
+        ],
+        "price": 3900,
+        "dietType": ["HIPERCALORICA"]
+    },
+    {
+        "id": "33",
+        "name": "Pizza de Pepperoni",
+        "ingredients": [
+            {
+                "ingredientId": 23,
+                "quantity": 2,
+                "unit": "SLICE"
+            },
+            {
+                "ingredientId": 50,
+                "quantity": 3,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 45,
+                "quantity": 1.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 46,
+                "quantity": 8,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 1,
+                "unit": "CLOVE"
+            }
+        ],
+        "steps": [
+            "Colocar el pan en una bandeja y untar con salsa de tomate.",
+            "Cubrir con el queso mozzarella.",
+            "Colocar las rodajas de pepperoni encima.",
+            "Hornear a 180°C por 10-15 minutos o hasta que el queso se derrita y esté dorado.",
+            "Rociar con un poco de aceite de oliva antes de servir."
+        ],
+        "image": "33.jpg",
+        "restrictions": [],
+        "calories_per_serving": 300,
+        "nutrition_facts": {
+            "protein": 12,
+            "carbohydrates": 20,
+            "fat": 15,
+            "fiber": 2
+        },
+        "cuisine": "ITALIAN",
+        "category": "SNACK",
+        "tags": [
+            "pizza",
+            "bread",
+            "cheese",
+            "pepperoni",
+            "snack"
+        ],
+        "price": 5500,
+        "dietType": ["HIPERCALORICA"]
+    },
+    {
+        "id": "34",
+        "name": "Tacos de Pollo Frito",
+        "ingredients": [
+            {
+                "ingredientId": 19,
+                "quantity": 150,
+                "unit": "GRAM"
+            },
+            {
+                "ingredientId": 29,
+                "quantity": 2,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 35,
+                "quantity": 0.25,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 6,
+                "quantity": 0.5,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 30,
+                "quantity": 1,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 22,
+                "quantity": 1,
+                "unit": "UNIT"
+            },
+            {
+                "ingredientId": 9,
+                "quantity": 1,
+                "unit": "UNIT"
+            }
+        ],
+        "steps": [
+            "Empanar el pollo con la harina.",
+            "Freír el pollo en el aceite hasta que esté dorado.",
+            "Calentar las tortillas en una sartén.",
+            "Colocar el pollo en las tortillas, agregar mayonesa y lechuga.",
+            "Añadir tomate picado y servir."
+        ],
+        "image": "34.jpg",
+        "restrictions": [
+            "NONE"
+        ],
+        "calories_per_serving": 320,
+        "nutrition_facts": {
+            "protein": 15,
+            "carbohydrates": 15,
+            "fat": 25,
+            "fiber": 1
+        },
+        "cuisine": "MEXICAN",
+        "category": "DINNER",
+        "tags": [
+            "mexican",
+            "taco",
+            "chicken",
+            "fried food",
+            "fast food"
+        ],
+        "price": 6000,
+        "dietType": ["HIPERCALORICA"]
+    },
+    {
+        "id": "35",
+        "name": "Ensalada de Espinaca y Quinoa",
+        "ingredients": [
+            {
+                "id": 80,
+                "quantity": 2,
+                "unit": "CUP"
+            },
+            {
+                "id": 6,
+                "quantity": 2,
+                "unit": "TABLESPOON"
+            },
+            {
+                "ingredientId": 24,
+                "quantity": 2,
+                "unit": "CLOVE"
+            },
+            {
+                "ingredientId": 83,
+                "quantity": 1,
+                "unit": "CUP"
+            },
+            {
+                "ingredientId": 84,
+                "quantity": 1,
+                "unit": "CUP"
+            }
+        ],
+        "steps": [
+            "Lavar y secar las hojas de espinaca.",
+            "Cocer la quinoa en agua durante 15 minutos y dejar enfriar.",
+            "Saltear el ajo picado en aceite de oliva durante 2 minutos.",
+            "Agregar los tomates cherry cortados a la sartén y cocinar por 5 minutos.",
+            "Mezclar todos los ingredientes en un bol y sazonar al gusto."
+        ],
+        "image": "35.webp",
+        "restrictions": ["VEGAN", "GLUTEN_FREE"],
+        "calories_per_serving": 250,
+        "nutrition_facts": {
+            "protein": 10,
+            "carbohydrates": 20,
+            "fat": 15,
+            "fiber": 7
+        },
+        "cuisine": "MEDITERRANEAN",
+        "category": "LUNCH",
+        "dietType": ["BALANCEADA"],
+        "tags": ["healthy", "light", "vegan", "easy"],
+        "price": 5200
+    },
+    {
+        "id": "36",
+        "name": "Ensalada de aguacate y huevos",
+        "ingredients": [
+            { "ingredientId": 7, "quantity": 1, "unit": "UNIT" },
+            { "ingredientId": 2, "quantity": 2, "unit": "UNIT" },
+            { "ingredientId": 6, "quantity": 15, "unit": "MILLILITER" }
+        ],
+        "steps": [
+            "Hervir los huevos hasta que estén duros.",
+            "Cortar el aguacate en rodajas.",
+            "Mezclar los huevos picados y el aguacate en un bol.",
+            "Agregar aceite de oliva y mezclar."
+        ],
+        "image": "36.png",
+        "restrictions": ["KETO", "LOW_CARB"],
+        "calories_per_serving": 300,
+        "nutrition_facts": {
+            "protein": 12,
+            "carbohydrates": 4,
+            "fat": 28,
+            "fiber": 6
+        },
+        "cuisine": "MEDITERRANEAN",
+        "category": "LUNCH",
+        "dietType": ["CETOGENICA", "LOW_CARB"],
+        "tags": ["keto", "healthy", "low carb"],
+        "price": 4200
+    },
+    {
+        "id": "37",
+        "name": "Snack de almendras y queso",
+        "ingredients": [
+            { "ingredientId": 85, "quantity": 30, "unit": "GRAM" },
+            { "ingredientId": 4, "quantity": 20, "unit": "GRAM" }
+        ],
+        "steps": [
+            "Servir las almendras en un plato pequeño.",
+            "Rallar queso parmesano y colocarlo sobre las almendras."
+        ],
+        "image": "37.jpg",
+        "restrictions": ["KETO", "LOW_CARB", "GLUTEN_FREE"],
+        "calories_per_serving": 250,
+        "nutrition_facts": {
+            "protein": 10,
+            "carbohydrates": 3,
+            "fat": 22,
+            "fiber": 5
+        },
+        "cuisine": "INTERNATIONAL",
+        "category": "SNACK",
+        "dietType": ["CETOGENICA", "GLUTEN_FREE"],
+        "tags": ["keto", "snack", "low carb", "gluten free"],
+        "price": 3.0
+    }
+]

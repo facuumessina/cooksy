@@ -1,0 +1,1277 @@
+[
+    {
+        "id": 1,
+        "name": "Pasta",
+        "image": "pasta.webp",
+        "unit": "GRAM",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "pasta",
+            "italian",
+            "carbs"
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Huevo",
+        "image": "huevo.webp",
+        "unit": "UNIT",
+        "category": "OTHERS",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "egg",
+            "protein",
+            "breakfast"
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Bacon",
+        "image": "bacon.webp",
+        "unit": "STRIPS",
+        "category": "MEAT",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN",
+            "HIGH_FAT"
+        ],
+        "keywords": [
+            "bacon",
+            "pork",
+            "meat"
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Queso Parmesano",
+        "image": "queso_parmesano.webp",
+        "unit": "GRAM",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "cheese",
+            "parmesan",
+            "dairy"
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Pimienta Negra",
+        "image": "pimienta_negra.webp",
+        "unit": "PINCH",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "pepper",
+            "black pepper",
+            "spice"
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Aceite de Oliva",
+        "image": "aceite_de_oliva.webp",
+        "unit": "TABLESPOON",
+        "category": "FATS",
+        "keywords": [
+            "oil",
+            "olive oil",
+            "healthy"
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Palta",
+        "image": "palta.webp",
+        "unit": "UNIT",
+        "category": "FRUITS",
+        "nutritionalProperties": [
+            "HEALTHY_FAT",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "avocado",
+            "fruit",
+            "healthy"
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Cebolla",
+        "image": "cebolla.webp",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "onion",
+            "vegetable",
+            "healthy"
+        ]
+    },
+    {
+        "id": 9,
+        "name": "Tomate",
+        "image": "tomate.webp",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "tomato",
+            "vegetable",
+            "healthy"
+        ]
+    },
+    {
+        "id": 10,
+        "name": "Cilantro",
+        "image": "cilantro.webp",
+        "unit": "TABLESPOON",
+        "category": "VEGETABLES",
+        "keywords": [
+            "cilantro",
+            "herb",
+            "healthy"
+        ]
+    },
+    {
+        "id": 11,
+        "name": "Lima",
+        "image": "lima.webp",
+        "unit": "UNIT",
+        "category": "FRUITS",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "lime",
+            "fruit",
+            "healthy"
+        ]
+    },
+    {
+        "id": 12,
+        "name": "Sal",
+        "image": "sal.webp",
+        "unit": "PINCH",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "salt",
+            "spice",
+            "healthy"
+        ]
+    },
+    {
+        "id": 13,
+        "name": "Pepino",
+        "image": "pepino.webp",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "cucumber",
+            "vegetable",
+            "healthy"
+        ]
+    },
+    {
+        "id": 14,
+        "name": "Aceitunas Negras",
+        "image": "aceitunas_negras.webp",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "HEALTHY_FAT"
+        ],
+        "keywords": [
+            "olives",
+            "fruit",
+            "healthy"
+        ]
+    },
+    {
+        "id": 15,
+        "name": "Queso Feta",
+        "image": "queso_feta.webp",
+        "unit": "GRAM",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "cheese",
+            "feta",
+            "dairy"
+        ]
+    },
+    {
+        "id": 16,
+        "name": "Bananas",
+        "image": "bananas.webp",
+        "unit": "UNIT",
+        "category": "FRUITS",
+        "nutritionalProperties": [
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "banana",
+            "fruit",
+            "healthy"
+        ]
+    },
+    {
+        "id": 17,
+        "name": "Frutillas",
+        "image": "frutillas.webp",
+        "unit": "CUP",
+        "category": "FRUITS",
+        "nutritionalProperties": [
+            "LOW_CALORIE",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "strawberries",
+            "fruit",
+            "healthy",
+            "frutilla",
+            "frutillas"
+        ]
+    },
+    {
+        "id": 18,
+        "name": "Miel",
+        "image": "miel.webp",
+        "unit": "TABLESPOON",
+        "category": "SWEETS",
+        "keywords": [
+            "honey",
+            "sweet",
+            "healthy",
+            "miel"
+        ]
+    },
+    {
+        "id": 19,
+        "name": "Pollo",
+        "image": "pollo.webp",
+        "unit": "GRAM",
+        "category": "MEAT",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN",
+            "LOW_FAT"
+        ],
+        "keywords": [
+            "chicken",
+            "meat",
+            "pollo"
+        ]
+    },
+    {
+        "id": 20,
+        "name": "Arroz",
+        "image": "arroz.webp",
+        "unit": "CUP",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "rice",
+            "carbs",
+            "healthy",
+            "arroz"
+        ]
+    },
+    {
+        "id": 21,
+        "name": "Zanahoria",
+        "image": "zanahoria.webp",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "HIGH_FIBER",
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "carrot",
+            "vegetable",
+            "healthy",
+            "zanahoria"
+        ]
+    },
+    {
+        "id": 22,
+        "name": "Lechuga",
+        "image": "lechuga.webp",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "lettuce",
+            "vegetable",
+            "lechuga",
+            "healthy"
+        ]
+    },
+    {
+        "id": 23,
+        "name": "Pan",
+        "image": "pan.webp",
+        "unit": "SLICE",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "bread",
+            "pan",
+            "carbs",
+            "healthy"
+        ]
+    },
+    {
+        "id": 24,
+        "name": "Ajo",
+        "image": "ajo.webp",
+        "unit": "CLOVE",
+        "category": "VEGETABLES",
+        "keywords": [
+            "garlic",
+            "ajo",
+            "vegetable",
+            "healthy"
+        ]
+    },
+    {
+        "id": 25,
+        "name": "Mostaza",
+        "image": "mostaza.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "mustard",
+            "spice",
+            "mostaza"
+        ]
+    },
+    {
+        "id": 26,
+        "name": "Vinagre",
+        "image": "vinagre.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "vinegar",
+            "spice",
+            "healthy"
+        ]
+    },
+    {
+        "id": 27,
+        "name": "Aderezo Caesar",
+        "image": "aderezo_caesar.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "caesar",
+            "dressing",
+            "healthy"
+        ]
+    },
+    {
+        "id": 28,
+        "name": "Salmón",
+        "image": "salmon.webp",
+        "unit": "GRAM",
+        "category": "FISH",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN",
+            "HEALTHY_FAT"
+        ],
+        "keywords": [
+            "salmon",
+            "fish",
+            "healthy"
+        ]
+    },
+    {
+        "id": 29,
+        "name": "Tortilla",
+        "image": "tortilla.webp",
+        "unit": "UNIT",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "tortilla",
+            "carbs",
+            "healthy",
+            "wrap"
+        ]
+    },
+    {
+        "id": 30,
+        "name": "Mayonesa",
+        "image": "mayonesa.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "nutritionalProperties": [
+            "HIGH_FAT"
+        ],
+        "keywords": [
+            "mayonnaise",
+            "sauce",
+            "healthy"
+        ]
+    },
+    {
+        "id": 31,
+        "name": "Mayonesa Light",
+        "image": "mayonesa_light.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "nutritionalProperties": [
+            "LOW_FAT"
+        ],
+        "keywords": [
+            "mayonnaise",
+            "sauce",
+            "healthy"
+        ]
+    },
+    {
+        "id": 32,
+        "name": "Mayonesa Vegana",
+        "image": "mayonesa_vegana.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "nutritionalProperties": [
+            "DAIRY_FREE",
+            "LOW_FAT"
+        ],
+        "keywords": [
+            "mayonnaise",
+            "sauce",
+            "healthy"
+        ]
+    },
+    {
+        "id": 33,
+        "name": "Mayonesa de Ajo",
+        "image": "mayonesa_de_ajo.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "nutritionalProperties": [
+            "HIGH_FAT"
+        ],
+        "keywords": [
+            "mayonnaise",
+            "sauce",
+            "healthy",
+            "garlic",
+            "ajo",
+            "mayonesa de ajo"
+        ]
+    },
+    {
+        "id": 34,
+        "name": "Lentejas",
+        "image": "lentejas.webp",
+        "unit": "CUP",
+        "category": "LEGUMES",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "lentils",
+            "legume",
+            "healthy",
+            "lentejas",
+            "lenteja"
+        ]
+    },
+    {
+        "id": 35,
+        "name": "Pan rallado",
+        "image": "pan_rallado.webp",
+        "unit": "TABLESPOON",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "bread crumbs",
+            "carbs",
+            "healthy",
+            "pan rallado",
+            "pan molido"
+        ]
+    },
+    {
+        "id": 36,
+        "name": "Yogurt",
+        "image": "yogurt.webp",
+        "unit": "GRAM",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "yogurt",
+            "dairy"
+        ]
+    },
+    {
+        "id": 37,
+        "name": "Yogurt Vainilla",
+        "image": "yogurt.webp",
+        "unit": "GRAM",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "yogurt",
+            "dairy",
+            "healthy",
+            "vanilla",
+            "yogurt vainilla",
+            "yogurt de vainilla"
+        ]
+    },
+    {
+        "id": 38,
+        "name": "Yogurt Frutilla",
+        "image": "yogurt.webp",
+        "unit": "GRAM",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "yogurt",
+            "dairy",
+            "healthy",
+            "strawberry",
+            "yogurt frutilla",
+            "yogurt de frutilla"
+        ]
+    },
+    {
+        "id": 40,
+        "name": "Agua",
+        "image": "agua.webp",
+        "unit": "MILLILITER",
+        "category": "BEVERAGES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "water",
+            "drink",
+            "healthy",
+            "agua"
+        ]
+    },
+    {
+        "id": 41,
+        "name": "Papas",
+        "image": "papas.webp",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "potatoes",
+            "vegetables",
+            "carbs",
+            "papas"
+        ]
+    },
+    {
+        "id": 42,
+        "name": "Queso Cheddar",
+        "image": "queso_cheddar.webp",
+        "unit": "CUP",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_FAT",
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "cheddar cheese",
+            "grated cheese",
+            "dairy",
+            "cheddar",
+            "queso cheddar"
+        ]
+    },
+    {
+        "id": 43,
+        "name": "Crema Agria",
+        "image": "crema_agria.webp",
+        "unit": "TABLESPOON",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_FAT"
+        ],
+        "keywords": [
+            "sour cream",
+            "dairy",
+            "cream",
+            "crema agria"
+        ]
+    },
+    {
+        "id": 44,
+        "name": "Cebolla Verde",
+        "image": "cebolla_verde.webp",
+        "unit": "TABLESPOON",
+        "category": "VEGETABLES",
+        "keywords": [
+            "green onion",
+            "vegetables",
+            "garnish",
+            "cebolla verde"
+        ]
+    },
+    {
+        "id": 45,
+        "name": "Queso Mozzarella",
+        "image": "queso_mozzarella.webp",
+        "unit": "CUP",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "mozzarella cheese",
+            "cheese",
+            "dairy",
+            "mozzarella",
+            "queso mozzarella"
+        ]
+    },
+    {
+        "id": 46,
+        "name": "Pepperoni",
+        "image": "pepperoni.webp",
+        "unit": "UNIT",
+        "category": "MEAT",
+        "nutritionalProperties": [
+            "HIGH_FAT",
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "pepperoni",
+            "meat",
+            "processed"
+        ]
+    },
+    {
+        "id": 47,
+        "name": "Pan Francés",
+        "image": "pan_frances.webp",
+        "unit": "UNIT",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "french bread",
+            "bread",
+            "grains",
+            "pan frances",
+            "pan francesa"
+        ]
+    },
+    {
+        "id": 48,
+        "name": "Salchicha",
+        "image": "salchicha.webp",
+        "unit": "UNIT",
+        "category": "MEAT",
+        "nutritionalProperties": [
+            "HIGH_FAT",
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "sausage",
+            "meat",
+            "processed",
+            "salchicha",
+            "salchichas"
+        ]
+    },
+    {
+        "id": 49,
+        "name": "Pan para Hot Dog",
+        "image": "pan_hot_dog.webp",
+        "unit": "UNIT",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "hot dog bun",
+            "bread",
+            "grains",
+            "Pan para pancho",
+            "pan hot dog",
+            "pan para hot dog",
+            "pan para perro caliente",
+            "pan para perrito caliente"
+        ]
+    },
+    {
+        "id": 50,
+        "name": "Salsa de Tomate",
+        "image": "salsa_tomate.webp",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "tomato sauce",
+            "sauce",
+            "condiment",
+            "salsa de tomate"
+        ]
+    },
+    {
+        "id": 51,
+        "name": "Papas Snack",
+        "image": "51.webp",
+        "unit": "GRAM",
+        "category": "SNACKS",
+        "nutritionalProperties": [
+            "HIGH_FAT"
+        ],
+        "keywords": [
+            "snack",
+            "potatoes",
+            "aperitivo",
+            "patata",
+            "snack"
+        ]
+    },
+    {
+        "id": 52,
+        "name": "Arroz Integral",
+        "unit": "CUP",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "brown rice",
+            "carbs",
+            "healthy",
+            "arroz integral",
+            "arroz",
+            "integral"
+        ]
+    },
+    {
+        "id": 53,
+        "name": "Brócoli",
+        "unit": "CUP",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "broccoli",
+            "vegetable",
+            "healthy",
+            "brócoli",
+            "verdura"
+        ]
+    },
+    {
+        "id": 54,
+        "name": "Pimiento Amarillo",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "yellow bell pepper",
+            "vegetable",
+            "healthy",
+            "pimiento",
+            "pimiento amarillo",
+            "verdura"
+        ]
+    },
+    {
+        "id": 55,
+        "name": "Salsa de Soja",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "soy sauce",
+            "sauce",
+            "healthy",
+            "salsa de soja",
+            "soja",
+            "condimento"
+        ]
+    },
+    {
+        "id": 56,
+        "name": "Aceite de Sésamo",
+        "unit": "TABLESPOON",
+        "category": "FATS",
+        "nutritionalProperties": [
+            "HEALTHY_FAT"
+        ],
+        "keywords": [
+            "sesame oil",
+            "oil",
+            "healthy",
+            "aceite de sésamo",
+            "sésamo",
+            "aceite"
+        ]
+    },
+    {
+        "id": 57,
+        "name": "Semillas de Chía",
+        "unit": "TABLESPOON",
+        "category": "OTHERS",
+        "nutritionalProperties": [
+            "HIGH_FIBER",
+            "HEALTHY_FAT"
+        ],
+        "keywords": [
+            "chia seeds",
+            "healthy",
+            "superfood",
+            "semillas de chía",
+            "chía",
+            "semillas"
+        ]
+    },
+    {
+        "id": 58,
+        "name": "Tofu",
+        "unit": "GRAM",
+        "category": "OTHERS",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN",
+            "LOW_FAT"
+        ],
+        "keywords": [
+            "tofu",
+            "soy",
+            "protein",
+            "soja",
+            "proteína"
+        ]
+    },
+    {
+        "id": 59,
+        "name": "Maíz",
+        "unit": "CUP",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "corn",
+            "vegetable",
+            "healthy",
+            "maíz",
+            "choclo",
+            "elote",
+            "verdura"
+        ]
+    },
+    {
+        "id": 60,
+        "name": "Tomate Triturado",
+        "unit": "CUP",
+        "category": "VEGETABLES",
+        "keywords": [
+            "crushed tomatoes",
+            "vegetable",
+            "healthy",
+            "tomate triturado",
+            "tomate",
+            "verdura"
+        ]
+    },
+    {
+        "id": 61,
+        "name": "Comino",
+        "unit": "TEASPOON",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "cumin",
+            "spice",
+            "healthy",
+            "comino",
+            "especia",
+            "condimento"
+        ]
+    },
+    {
+        "id": 62,
+        "name": "Pimentón",
+        "unit": "TEASPOON",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "paprika",
+            "spice",
+            "healthy",
+            "pimentón",
+            "especia",
+            "condimento"
+        ]
+    },
+    {
+        "id": 63,
+        "name": "Leche de Almendras",
+        "unit": "CUP",
+        "category": "BEVERAGES",
+        "nutritionalProperties": [
+            "LOW_CALORIE",
+            "DAIRY_FREE"
+        ],
+        "keywords": [
+            "almond milk",
+            "dairy alternative",
+            "healthy",
+            "leche de almendras",
+            "almendras",
+            "bebida vegetal"
+        ]
+    },
+    {
+        "id": 64,
+        "name": "Granola",
+        "unit": "CUP",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "granola",
+            "snack",
+            "healthy",
+            "cereales",
+            "desayuno"
+        ]
+    },
+    {
+        "id": 65,
+        "name": "Agua de Coco",
+        "unit": "CUP",
+        "category": "BEVERAGES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "coconut water",
+            "beverage",
+            "healthy",
+            "agua de coco",
+            "coco",
+            "bebida"
+        ]
+    },
+    {
+        "id": 66,
+        "name": "Calabaza",
+        "unit": "GRAM",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "pumpkin",
+            "vegetable",
+            "healthy",
+            "calabaza",
+            "zapallo",
+            "verdura"
+        ]
+    },
+    {
+        "id": 67,
+        "name": "Albahaca",
+        "unit": "TABLESPOON",
+        "category": "VEGETABLES",
+        "keywords": [
+            "basil",
+            "herb",
+            "italian",
+            "albahaca",
+            "hierba",
+            "condimento"
+        ]
+    },
+    {
+        "id": 68,
+        "name": "Apio",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "celery",
+            "vegetable",
+            "healthy",
+            "apio",
+            "verdura"
+        ]
+    },
+    {
+        "id": 69,
+        "name": "Espaguetis",
+        "unit": "GRAM",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "spaghetti",
+            "pasta",
+            "italian",
+            "espaguetis",
+            "pasta",
+            "italiano"
+        ]
+    },
+    {
+        "id": 70,
+        "name": "Pimiento Rojo",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "red pepper",
+            "vegetable",
+            "healthy",
+            "pimiento rojo",
+            "pimiento",
+            "verdura"
+        ]
+    },
+    {
+        "id": 71,
+        "name": "Berenjena",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "eggplant",
+            "vegetable",
+            "french",
+            "berenjena",
+            "verdura"
+        ]
+    },
+    {
+        "id": 72,
+        "name": "Calabacín",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "zucchini",
+            "vegetable",
+            "healthy",
+            "calabacín",
+            "zapallito",
+            "verdura"
+        ]
+    },
+    {
+        "id": 73,
+        "name": "Pimiento Verde",
+        "unit": "UNIT",
+        "category": "VEGETABLES",
+        "nutritionalProperties": [
+            "LOW_CALORIE"
+        ],
+        "keywords": [
+            "green pepper",
+            "vegetable",
+            "healthy",
+            "pimiento verde",
+            "pimiento",
+            "verdura"
+        ]
+    },
+    {
+        "id": 74,
+        "name": "Leche",
+        "unit": "TABLESPOON",
+        "category": "DAIRY",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN"
+        ],
+        "keywords": [
+            "milk",
+            "dairy",
+            "beverage",
+            "leche",
+            "lácteo",
+            "bebida"
+        ]
+    },
+    {
+        "id": 75,
+        "name": "Garbanzos",
+        "unit": "CUP",
+        "category": "LEGUMES",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "chickpeas",
+            "legume",
+            "protein",
+            "garbanzos",
+            "legumbre",
+            "proteína"
+        ]
+    },
+    {
+        "id": 76,
+        "name": "Tahini",
+        "unit": "TABLESPOON",
+        "category": "CONDIMENTS",
+        "keywords": [
+            "tahini",
+            "sesame",
+            "sauce",
+            "tahini",
+            "sésamo",
+            "salsa"
+        ]
+    },
+    {
+        "id": 77,
+        "name": "Cuscús",
+        "unit": "CUP",
+        "category": "GRAINS",
+        "nutritionalProperties": [
+            "HIGH_CARB"
+        ],
+        "keywords": [
+            "couscous",
+            "grain",
+            "mediterranean",
+            "cuscús",
+            "grano",
+            "mediterráneo"
+        ]
+    },
+    {
+        "id": 78,
+        "name": "Perejil",
+        "unit": "CUP",
+        "category": "VEGETABLES",
+        "keywords": [
+            "parsley",
+            "herb",
+            "mediterranean",
+            "perejil",
+            "hierba",
+            "condimento"
+        ]
+    },
+    {
+        "id": 79,
+        "name": "Frijoles",
+        "unit": "CUP",
+        "category": "LEGUMES",
+        "nutritionalProperties": [
+            "HIGH_PROTEIN",
+            "HIGH_FIBER"
+        ],
+        "keywords": [
+            "beans",
+            "legume",
+            "protein",
+            "frijoles",
+            "porotos",
+            "legumbre",
+            "proteína"
+        ]
+    },
+    {
+        "id": 80,
+        "name": "Espinaca",
+        "image": "spinach.jpg",
+        "quantity": 2,
+        "unit": "CUP",
+        "category": "VEGETABLES",
+        "nutritionalProperties": ["HIGH_FIBER", "LOW_CALORIES"],
+        "keywords": ["leafy greens", "espinaca", "vitaminas", "hierro", "saludable"]
+    },
+    {
+        "id": 83,
+        "name": "Tomates cherry",
+        "image": "83.jpg",
+        "quantity": 1,
+        "unit": "CUP",
+        "category": "VEGETABLES",
+        "nutritionalProperties": ["LOW_CALORIES", "HIGH_VITAMINS"],
+        "keywords": ["tomate", "cherry tomatoes", "vitaminas", "saludable", "fresco"]
+    },
+    {
+        "id": 84,
+        "name": "Quinoa",
+        "image": "quinoa.jpg",
+        "quantity": 1,
+        "unit": "CUP",
+        "category": "GRAINS",
+        "nutritionalProperties": ["HIGH_PROTEIN", "HIGH_FIBER", "GLUTEN_FREE"],
+        "keywords": ["quinoa", "granos", "gluten free", "proteína", "healthy"]
+    },
+    {
+        "id": 85,
+        "name": "Almendras",
+        "image": "almendras.png",
+        "quantity": 30,
+        "calories": 160,
+        "unit": "GRAM",
+        "category": "SNACKS",
+        "nutritionalProperties": ["HIGH_FAT", "LOW_CARB", "HIGH_FIBER"],
+        "keywords": ["almonds", "nuts", "keto", "snack"]
+    }
+]
