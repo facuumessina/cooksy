@@ -7,6 +7,7 @@ export interface IUsuario extends Document {
   nombre?: string;
   password?: string;
   recoveryCode?: string;
+  savedRecipes: mongoose.Types.ObjectId[];
 }
 
 const UsuarioSchema = new Schema<IUsuario>(
@@ -15,7 +16,8 @@ const UsuarioSchema = new Schema<IUsuario>(
     alias:        { type: String, required: true, unique: true },
     nombre:       { type: String },
     password:     { type: String },
-    recoveryCode: { type: String }
+    recoveryCode: { type: String },
+    savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'Receta' }]
   },
   { timestamps: true }
 );

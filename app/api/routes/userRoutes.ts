@@ -1,9 +1,15 @@
+// app/api/routes/userRoutes.ts
 import { Router } from 'express';
-import { createUser, getUsers } from '../controller/userController';
+import {
+    addSavedRecipe,
+    deleteSavedRecipe,
+    getSavedRecipes
+} from '../controller/userController';
 
 const router = Router();
 
-router.get('/', getUsers);
-router.post('/', createUser);
+router.get('/:id/saved-recipes', getSavedRecipes);
+router.post('/:id/saved-recipes', addSavedRecipe);
+router.delete('/:id/saved-recipes/:recipeId', deleteSavedRecipe);
 
 export default router;

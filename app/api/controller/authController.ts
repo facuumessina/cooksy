@@ -22,10 +22,16 @@ export async function registerStep2(req: Request, res: Response) {
   const user = await Usuario.findOne({ email });
   if (!user) return res.status(400).json({ message: 'Email no registrado' });
   if (user.password) return res.status(400).json({ message: 'Registro ya completado' });
-  user.nombre = nombre;
+
+  user.nombre   = nombre;
   user.password = await bcrypt.hash(password, 10);
   await user.save();
-  return res.status(201).json({ message: 'Usuario registrado completamente' });
+
+  // Devuelvo el ID además del mensaje
+  return res.status(201).json({ 
+    message: 'Usuario registrado completamente', 
+    id: user._id 
+  });
 }
 
 // Login: devolver JWT
