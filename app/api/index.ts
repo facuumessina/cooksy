@@ -1,29 +1,39 @@
-const express = require('express');
-const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
-const mongoose = require('mongoose');
+// app/api/index.ts
+import cors from 'cors';
+import express from 'express';
+import mongoose from 'mongoose';
+
+import authRoutes from './routes/authRoutes';
+import recipeRoutes from './routes/recipeRoutes';
+import userRoutes from './routes/userRoutes';
+
+import './model/Receta';
+import './model/Usuario';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT ?? 3000;
 
-mongoose.connect('mongodb+srv://fmessina:Test2025DESA@cluster0.rfzx4fd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-  .then(() => {
-    console.log('✅ Conectado a MongoDB');
-  })
-  .catch((err) => {
-    console.error('❌ Error al conectar MongoDB:', err);
-  });
+// Conexión a MongoDB
+mongoose
+  .connect('mongodb+srv://fmessina:Test2025DESA@cluster0.rfzx4fd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+  .then(() => console.log('✅ Conectado a MongoDB'))
+  .catch(err => console.error('❌ Error al conectar MongoDB:', err));
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-app.use('/auth', authRoutes);
-// Acá agregarás recipeRoutes y userRoutes también
+// Rutas
+app.use('/auth',    authRoutes);
+app.use('/recipes', recipeRoutes);
+app.use('/users',   userRoutes);
 
-app.get('/test', (req, res) => {
-    res.send('funcionó');
-  });
+// Endpoint de prueba
+app.get('/test', (_req, res) => {
+  res.send('funcionó');
+});
 
+// Arrancar servidor
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);
 });
