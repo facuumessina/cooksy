@@ -4,19 +4,20 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUsuario extends Document {
   email: string;
   alias: string;
-  nombre: string;
+  nombre?: string;
+  password?: string;
+  recoveryCode?: string;
 }
 
 const UsuarioSchema = new Schema<IUsuario>(
   {
-    email:  { type: String, required: true, unique: true },
-    alias:  { type: String, required: true, unique: true },
-    nombre: { type: String, required: true }
+    email:        { type: String, required: true, unique: true },
+    alias:        { type: String, required: true, unique: true },
+    nombre:       { type: String },
+    password:     { type: String },
+    recoveryCode: { type: String }
   },
   { timestamps: true }
 );
 
-// El primer parámetro 'Usuario' debe coincidir con el ref en tu RecetaSchema
-const UsuarioModel = mongoose.model<IUsuario>('Usuario', UsuarioSchema);
-
-export default UsuarioModel;
+export default mongoose.model<IUsuario>('Usuario', UsuarioSchema);

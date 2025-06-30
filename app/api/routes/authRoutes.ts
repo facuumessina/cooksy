@@ -1,3 +1,4 @@
+// app/api/routes/authRoutes.ts
 import { Router } from 'express';
 import {
   login,
@@ -11,8 +12,8 @@ const router = Router();
 
 router.post('/register-step1', registerStep1);
 router.post('/register-step2', registerStep2);
-router.post('/login', login);
+router.post('/login',           login);
 router.post('/recover-password', recoverPassword);
-router.post('/reset-password', resetPassword);
+router.post('/reset-password',   resetPassword);
 
 export default router;
