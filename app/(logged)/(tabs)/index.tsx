@@ -1,7 +1,4 @@
 import SearchBar from '@/components/Search';
-import { SkeletonLoader } from '@/components/SkeletonLoader';
-import { TipContainer } from '@/components/TipsContainer';
-import { envConfig } from '@/configs/envConfig';
 import { useData } from '@/context/DataProvider';
 import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
 import { Cuisine, DietaryRestriction } from '@/types/enums';
@@ -100,7 +97,8 @@ const FilterModal = ({ visible, onClose, activeFilters, onToggleFilter }: {
     </Modal>
 );
 
-const FoodItem = ({ title, imageUrl, id }: { id: string, title: string; imageUrl: string }) => (
+import type { ImageSourcePropType } from 'react-native';
+const FoodItem = ({ title, imageUrl, id }: { id: string, title: string; imageUrl: ImageSourcePropType }) => (
     <TouchableOpacity
         onPress={() => router.push({
             pathname: '/recommendations/[id]',
@@ -108,12 +106,10 @@ const FoodItem = ({ title, imageUrl, id }: { id: string, title: string; imageUrl
         })}
         style={styles.foodItem}
     >
-        <View style={[styles.foodImage, !imageUrl && styles.imagePlaceholder]}>
-            {imageUrl && <Image
-                source={{ uri: imageUrl }}
-                style={styles.foodImage}
-            />}
-        </View>
+        <Image
+            source={imageUrl}
+            style={styles.foodImage}
+        />
         <Text numberOfLines={2} style={styles.foodTitle}>{title}</Text>
     </TouchableOpacity>
 );
@@ -214,12 +210,12 @@ export default function Home() {
 
     const renderFilterSection = () => (
         <View style={styles.filterSection}>
-            <TouchableOpacity
-                style={styles.filterButton}
-                onPress={() => setShowFilterModal(true)}
-            >
-                <Ionicons name="filter" size={24} color="#4CAF50" />
-            </TouchableOpacity>
+    <TouchableOpacity
+        style={styles.filterButton}
+        onPress={() => setShowFilterModal(true)}
+    >
+        <Ionicons name="filter" size={24} color="#F97316" />
+    </TouchableOpacity>
             <ScrollView horizontal scrollEnabled showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
                 {QUICK_FILTERS.restrictions.map((restriction) => (
                     <FilterTag
@@ -233,47 +229,33 @@ export default function Home() {
         </View>
     );
 
-    const renderRecommendedSection = () => {
-        const hasActiveFilters = activeFilters.restrictions.size > 0 || activeFilters.cuisines.size > 0;
-        const recipesToShow = hasActiveFilters ? filteredRecipes : recommendations;
-
-        return (
-            <View style={styles.recommendedSection}>
-                <View style={styles.recommendedHeader}>
-                    <Text style={styles.recommendedTitle}>Recomendado para ti</Text>
-                    <TouchableOpacity onPress={() => router.navigate('/(logged)/recommendations')}>
-                        <Text style={styles.seeAllText}>Ver Todo</Text>
-                    </TouchableOpacity>
-                </View>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {
-                        (isCalculating)
-                            ? <SkeletonLoader />
-                            : recipesToShow.map(recipe => (
-                                <FoodItem
-                                    key={recipe.id}
-                                    id={recipe.id}
-                                    title={recipe.name}
-                                    imageUrl={recipe.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image}` : ''}
-                                />
-                            ))
-                    }
-
-                </ScrollView>
-
-                {
-                    !isCalculating && isInitialized && recipesToShow.length === 0 &&
-                    <View style={styles.emptyState}>
-                        <Text style={styles.emptyStateText}>
-                            {hasActiveFilters
-                                ? "No se encontraron recetas que coincidan con los filtros seleccionados"
-                                : "No hay recomendaciones disponibles"}
-                        </Text>
-                    </View>
-                }
+    const renderRecommendedSection = () => (
+        <View style={styles.recommendedSection}>
+            <View style={styles.recommendedHeader}>
+                <Text style={styles.recommendedTitle}>Recomendado para ti</Text>
+                <TouchableOpacity onPress={() => router.navigate('/(logged)/recommendations')}>
+                    <Text style={styles.seeAllText}>Ver Todo</Text>
+                </TouchableOpacity>
             </View>
-        );
-    };
+            <View>
+                <FoodItem
+                    id="1"
+                    title="Hamburguesa"
+                    imageUrl={require('../../../assets/images/cuisines/fast.jpg')}
+                />
+                <FoodItem
+                    id="2"
+                    title="Pizza"
+                    imageUrl={require('../../../assets/images/cuisines/italian.jpeg')}
+                />
+                <FoodItem
+                    id="3"
+                    title="Sushi"
+                    imageUrl={require('../../../assets/images/cuisines/japanese.webp')}
+                />
+            </View>
+        </View>
+    );
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -281,20 +263,11 @@ export default function Home() {
                 <View style={styles.header}>
                     <View style={styles.userInfo}>
                         <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-                            {user && (
-                                <TouchableOpacity
-                                    onPress={() => router.navigate('/(logged)/profile')}
-                                >
-                                    <View style={[styles.avatar, !user.image && styles.avatarPlaceholder]}>
-                                        {user.image && <Image
-                                            source={{ uri: `${envConfig.IMAGE_SERVER_URL}/users/${user.image}` }}
-                                            style={styles.avatar}
-                                        />}
-                                    </View>
-                                </TouchableOpacity>
-                            )}
+                            <TouchableOpacity onPress={() => router.navigate('/(logged)/profile')}>
+                                <Ionicons name="person-circle-outline" size={40} color="black" style={{ marginRight: 8 }} />
+                            </TouchableOpacity>
                             <Text style={styles.greeting}>Hola,</Text>
-                            <Text style={styles.userName}>{user?.name || ''}</Text>
+                            <Text style={styles.userName}>{user?.name || 'John Doe'}</Text>
                         </View>
                     </View>
                     <TouchableOpacity>
@@ -306,7 +279,6 @@ export default function Home() {
 
                 {renderFilterSection()}
                 {renderRecommendedSection()}
-                <TipContainer />
             </ScrollView>
 
             <View style={[styles.createRecipeButtonContainer, { paddingBottom: insets.bottom + 16 }]}>
@@ -353,9 +325,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginRight: 12,
     },
-    avatarPlaceholder: {
-        backgroundColor: '#F2F2F2',
-    },
     greeting: {
         fontSize: 16,
         color: 'gray',
@@ -398,7 +367,7 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     filterTagActive: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#F97316',
     },
     filterTagText: {
         color: 'gray',
@@ -420,16 +389,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     seeAllText: {
-        color: '#4CAF50',
+        color: '#F97316',
     },
     foodItem: {
-        marginRight: 16,
-        width: 120,
+        marginBottom: 16,
+        width: '100%',
     },
     foodImage: {
-        width: 120,
-        height: 120,
-        borderRadius: 8,
+        width: '100%',
+        height: 200,
+        borderRadius: 12,
     },
     imagePlaceholder: {
         backgroundColor: '#F2F2F2',
@@ -453,7 +422,7 @@ const styles = StyleSheet.create({
         paddingTop: 16,
     },
     createRecipeButton: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#F97316',
         borderRadius: 25,
         padding: 16,
         alignItems: 'center',
@@ -502,7 +471,7 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     applyButton: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#F97316',
         padding: 16,
         borderRadius: 8,
         alignItems: 'center',

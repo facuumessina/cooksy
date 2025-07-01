@@ -1,11 +1,11 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Image, Platform } from 'react-native';
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { Platform } from 'react-native';
 
 // Constantes para la configuración del TabBar
 const TAB_CONFIG = {
-  ACTIVE_COLOR: '#23B361',
+  ACTIVE_COLOR: '#F26E04',
   INACTIVE_COLOR: 'gray',
   BAR_HEIGHT: Platform.OS === 'ios' ? 90 : 60,
   ICON_SIZE: 24,
@@ -17,43 +17,21 @@ const TAB_SCREENS = [
     name: 'index',
     title: 'Inicio',
     icon: ({ color, size }: any) => (
-      <Image
-        style={{
-          width: size + 10,
-          height: size + 10,
-          opacity: color === TAB_CONFIG.ACTIVE_COLOR ? 1 : 0.5,
-          marginBottom: Platform.OS === 'ios' ? 10 : 0,
-        }}
-        source={require('../../../assets/images/logo.png')}
-        resizeMode="contain"
-      />
+      <Ionicons name="home-outline" size={size} color={color} />
     ),
   },
   {
     name: 'recipes',
     title: 'Recetas',
     icon: ({ color, size }: any) => (
-      <Ionicons name="book-outline" size={size} style={{
-        marginBottom: Platform.OS === 'ios' ? 10 : 0,
-      }} color={color} />
-    ),
-  },
-  {
-    name: 'shopping',
-    title: 'Compras',
-    icon: ({ color, size }: any) => (
-      <Ionicons name="card-outline" size={size} style={{
-        marginBottom: Platform.OS === 'ios' ? 10 : 0,
-      }} color={color} />
+      <Ionicons name="library-outline" size={size} color={color} />
     ),
   },
   {
     name: 'profile',
-    title: 'Perfil',
+    title: 'Cuenta',
     icon: ({ color, size }: any) => (
-      <Ionicons name="person-outline" size={size} style={{
-        marginBottom: Platform.OS === 'ios' ? 10 : 0,
-      }} color={color} />
+      <Ionicons name="person-outline" size={size} color={color} />
     ),
   },
 ];

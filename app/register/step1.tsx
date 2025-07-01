@@ -1,6 +1,8 @@
+import logo from '@/assets/images/logo.png'; // adjust path if needed
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const StepOne = () => {
     const router = useRouter();
@@ -11,6 +13,9 @@ const StepOne = () => {
 
     return (
         <View style={styles.container}>
+            <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                <Image source={logo} style={{ width: 140, height: 140, resizeMode: 'contain' }} />
+            </View>
             <Text style={styles.title}>Bienvenido</Text>
             <Text style={styles.subtitle}>Por favor ingrese sus datos para continuar</Text>
 
@@ -22,7 +27,8 @@ const StepOne = () => {
                 onChangeText={setAlias}
             />
 
-            <View style={{ position: 'relative' }}>
+            <View style={{ position: 'relative', marginBottom: 10 }}>
+                <Text style={styles.label}>Contraseña</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Ingrese su contraseña"
@@ -33,9 +39,9 @@ const StepOne = () => {
                 />
                 <TouchableOpacity
                     onPress={() => setShowPassword(!showPassword)}
-                    style={{ position: 'absolute', right: 15, top: 15 }}
+                    style={{ position: 'absolute', right: 15, top: 0, bottom: 0, justifyContent: 'center' }}
                 >
-                    <Text>{showPassword ? '🙈' : '👁️'}</Text>
+                    <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#555" />
                 </TouchableOpacity>
             </View>
 
@@ -43,12 +49,12 @@ const StepOne = () => {
               <TouchableOpacity onPress={() => setRememberMe(!rememberMe)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{
                   width: 20, height: 20, borderWidth: 1, borderColor: '#333',
-                  backgroundColor: rememberMe ? '#007BFF' : 'transparent', marginRight: 8
+                  backgroundColor: rememberMe ? '#F26E04' : 'transparent', marginRight: 8
                 }} />
                 <Text>Recordar esta cuenta</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => router.push('/forgotPassword')}>
-                <Text style={{ color: '#007BFF' }}>Olvidé mi contraseña</Text>
+                <Text style={{ color: '#F26E04' }}>Olvidé mi contraseña</Text>
               </TouchableOpacity>
             </View>
 
@@ -100,7 +106,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f9f9f9'
     },
     button: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#F26E04',
         padding: 15,
         borderRadius: 25,
         alignItems: 'center',
@@ -113,19 +119,19 @@ const styles = StyleSheet.create({
     },
     googleButton: {
         borderWidth: 1,
-        borderColor: '#007BFF',
+        borderColor: '#F26E04',
         padding: 15,
         borderRadius: 25,
         alignItems: 'center',
         marginTop: 15
     },
     googleButtonText: {
-        color: '#007BFF',
+        color: '#F26E04',
         fontSize: 16,
         fontWeight: 'bold'
     },
     link: {
-        color: '#007BFF',
+        color: '#F26E04',
         fontSize: 16,
         textAlign: 'center',
         marginTop: 15,

@@ -1,25 +1,23 @@
-import React, { useRef, useState, useCallback, useMemo, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet, Dimensions, Button } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { Ionicons } from '@expo/vector-icons';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { debounce } from '@/utils/debounce';
-import { Ingredient } from '@/types/types';
-import { useIngredientMapper } from '@/hooks/useIngredientMapper';
-import { useData } from '@/context/DataProvider';
-import ScanLoader from '@/components/recipes/create/ScanLoader';
 import BottomSheetComponent from '@/components/recipes/create/BottomSheet';
-import { useFetch } from '@/hooks/useFetch';
-import { envConfig } from '@/configs/envConfig';
-import { FoodUnit } from '@/types/enums';
-import { router } from 'expo-router';
 import CameraComponent from '@/components/recipes/create/CameraComponent';
-import { checkScanArea, processProductData } from '@/utils/scannerUtils';
-import SearchIngredientSheet from './searchIngredient';
-import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
+import ScanLoader from '@/components/recipes/create/ScanLoader';
 import SearchIngredientModal from '@/components/SearchIngredientSheet';
+import { envConfig } from '@/configs/envConfig';
+import { useData } from '@/context/DataProvider';
+import { useFetch } from '@/hooks/useFetch';
+import { useIngredientMapper } from '@/hooks/useIngredientMapper';
+import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
+import { FoodUnit } from '@/types/enums';
+import { Ingredient } from '@/types/types';
+import { debounce } from '@/utils/debounce';
+import { checkScanArea, processProductData } from '@/utils/scannerUtils';
+import { Ionicons } from '@expo/vector-icons';
+import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { CameraType, useCameraPermissions } from 'expo-camera';
+import { router } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Dimensions, FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface ScannedProduct {
   product_name: string;
@@ -348,65 +346,88 @@ export default function CreateRecipe() {
   }, [scanning, permission, detectionAreas, facing, handleBarcodeScanned]);
 
   return (
-    <>
-      <SafeAreaView style={styles.container} edges={['top']}>
-        {scanning ? cameraComponent : (
-          <View style={{ flex: 1, padding: 16 }}>
-            {HeaderComponent}
-            <Text style={styles.itemCount}>
-              {currentRecipeIngredients.length} {currentRecipeIngredients.length === 1 ? 'Item' : 'Items'}
-            </Text>
-            <FlatList
-              data={currentRecipeIngredients}
-              renderItem={renderItem}
-              keyExtractor={item => item.id?.toString() ?? ''}
-              contentContainerStyle={styles.list}
-              ListEmptyComponent={ListEmptyComponent}
-              removeClippedSubviews={true}
-              maxToRenderPerBatch={10}
-              windowSize={5}
-              initialNumToRender={5}
-            />
-            <TouchableOpacity
-              onPress={handleFullRecommendation}
-              style={[
-                styles.addButton,
-                currentRecipeIngredients.length === 0 && styles.addButtonDisabled
-              ]}
-              disabled={currentRecipeIngredients.length === 0}
-            >
-              <Text style={[
-                styles.addButtonText,
-                currentRecipeIngredients.length === 0 && styles.addButtonTextDisabled
-              ]}>
-                Buscar
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        <BottomSheetComponent
-          addIngredient={handleAddIngredient}
-          found={mappedIngredient !== null}
-          bottomSheetRef={bottomSheetRef}
-          scannedProduct={scannedProduct}
-          mappedIngredient={mappedIngredient}
-          handleRecommendation={handleRecommendation}
-          handleScanAgain={() => {
-            setScanning(true);
-            setIsProcessingBarcode(false);
-            bottomSheetRef.current?.close();
-          }}
-        />
-        <SearchIngredientModal
-          visible={isSearchModalVisible}
-          onClose={handleCloseSearch}
-          knownIngredients={ingredients}
-          onSelectIngredient={handleAddIngredientFromSearch}
-        />
-        <ScanLoader isVisible={loading} />
+    <SafeAreaView style={{ flex: 1, padding: 16 }}>
+      <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 16 }}>Nueva Receta</Text>
 
-      </SafeAreaView>
-    </>
+      <Text style={{ fontSize: 16, marginBottom: 4 }}>Nombre de la receta</Text>
+      <TextInput
+        style={{
+          borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+          paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16
+        }}
+        placeholder="Ingresa el nombre de la receta"
+      />
+
+      <Text style={{ fontSize: 16, marginBottom: 4 }}>Tipo de receta</Text>
+      <View style={{
+        borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+        paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16
+      }}>
+        <Text style={{ color: '#999' }}>Selecciona el tipo de receta</Text>
+      </View>
+
+      <Text style={{ fontSize: 18, marginBottom: 8 }}>Ingredientes</Text>
+      <FlatList
+        data={currentRecipeIngredients}
+        renderItem={renderItem}
+        keyExtractor={item => item.id?.toString() ?? ''}
+        contentContainerStyle={{ marginBottom: 8 }}
+        ListEmptyComponent={<Text style={{ color: '#999' }}>No hay ingredientes añadidos</Text>}
+      />
+      <TouchableOpacity onPress={handleOpenSearch}>
+        <Text style={{ color: '#2196F3', marginBottom: 16 }}>+ Añadir ingrediente</Text>
+      </TouchableOpacity>
+
+      <Text style={{ fontSize: 18, marginBottom: 4 }}>Instrucciones</Text>
+      <TextInput
+        style={{
+          borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+          paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16, height: 80
+        }}
+        placeholder="Ingresa las instrucciones de la receta"
+        multiline
+      />
+
+      <TouchableOpacity style={{
+        borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+        padding: 16, alignItems: 'center', marginBottom: 24
+      }}>
+        <Text style={{ color: '#666' }}>Subí tu multimedia de la receta</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{
+        backgroundColor: '#4CAF50', padding: 16, borderRadius: 18, alignItems: 'center', marginBottom: 12
+      }}>
+        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Crear Receta</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{
+        backgroundColor: '#2196F3', padding: 16, borderRadius: 18, alignItems: 'center'
+      }}>
+        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Enviar para aprobación</Text>
+      </TouchableOpacity>
+
+      <BottomSheetComponent
+        addIngredient={handleAddIngredient}
+        found={mappedIngredient !== null}
+        bottomSheetRef={bottomSheetRef}
+        scannedProduct={scannedProduct}
+        mappedIngredient={mappedIngredient}
+        handleRecommendation={handleRecommendation}
+        handleScanAgain={() => {
+          setScanning(true);
+          setIsProcessingBarcode(false);
+          bottomSheetRef.current?.close();
+        }}
+      />
+      <SearchIngredientModal
+        visible={isSearchModalVisible}
+        onClose={handleCloseSearch}
+        knownIngredients={ingredients}
+        onSelectIngredient={handleAddIngredientFromSearch}
+      />
+      <ScanLoader isVisible={loading} />
+    </SafeAreaView>
   );
 }
 

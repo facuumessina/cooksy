@@ -1,31 +1,30 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  Alert,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useData } from "../../../context/DataProvider";
 import { envConfig } from "@/configs/envConfig";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import { STORAGE_KEYS } from "@/service/storage";
+import { ActivityLevel } from "@/types/enums";
+import { User } from "@/types/types";
 import {
-  translateActivityLevel,
   translateCuisine,
   translateDietaryRestriction,
   translateFood,
-  translateGoal,
+  translateGoal
 } from "@/utils/enum-translations";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { Recipe, User } from "@/types/types";
-import { ActivityLevel } from "@/types/enums";
-import { STORAGE_KEYS } from "@/service/storage";
+import React from "react";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useData } from "../../../context/DataProvider";
 
 const ProfileSection = ({ title, children, icon }: any) => (
   <View style={styles.section}>
@@ -36,7 +35,7 @@ const ProfileSection = ({ title, children, icon }: any) => (
       style={styles.sectionGradient}
     >
       <View style={styles.sectionHeader}>
-        <Ionicons name={icon} size={24} color="#005e3e" />
+        <Ionicons name={icon} size={24} color="#FB8C00" />
         <Text style={styles.sectionTitle}>{title}</Text>
       </View>
       {children}
@@ -149,25 +148,20 @@ const ProfileScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
-          colors={["#005e3e", "#003825"]}
+          colors={["#FFA726", "#FB8C00"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.headerGradient}
         >
+          {/* Edit pencil icon, top right */}
           <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
+            style={{ position: 'absolute', top: 60, right: 20 }}
+            onPress={() => console.log('Editar perfil')}
           >
-            <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+            <Ionicons name="create-outline" size={24} color="#FFFFFF" />
           </TouchableOpacity>
-
           <View style={styles.headerContent}>
-            <Image
-              style={styles.profileImage}
-              source={{
-                uri: `${envConfig.IMAGE_SERVER_URL}/users/${user?.image}`,
-              }}
-            />
+            <Ionicons name="person-circle-outline" size={120} color="#FFFFFF" />
             <Text style={styles.nameText}>
               {user?.name || "Nombre no disponible"}
             </Text>
@@ -178,52 +172,15 @@ const ProfileScreen = () => {
         </LinearGradient>
 
         <View style={styles.contentContainer}>
-          {/* Stats Section */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                {user?.measurements?.weight || "--"}
-              </Text>
-              <Text style={styles.statLabel}>kg</Text>
-            </View>
-            <View style={[styles.statItem, styles.statItemBorder]}>
-              <Text style={styles.statValue}>
-                {user?.measurements?.height || "--"}
-              </Text>
-              <Text style={styles.statLabel}>cm</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                {user?.measurements?.age || "--"}
-              </Text>
-              <Text style={styles.statLabel}>años</Text>
-            </View>
-          </View>
 
-          {/* Health Section */}
-          <ProfileSection title="Salud y Actividad" icon="fitness-outline">
-            <InfoItem
-              label="Nivel de Actividad"
-              value={
-                user && translateActivityLevel(user.measurements.activityLevel)
-              }
-            />
-            <View style={styles.healthStats}>
-              <View style={styles.healthStatItem}>
-                <Ionicons name="flame-outline" size={24} color="#005e3e" />
-                <Text style={styles.healthStatValue}>
-                  {user?.measurements?.bmr || "--"}
-                </Text>
-                <Text style={styles.healthStatLabel}>BMR (kcal)</Text>
-              </View>
-              <View style={styles.healthStatItem}>
-                <Ionicons name="restaurant-outline" size={24} color="#005e3e" />
-                <Text style={styles.healthStatValue}>
-                  {user?.measurements?.dailyCalories || "--"}
-                </Text>
-                <Text style={styles.healthStatLabel}>Calorías Diarias</Text>
-              </View>
-            </View>
+          <View style={{ marginTop: 20 }}>
+            <ProfileSection title="Recetas favoritas" icon="heart-outline">
+              <FavRecipesInfoItem />
+            </ProfileSection>
+          </View>
+          <ProfileSection title="Mis recetas" icon="restaurant-outline">
+            {/* Placeholder for user's own recipes, implement map when data ready */}
+            <Text style={styles.infoValue}>Aún no has creado recetas.</Text>
           </ProfileSection>
 
           {/* Preferences Section */}
@@ -254,9 +211,24 @@ const ProfileScreen = () => {
             />
           </ProfileSection>
 
-          <ProfileSection title="Recetas favoritas" icon="heart-outline">
-            <FavRecipesInfoItem />
-          </ProfileSection>
+          <TouchableOpacity style={styles.logoutButton} onPress={() => router.push('/changePassword')}>
+            <LinearGradient
+              colors={["#FFA500", "#FF8C00"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.logoutGradient}
+            >
+              <Ionicons
+                name="key-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.logoutIcon}
+              />
+              <Text style={styles.logoutText}>
+                Cambiar contraseña
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <LinearGradient
@@ -333,37 +305,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "rgba(255, 255, 255, 0.8)",
   },
-  statsContainer: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    marginVertical: 20,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  statItemBorder: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#005e3e",
-  },
-  statLabel: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginTop: 4,
-  },
   section: {
     marginBottom: 20,
     borderRadius: 20,
@@ -406,30 +347,6 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: 14,
     color: "#4B5563",
-  },
-  healthStats: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-  healthStatItem: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "#F3F4F6",
-    padding: 16,
-    borderRadius: 15,
-    marginHorizontal: 5,
-  },
-  healthStatValue: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#005e3e",
-    marginTop: 8,
-  },
-  healthStatLabel: {
-    fontSize: 12,
-    color: "#6B7280",
-    marginTop: 4,
   },
   logoutButton: {
     marginVertical: 20,

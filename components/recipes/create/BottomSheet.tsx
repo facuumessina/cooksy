@@ -1,9 +1,9 @@
-import React from 'react'
-import BottomSheet from '@gorhom/bottom-sheet'
 import BottomSheetNotFoundContent from '@/components/recipes/create/BottomSheetNotFoundContent'
-import BottomSheetFoundContent from './BottomSheetFoundContent'
 import { Ingredient } from '@/types/types'
+import BottomSheet from '@gorhom/bottom-sheet'
+import React from 'react'
 import { StyleSheet } from 'react-native'
+import BottomSheetFoundContent from './BottomSheetFoundContent'
 
 const BottomSheetComponent = ({ bottomSheetRef, found, scannedProduct, mappedIngredient, addIngredient, handleRecommendation, handleScanAgain }: {
   bottomSheetRef: React.RefObject<BottomSheet>,
