@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, SafeAreaView, Modal } from 'react-native';
+import { Cuisine, DietaryRestriction, DietType } from '@/types/enums';
+import { translateCuisine, translateDietaryRestriction } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { DietaryRestriction, Cuisine, DietType } from '@/types/enums';
-import { translateDietaryRestriction, translateCuisine } from '@/utils/enum-translations';
+import React, { useState } from 'react';
+import { Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const INGREDIENT_RANGES = [
   'Cualquiera',
@@ -13,22 +13,30 @@ const INGREDIENT_RANGES = [
   'Más de 15 ingredientes'
 ];
 
-const PRICE_RANGES = [
-  'Cualquiera',
-  '$0 - $2500',
-  '$2500 - $5000',
-  'Más de $5000'
-];
-
 const recipes = () => {
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedRestrictions, setSelectedRestrictions] = useState<Set<DietaryRestriction>>(new Set());
   const [selectedCuisines, setSelectedCuisines] = useState<Set<Cuisine>>(new Set());
   const [selectedDietTypes, setSelectedDietTypes] = useState<Set<DietType>>(new Set());
   const [ingredientsRange, setIngredientsRange] = useState('Cualquiera');
-  const [priceRange, setPriceRange] = useState('Cualquiera');
   const [showIngredientsModal, setShowIngredientsModal] = useState(false);
-  const [showPriceModal, setShowPriceModal] = useState(false);
   const [showDietTypeModal, setShowDietTypeModal] = useState(false);
+  // Ingredients filter modal state
+  const [ingredientsModalVisible, setIngredientsModalVisible] = useState(false);
+  const [allIngredients] = useState<string[]>([
+    'Pasta', 'Huevo', 'Bacon', 'Queso Parmesano', 'Pimienta Negra', 'Aceite de Oliva',
+    'Palta', 'Cebolla', 'Tomate', 'Cilantro', 'Lima', 'Sal'
+  ]);
+  const [filteredIngredients, setFilteredIngredients] = useState(allIngredients);
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+  const [ingredientSearch, setIngredientSearch] = useState('');
+
+  const [excludedIngredientsModalVisible, setExcludedIngredientsModalVisible] = useState(false);
+  const [excludedIngredientSearch, setExcludedIngredientSearch] = useState('');
+  const [filteredExcludedIngredients, setFilteredExcludedIngredients] = useState(allIngredients);
+  const [selectedExcludedIngredients, setSelectedExcludedIngredients] = useState<string[]>([]);
+  // Usuario filter state
+  const [userSearch, setUserSearch] = useState('');
 
   const handleToggleRestriction = (restriction: DietaryRestriction) => {
     setSelectedRestrictions(prev => {
@@ -126,18 +134,32 @@ const recipes = () => {
         <ScrollView style={styles.container}>
           <Text style={styles.title}>Que estas buscando?</Text>
 
+          <View style={styles.searchContainer}>
+            <Ionicons name="search" size={20} color="#333" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar por nombre"
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+            />
+          </View>
+
+          {/* Usuario filter section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Rango de precios</Text>
-            <TouchableOpacity
-              style={styles.selectButton}
-              onPress={() => setShowPriceModal(true)}
-            >
-              <Text style={styles.selectButtonText}>{priceRange}</Text>
-            </TouchableOpacity>
+            <Text style={styles.sectionTitle}>Usuario</Text>
+            <View style={styles.searchContainer}>
+              <Ionicons name="person" size={20} color="#333" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Buscar por usuario"
+                value={userSearch}
+                onChangeText={setUserSearch}
+              />
+            </View>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Estilo de receta</Text>
+            <Text style={styles.sectionTitle}>Tipo de receta</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.chipContainer}>
                 {Object.values(Cuisine).map((cuisine) => (
@@ -187,45 +209,65 @@ const recipes = () => {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Tipo de dieta</Text>
+            <Text style={styles.sectionTitle}>Ingredientes que debe contener</Text>
             <TouchableOpacity
               style={styles.selectButton}
-              onPress={() => setShowDietTypeModal(true)}
+              onPress={() => setIngredientsModalVisible(true)}
             >
               <Text style={styles.selectButtonText}>
-                {selectedDietTypes.size > 0 
-                  ? Array.from(selectedDietTypes).map(dt => dt).join(', ')
-                  : 'Selecciona un tipo de dieta'}
+                {selectedIngredients.length > 0 ? selectedIngredients.join(', ') : 'Seleccionar ingredientes'}
               </Text>
             </TouchableOpacity>
-            {selectedDietTypes.size > 0 && (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
-                <View style={styles.chipContainer}>
-                  {Array.from(selectedDietTypes).map((dietType) => (
-                    <TouchableOpacity
-                      key={dietType}
-                      style={[styles.chip, styles.chipSelected]}
-                      onPress={() => handleToggleDietType(dietType)}
-                    >
-                      <Text style={[styles.chipText, styles.chipTextSelected]}>
-                        {dietType}
-                        <Ionicons name="close" size={16} color="white" />
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </ScrollView>
+            {selectedIngredients.length > 0 && (
+              <View style={{ marginTop: 8, flexDirection: 'row', flexWrap: 'wrap' }}>
+                {selectedIngredients.map((ingredient) => (
+                  <View
+                    key={ingredient}
+                    style={{
+                      backgroundColor: '#F97316',
+                      borderRadius: 12,
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      marginRight: 8,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text style={{ color: 'white', fontSize: 14 }}>{ingredient}</Text>
+                  </View>
+                ))}
+              </View>
             )}
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Cantidad de ingredientes</Text>
+            <Text style={styles.sectionTitle}>Ingredientes que no debe contener</Text>
             <TouchableOpacity
               style={styles.selectButton}
-              onPress={() => setShowIngredientsModal(true)}
+              onPress={() => setExcludedIngredientsModalVisible(true)}
             >
-              <Text style={styles.selectButtonText}>{ingredientsRange}</Text>
+              <Text style={styles.selectButtonText}>
+                {selectedExcludedIngredients.length > 0 ? selectedExcludedIngredients.join(', ') : 'Seleccionar ingredientes'}
+              </Text>
             </TouchableOpacity>
+            {selectedExcludedIngredients.length > 0 && (
+              <View style={{ marginTop: 8, flexDirection: 'row', flexWrap: 'wrap' }}>
+                {selectedExcludedIngredients.map((ingredient) => (
+                  <View
+                    key={ingredient}
+                    style={{
+                      backgroundColor: '#F97316',
+                      borderRadius: 12,
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      marginRight: 8,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text style={{ color: 'white', fontSize: 14 }}>{ingredient}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         </ScrollView>
 
@@ -238,8 +280,10 @@ const recipes = () => {
                 restrictions: Array.from(selectedRestrictions),
                 cuisines: Array.from(selectedCuisines),
                 dietTypes: Array.from(selectedDietTypes),
-                ingredientsRange,
-                priceRange
+                ingredients: selectedIngredients,
+                excludedIngredients: selectedExcludedIngredients,
+                searchTerm,
+                user: userSearch,
               },
             })}
             style={styles.searchButton}
@@ -256,58 +300,109 @@ const recipes = () => {
           ingredientsRange,
           setIngredientsRange
         )}
-
-        {renderModal(
-          showPriceModal,
-          () => setShowPriceModal(false),
-          'Rango de precios',
-          PRICE_RANGES,
-          priceRange,
-          setPriceRange
-        )}
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={showDietTypeModal}
-          onRequestClose={() => setShowDietTypeModal(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Tipo de dieta</Text>
-                <TouchableOpacity onPress={() => setShowDietTypeModal(false)}>
-                  <Ionicons name="close" size={24} color="#333" />
-                </TouchableOpacity>
-              </View>
-              <ScrollView>
-                {Object.values(DietType)
-                  .filter(dt => dt !== DietType.NINGUNA)
-                  .map((dietType) => (
+        {/* Modal de selección de ingredientes */}
+        <Modal visible={ingredientsModalVisible} animationType="slide">
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ padding: 16 }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 12 }}>Buscar Ingrediente</Text>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Buscar ingrediente..."
+                value={ingredientSearch}
+                onChangeText={(text) => {
+                  setIngredientSearch(text);
+                  setFilteredIngredients(
+                    allIngredients.filter(ing => ing.toLowerCase().includes(text.toLowerCase()))
+                  );
+                }}
+              />
+              <ScrollView style={{ marginTop: 16 }}>
+                {filteredIngredients.map((ingredient) => (
                   <TouchableOpacity
-                    key={dietType}
-                    style={[
-                      styles.modalOption,
-                      selectedDietTypes.has(dietType) && styles.modalOptionSelected
-                    ]}
-                    onPress={() => handleToggleDietType(dietType)}
+                    key={ingredient}
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      paddingVertical: 12,
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#EEE',
+                    }}
+                    onPress={() => {
+                      setSelectedIngredients(prev =>
+                        prev.includes(ingredient)
+                          ? prev.filter(i => i !== ingredient)
+                          : [...prev, ingredient]
+                      );
+                    }}
                   >
-                    <Text
-                      style={[
-                        styles.modalOptionText,
-                        selectedDietTypes.has(dietType) && styles.modalOptionTextSelected
-                      ]}
-                    >
-                      {dietType}
-                    </Text>
-                    {selectedDietTypes.has(dietType) && (
-                      <Ionicons name="checkmark" size={24} color="white" />
+                    <Text>{ingredient}</Text>
+                    {selectedIngredients.includes(ingredient) && (
+                      <Ionicons name="checkmark" size={20} color="#F97316" />
                     )}
                   </TouchableOpacity>
                 ))}
               </ScrollView>
+              <TouchableOpacity
+                onPress={() => setIngredientsModalVisible(false)}
+                style={[styles.searchButton, { marginTop: 20 }]}
+              >
+                <Text style={styles.searchButtonText}>Hecho</Text>
+              </TouchableOpacity>
             </View>
-          </View>
+          </SafeAreaView>
+        </Modal>
+        {/* Modal de selección de ingredientes excluidos */}
+        <Modal visible={excludedIngredientsModalVisible} animationType="slide">
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ padding: 16 }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 12 }}>Buscar Ingrediente</Text>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Buscar ingrediente..."
+                value={excludedIngredientSearch}
+                onChangeText={(text) => {
+                  setExcludedIngredientSearch(text);
+                  setFilteredExcludedIngredients(
+                    allIngredients.filter(ing => ing.toLowerCase().includes(text.toLowerCase()))
+                  );
+                }}
+              />
+              <ScrollView style={{ marginTop: 16 }}>
+                {filteredExcludedIngredients.map((ingredient) => (
+                  <TouchableOpacity
+                    key={ingredient}
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      paddingVertical: 12,
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#EEE',
+                    }}
+                    onPress={() => {
+                      setSelectedExcludedIngredients(prev =>
+                        prev.includes(ingredient)
+                          ? prev.filter(i => i !== ingredient)
+                          : [...prev, ingredient]
+                      );
+                    }}
+                  >
+                    <Text>{ingredient}</Text>
+                    {selectedExcludedIngredients.includes(ingredient) && (
+                      <Ionicons name="checkmark" size={20} color="#F97316" />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity
+                onPress={() => setExcludedIngredientsModalVisible(false)}
+                style={[styles.searchButton, { marginTop: 20 }]}
+              >
+                <Text style={styles.searchButtonText}>Hecho</Text>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
         </Modal>
       </View>
     </SafeAreaView>
@@ -370,7 +465,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   chipSelected: {
-    backgroundColor: '#00C853',
+    backgroundColor: '#F97316',
   },
   chipText: {
     color: '#333',
@@ -382,7 +477,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   searchButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#F97316',
     borderRadius: 25,
     padding: 16,
     alignItems: 'center',
@@ -425,7 +520,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EEEEEE',
   },
   modalOptionSelected: {
-    backgroundColor: '#00C853',
+    backgroundColor: '#F97316',
   },
   modalOptionText: {
     justifyContent: 'center',
