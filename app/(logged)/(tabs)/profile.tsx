@@ -5,8 +5,7 @@ import { User } from "@/types/types";
 import {
   translateCuisine,
   translateDietaryRestriction,
-  translateFood,
-  translateGoal
+  translateFood
 } from "@/utils/enum-translations";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -81,6 +80,42 @@ const FavRecipesInfoItem = () => {
                 })}>
           <Text style={styles.moreRecipeInfo}>Ver más</Text>
         </TouchableOpacity>
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+};
+
+const MyRecipesInfoItem = () => {
+  const { myRecipes } = useData();
+
+  if (!myRecipes || myRecipes.length === 0) {
+    return (
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoValue}>{"Aún no has creado recetas."}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View>
+      {myRecipes.map((recipe, index) => (
+        <View key={index} style={styles.recipeContainer}>
+          <Image
+            source={{ uri: recipe.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image}` : '' }}
+            resizeMode="contain"
+            style={styles.recipeImage}
+          />
+          <View style={styles.recipeContainerInfo}>
+            <Text style={styles.recipeName}>{recipe.name}</Text>
+            <TouchableOpacity onPress={() => router.push(
+              {
+                pathname: '/recommendations/[id]',
+                params: { id: recipe.id, fromSearch: 'true' }
+              })}>
+              <Text style={styles.moreRecipeInfo}>Ver más</Text>
+            </TouchableOpacity>
           </View>
         </View>
       ))}
@@ -179,8 +214,7 @@ const ProfileScreen = () => {
             </ProfileSection>
           </View>
           <ProfileSection title="Mis recetas" icon="restaurant-outline">
-            {/* Placeholder for user's own recipes, implement map when data ready */}
-            <Text style={styles.infoValue}>Aún no has creado recetas.</Text>
+            <MyRecipesInfoItem />
           </ProfileSection>
 
           {/* Preferences Section */}
@@ -189,12 +223,6 @@ const ProfileScreen = () => {
               label="Restricciones Dietéticas"
               value={user?.preferences?.dietaryRestrictions
                 ?.map((d) => translateDietaryRestriction(d))
-                .join(", ")}
-            />
-            <InfoItem
-              label="Objetivos"
-              value={user?.preferences?.goals
-                ?.map((g) => translateGoal(g))
                 .join(", ")}
             />
             <InfoItem

@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#FF6F00',
     paddingVertical: 14,
     borderRadius: 25,
     alignItems: 'center',
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   backText: {
-    color: '#007bff',
+    color: '#FF6F00',
     textAlign: 'center',
     fontSize: 14,
   },

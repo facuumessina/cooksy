@@ -1,13 +1,12 @@
+import FavoriteButton from '@/components/FavoriteButton';
 import { envConfig } from '@/configs/envConfig';
 import { useData } from '@/context/DataProvider';
 import { Recipe } from '@/types/types';
-import { Cuisine, DietaryRestriction, DietType } from '@/types/enums';
-import { Ionicons } from '@expo/vector-icons';
 import { translateCuisine, translateDietaryRestriction } from '@/utils/enum-translations';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet, StatusBar, TextInput } from 'react-native';
-import FavoriteButton from '@/components/FavoriteButton';
+import { FlatList, Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const RecommendationScreen = () => {
   const { currentRecommendations, recipes } = useData();
@@ -19,76 +18,62 @@ const RecommendationScreen = () => {
   useEffect(() => {
     if (params.fromFilter === 'true') {
       const restrictions = params.restrictions ?
-        (Array.isArray(params.restrictions) ?
-          params.restrictions : [params.restrictions]) as DietaryRestriction[] :
-        [];
+        (Array.isArray(params.restrictions) ? params.restrictions : [params.restrictions]) : [];
 
       const cuisines = params.cuisines ?
-        (Array.isArray(params.cuisines) ?
-          params.cuisines : [params.cuisines]) as Cuisine[] :
-        [];
+        (Array.isArray(params.cuisines) ? params.cuisines : [params.cuisines]) : [];
 
-      const dietTypes = params.dietTypes ? 
-        (Array.isArray(params.dietTypes) ?
-          params.dietTypes : [params.dietTypes]) as DietType[] :
-        [];      
+      const dietTypes = params.dietTypes ?
+        (Array.isArray(params.dietTypes) ? params.dietTypes : [params.dietTypes]) : [];
+
+      const mustIncludeIngredients = params.mustIncludeIngredients ?
+        (Array.isArray(params.mustIncludeIngredients) ? params.mustIncludeIngredients : [params.mustIncludeIngredients]) : [];
+
+      const excludedIngredients = params.excludedIngredients ?
+        (Array.isArray(params.excludedIngredients) ? params.excludedIngredients : [params.excludedIngredients]) : [];
+
+      const userFilter = params.user ? params.user.toLowerCase() : '';
 
       let filtered = [...recipes];
-      // Aplicar filtros de restricciones
+
       if (restrictions.length > 0) {
         filtered = filtered.filter(recipe =>
-          restrictions.every(restriction =>
-            recipe.restrictions.includes(restriction)
-          )
+          restrictions.every(r => recipe.restrictions.includes(r))
         );
       }
 
-      // Aplicar filtros de cocina
       if (cuisines.length > 0) {
         filtered = filtered.filter(recipe =>
           cuisines.includes(recipe.cuisine)
         );
       }
 
-      // Aplicar filtro de tipo de dieta
       if (dietTypes.length > 0) {
         filtered = filtered.filter(recipe =>
-          dietTypes.some(selectedDietType => 
-            recipe.dietType.includes(selectedDietType)
+          dietTypes.some(d => recipe.dietType.includes(d))
+        );
+      }
+
+      if (mustIncludeIngredients.length > 0) {
+        filtered = filtered.filter(recipe =>
+          mustIncludeIngredients.every(ing =>
+            recipe.ingredients.some(ri => ri.name.toLowerCase().includes(ing.toLowerCase()))
           )
         );
       }
 
-      if (params.ingredientsRange !== 'Cualquiera') {
-        let minIngredients = 0;
-        let maxIngredients = Infinity;
-
-        if (params.ingredientsRange.includes('Más de')) {
-          minIngredients = parseInt((params.ingredientsRange as string).replace('Más de', '').trim());
-        } else {
-          [minIngredients, maxIngredients] = params.ingredientsRange
-            .toString().replace('ingredientes', '')
-            .split('a')
-            .map(range => parseInt(range.trim()));
-        }
-
+      if (excludedIngredients.length > 0) {
+        filtered = filtered.filter(recipe =>
+          !excludedIngredients.some(ing =>
+            recipe.ingredients.some(ri => ri.name.toLowerCase().includes(ing.toLowerCase()))
+          )
+        );
       }
 
-      // Aplicar filtro de precio
-      if (params.priceRange !== 'Cualquiera') {
-        let minPrice = 0;
-        let maxPrice = Infinity;
-
-        if (params.priceRange.includes('Más de')) {
-          minPrice = parseInt((params.priceRange as string).replace('Más de $', '').trim());
-        } else {
-          [minPrice, maxPrice] = params.priceRange
-            .toString().replace(/\$/g, '')
-            .split('-')
-            .map(price => parseInt(price.trim().replace('$', '')));
-        }
-
-        filtered = filtered.filter(recipe => recipe.price >= minPrice && recipe.price <= maxPrice);
+      if (userFilter) {
+        filtered = filtered.filter(recipe =>
+          recipe.user?.toLowerCase().includes(userFilter)
+        );
       }
 
       setFilteredRecipes(filtered);
@@ -152,7 +137,7 @@ const RecommendationScreen = () => {
             {item.steps[0]}
           </Text>
 
-          <View style={styles.statsContainer}>
+          {/* <View style={styles.statsContainer}>
             <Text style={styles.statsText}>
               <Ionicons name="flame-outline" size={14} /> {item.calories_per_serving} kcal
             </Text>
@@ -162,7 +147,7 @@ const RecommendationScreen = () => {
             <Text style={styles.priceText}>
               <Ionicons name="pricetag-outline" size={14} /> ${item.price}
             </Text>
-          </View>
+          </View> */}
         </View>
       </TouchableOpacity>
     );
@@ -191,7 +176,7 @@ const RecommendationScreen = () => {
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color="#FF6F00" />
         </TouchableOpacity>
         <Text style={styles.title}>
           {params.fromFilter === 'true' ? 'Resultados' : 'Recetas Recomendadas'}
@@ -346,15 +331,15 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   cuisineTag: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: '#FFE0B2',
   },
   restrictionTag: {
-    backgroundColor: '#1ab73f',
+    backgroundColor: '#FF6F00',
   },
   cuisineTagText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#333333',
+    color: '#FF6F00',
   },
   tagText: {
     fontSize: 12,
