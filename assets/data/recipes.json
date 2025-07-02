@@ -55,9 +55,7 @@
             "bacon",
             "carbonara",
             "pasta carbonara"
-        ],
-        "price": 5400,
-        "dietType": ["HIPERCALORICA"]
+        ]
     },
     {
         "id": "2",
@@ -121,9 +119,7 @@
             "appetizer",
             "dip",
             "healthy"
-        ],
-        "price": 3000,
-        "dietType": ["BALANCEADA", "CETOGENICA"]
+        ]
     },
     {
         "id": "3",
@@ -179,9 +175,7 @@
             "salad",
             "healthy",
             "vegetarian"
-        ],
-        "price": 5700,
-        "dietType": ["BALANCEADA"]
+        ]
     },
     {
         "id": "4",
@@ -230,9 +224,7 @@
             "fruit",
             "breakfast",
             "healthy"
-        ],
-        "price": 5300,
-        "dietType": ["BALANCEADA", "HIPOCALORICA"]
+        ]
     },
     {
         "id": "5",
@@ -288,9 +280,7 @@
             "chicken",
             "main course",
             "healthy"
-        ],
-        "price": 4000,
-        "dietType": ["BALANCEADA", "HIPERCALORICA"]
+        ]
     },
     {
         "id": "6",
@@ -349,9 +339,7 @@
             "salad",
             "chicken",
             "healthy"
-        ],
-        "price": 4500,
-        "dietType": ["BALANCEADA", "HIPOCALORICA"]
+        ]
     },
     {
         "id": "7",
@@ -407,9 +395,7 @@
             "wrap",
             "healthy",
             "fish"
-        ],
-        "price": 7500,
-        "dietType": ["BALANCEADA"]
+        ]
     },
     {
         "id": "8",
@@ -482,9 +468,7 @@
             "vegetarian",
             "lentils",
             "healthy"
-        ],
-        "price": 6500,
-        "dietType": ["BALANCEADA"]
+        ]
     },
     {
         "id": "9",
@@ -550,9 +534,7 @@
             "tacos",
             "chicken",
             "healthy"
-        ],
-        "price": 7000,
-        "dietType": ["BALANCEADA", "PALEO"]
+        ]
     },
     {
         "id": "10",
@@ -614,9 +596,7 @@
             "quinoa",
             "chickpeas",
             "vegan"
-        ],
-        "price": 6000,
-        "dietType": ["BALANCEADA"]
+        ]
     },
     {
         "id": "11",
@@ -683,9 +663,7 @@
             "lentils",
             "healthy",
             "vegan"
-        ],
-        "price": 4300,
-        "dietType": ["BALANCEADA"]
+        ]
     },
     {
         "id": "12",
@@ -746,9 +724,7 @@
             "pumpkin",
             "healthy",
             "vegan"
-        ],
-        "price": 3500,
-        "dietType": ["HIPOCALORICA", "DETOX", "BALANCEADA"]
+        ]
     },
     {
         "id": "13",
@@ -810,9 +786,7 @@
             "rice",
             "vegetables",
             "asian"
-        ],
-        "price": 3950,
-        "dietType": ["HIPOCALORICA", "BALANCEADA"]
+        ]
     },
     {
         "id": "14",
@@ -869,9 +843,7 @@
             "detox",
             "breakfast",
             "drink"
-        ],
-        "price": 3500,
-        "dietType": ["DETOX"]
+        ]
     },
     {
         "id": "15",
@@ -938,8 +910,7 @@
             "legumes",
             "Mediterranean",
             "vegan"
-        ],
-        "price": 4500
+        ]
     },
     {
         "id": "16",
@@ -1000,8 +971,7 @@
             "italian",
             "healthy",
             "vegan"
-        ],
-        "price": 4000
+        ]
     },
     {
         "id": "17",
@@ -1073,8 +1043,7 @@
             "beans",
             "healthy",
             "vegan"
-        ],
-        "price": 5400
+        ]
     },
     {
         "id": "18",
@@ -1120,8 +1089,7 @@
             "pancakes",
             "healthy",
             "oatmeal"
-        ],
-        "price": 2300
+        ]
     },
     {
         "id": "19",
@@ -1179,8 +1147,7 @@
             "asian",
             "tofu",
             "rice"
-        ],
-        "price": 6900
+        ]
     },
     {
         "id": "20",
@@ -1237,8 +1204,7 @@
             "fruits",
             "healthy",
             "bowl"
-        ],
-        "price": 4200
+        ]
     },
     {
         "id": "21",
@@ -1294,8 +1260,7 @@
             "egg",
             "potato",
             "main course"
-        ],
-        "price": 3900
+        ]
     },
     {
         "id": "22",
@@ -1365,8 +1330,7 @@
             "meat",
             "spicy",
             "main course"
-        ],
-        "price": 5500
+        ]
     },
     {
         "id": "23",
@@ -1421,8 +1385,7 @@
             "pumpkin",
             "healthy",
             "SIDE"
-        ],
-        "price": 3500
+        ]
     },
     {
         "id": "24",
@@ -1477,8 +1440,7 @@
             "salad",
             "cheese",
             "SIDE"
-        ],
-        "price": 4500
+        ]
     },
     {
         "id": "25",
@@ -1532,8 +1494,7 @@
             "chicken",
             "healthy",
             "SIDE"
-        ],
-        "price": 3500
+        ]
     },
     {
         "id": "26",
@@ -1588,8 +1549,7 @@
             "pasta",
             "herb",
             "main course"
-        ],
-        "price": 4000
+        ]
     },
     {
         "id": "27",
@@ -1645,8 +1605,7 @@
             "vegetable",
             "healthy",
             "main course"
-        ],
-        "price": 4500
+        ]
     },
     {
         "id": "28",
@@ -1695,8 +1654,7 @@
             "egg",
             "quick",
             "main course"
-        ],
-        "price": 1500
+        ]
     },
     {
         "id": "29",
@@ -1751,8 +1709,7 @@
             "middle eastern",
             "healthy",
             "SIDE"
-        ],
-        "price": 3500
+        ]
     },
     {
         "id": "30",
@@ -1812,9 +1769,7 @@
             "salad",
             "healthy",
             "SIDE"
-        ],
-        "price": 3900,
-        "dietType": ["HIPOCALORICA", "BALANCEADA"]
+        ]
     },
     {
         "id": 32,
@@ -1870,9 +1825,7 @@
             "bacon",
             "cheese",
             "comfort food"
-        ],
-        "price": 3900,
-        "dietType": ["HIPERCALORICA"]
+        ]
     },
     {
         "id": "33",
@@ -1933,9 +1886,7 @@
             "cheese",
             "pepperoni",
             "snack"
-        ],
-        "price": 5500,
-        "dietType": ["HIPERCALORICA"]
+        ]
     },
     {
         "id": "34",
@@ -2003,9 +1954,7 @@
             "chicken",
             "fried food",
             "fast food"
-        ],
-        "price": 6000,
-        "dietType": ["HIPERCALORICA"]
+        ]
     },
     {
         "id": "35",
@@ -2056,8 +2005,7 @@
         "cuisine": "MEDITERRANEAN",
         "category": "LUNCH",
         "dietType": ["BALANCEADA"],
-        "tags": ["healthy", "light", "vegan", "easy"],
-        "price": 5200
+        "tags": ["healthy", "light", "vegan", "easy"]
     },
     {
         "id": "36",
@@ -2085,8 +2033,7 @@
         "cuisine": "MEDITERRANEAN",
         "category": "LUNCH",
         "dietType": ["CETOGENICA", "LOW_CARB"],
-        "tags": ["keto", "healthy", "low carb"],
-        "price": 4200
+        "tags": ["keto", "healthy", "low carb"]
     },
     {
         "id": "37",
@@ -2111,7 +2058,6 @@
         "cuisine": "INTERNATIONAL",
         "category": "SNACK",
         "dietType": ["CETOGENICA", "GLUTEN_FREE"],
-        "tags": ["keto", "snack", "low carb", "gluten free"],
-        "price": 3.0
+        "tags": ["keto", "snack", "low carb", "gluten free"]
     }
 ]

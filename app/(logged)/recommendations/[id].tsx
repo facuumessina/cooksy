@@ -1,14 +1,20 @@
-import { useLocalSearchParams } from 'expo-router';
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Dimensions, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Ingredient, Recipe, ShoppingListItem } from '@/types/types';
-import { useData } from '@/context/DataProvider';
-import { envConfig } from '@/configs/envConfig';
+import ingredientsData from '@/assets/data/ingredients.json';
+import recipesData from '@/assets/data/recipes.json';
 import FavoriteButton from '@/components/FavoriteButton';
-import { translateFoodUnit } from '@/utils/enum-translations';
 import Toast from '@/components/Toast';
+import { useData } from '@/context/DataProvider';
+import { Ingredient, Recipe, ShoppingListItem } from '@/types/types';
+import { translateFoodUnit } from '@/utils/enum-translations';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const imageMap = {
+  "1.jpg": require('@/assets/images/cuisines/carbonara.jpg'),
+  "2.jpg": require('@/assets/images/cuisines/guacamole.jpeg'),
+  "3.webp": require('@/assets/images/cuisines/mediterranean.webp'),
+};
 
 const width = Dimensions.get('window').width;
 
@@ -16,31 +22,19 @@ const RecipeDetailScreen = () => {
   const { id, fromSearch, fromFilter } = useLocalSearchParams();
   const router = useRouter();
   const {
-    currentRecommendations,
     currentRecipeIngredients,
     addToShoppingList,
     user,
-    recipes
   } = useData();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [missingIngredients, setMissingIngredients] = useState<Ingredient[]>([]);
   const [toastVisible, setToastVisible] = useState(false);
 
   useEffect(() => {
-    let foundRecipe: Recipe | null = null;
-
-    if (fromSearch) {
-      foundRecipe = recipes.find(r => r.id === id) || null;
-    } else {
-      foundRecipe = currentRecommendations.find(
-        (r) => r.id.toString() === id
-      ) || null;
-    }
+    const foundRecipe = recipesData.find(r => r.id === id) || null;
+    setRecipe(foundRecipe);
 
     if (foundRecipe) {
-      setRecipe(foundRecipe);
-
-      // Calcular ingredientes faltantes considerando también los ingredientes del usuario
       const missing = foundRecipe.ingredients.filter((ingredient) => {
         const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
         const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
@@ -48,7 +42,7 @@ const RecipeDetailScreen = () => {
       });
       setMissingIngredients(missing || []);
     }
-  }, [id, fromSearch, currentRecommendations, currentRecipeIngredients, user?.ingredients, recipes]);
+  }, [id]);
 
   const isIngredientMissing = (ingredient: Ingredient): boolean => {
     const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
@@ -96,99 +90,25 @@ const RecipeDetailScreen = () => {
         </TouchableOpacity>
         <FavoriteButton recipe={recipe} style={styles.favouriteButton} />
         <Image
-          source={{ uri: `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image}` }}
+          source={imageMap[recipe.image]}
           style={styles.recipeImage}
         />
 
         <View style={styles.contentContainer}>
           <Text style={styles.title}>{recipe.name}</Text>
 
-          <View style={styles.nutritionContainer}>
-            <Text style={styles.sectionTitle}>Valor nutricional</Text>
-            <Text style={styles.portionText}>100g</Text>
-
-            <View style={styles.nutritionRow}>
-              <View style={styles.nutritionLabelContainer}>
-                <Ionicons name="leaf-outline" size={20} color="#4CAF50" />
-                <Text style={styles.nutritionLabel}>Proteína</Text>
-              </View>
-              <Text style={styles.nutritionValue}>
-                {recipe.nutrition_facts.protein}g
-              </Text>
-            </View>
-
-            <View style={styles.nutritionRow}>
-              <View style={styles.nutritionLabelContainer}>
-                <Ionicons name="grid-outline" size={20} color="#FFC107" />
-                <Text style={styles.nutritionLabel}>Carbohidratos</Text>
-              </View>
-              <Text style={styles.nutritionValue}>
-                {recipe.nutrition_facts.carbohydrates}g
-              </Text>
-            </View>
-
-            <View style={styles.nutritionRow}>
-              <View style={styles.nutritionLabelContainer}>
-                <Ionicons name="water-outline" size={20} color="#FF9800" />
-                <Text style={styles.nutritionLabel}>Grasas</Text>
-              </View>
-              <Text style={styles.nutritionValue}>
-                {recipe.nutrition_facts.fat}g
-              </Text>
-            </View>
-
-            <View style={styles.nutritionRow}>
-              <View style={styles.nutritionLabelContainer}>
-                <Ionicons name="nutrition" size={20} color="#FF9800" />
-                <Text style={styles.nutritionLabel}>Fibra</Text>
-              </View>
-              <Text style={styles.nutritionValue}>
-                {recipe.nutrition_facts.fiber}g
-              </Text>
-            </View>
-          </View>
-
-          {missingIngredients.length > 0 && (
-            <View style={styles.warningContainer}>
-              <View style={styles.warningContent}>
-                <Ionicons name="warning" size={24} color="#FFA000" />
-                <Text style={styles.warningText}>
-                  Te faltan {missingIngredients.length} ingredientes para esta receta
-                </Text>
-              </View>
-            </View>
-          )}
-
           <View style={styles.section}>
-            <View style={styles.ingredientsSection}>
-              <Text style={styles.sectionTitle}>Ingredientes</Text>
-              {missingIngredients.length > 0 && (
-                <TouchableOpacity
-                  style={styles.addToShoppingListButton}
-                  onPress={handleAddToShoppingList}
-                >
-                  <Ionicons name="cart" size={20} color="#4CAF50" />
-                  <Text style={styles.addToShoppingListText}>
-                    Agregar faltantes a lista de compras
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            <Text style={styles.sectionTitle}>Ingredientes</Text>
             <View style={styles.sectionContainer}>
               {recipe.ingredients.map((ingredient, index) => (
                 <View key={index} style={styles.ingredientRow}>
                   <Ionicons
-                    name={isIngredientMissing(ingredient) ? "close-circle" : "checkmark-circle"}
+                    name="ellipse"
                     size={20}
-                    color={isIngredientMissing(ingredient) ? "#FF5252" : "#4CAF50"}
+                    color="#333"
                   />
-                  <Text
-                    style={[
-                      styles.ingredientText,
-                      isIngredientMissing(ingredient) && styles.missingIngredient
-                    ]}
-                  >
-                    {ingredient.name} - {ingredient.quantity} {translateFoodUnit(ingredient)}
+                  <Text style={styles.ingredientText}>
+                    {JSON.stringify(ingredientsData.find(i => Number(i.id) === Number(ingredient.id)))} - {ingredient.quantity} {translateFoodUnit(ingredient)}
                   </Text>
                 </View>
               ))}

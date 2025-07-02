@@ -1,6 +1,6 @@
+import recipesData from '@/assets/data/recipes.json';
 import SearchBar from '@/components/Search';
 import { useData } from '@/context/DataProvider';
-import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
 import { Cuisine, DietaryRestriction } from '@/types/enums';
 import { Recipe } from '@/types/types';
 import { translateCuisine, translateDietaryRestriction } from '@/utils/enum-translations';
@@ -98,7 +98,14 @@ const FilterModal = ({ visible, onClose, activeFilters, onToggleFilter }: {
 );
 
 import type { ImageSourcePropType } from 'react-native';
-const FoodItem = ({ title, imageUrl, id }: { id: string, title: string; imageUrl: ImageSourcePropType }) => (
+
+// Mapeo de imágenes locales
+const imageMap = {
+  "1.jpg": require('@/assets/images/cuisines/carbonara.jpg'),
+  "2.jpg": require('@/assets/images/cuisines/guacamole.jpeg'),
+  "3.webp": require('@/assets/images/cuisines/mediterranean.webp'),
+};
+const FoodItem = ({ title, imageUrl, id, ingredientsCount }: { id: string, title: string; imageUrl: ImageSourcePropType, ingredientsCount: number }) => (
     <TouchableOpacity
         onPress={() => router.push({
             pathname: '/recommendations/[id]',
@@ -110,7 +117,13 @@ const FoodItem = ({ title, imageUrl, id }: { id: string, title: string; imageUrl
             source={imageUrl}
             style={styles.foodImage}
         />
-        <Text numberOfLines={2} style={styles.foodTitle}>{title}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginTop: 4 }}>
+            <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{title}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="restaurant-outline" size={16} color="#666" style={{ marginRight: 4 }} />
+                <Text style={{ fontSize: 14, color: '#666' }}>{ingredientsCount}</Text>
+            </View>
+        </View>
     </TouchableOpacity>
 );
 
@@ -132,40 +145,20 @@ export default function Home() {
 
     useEffect(() => {
         const loadRecommendations = () => {
-            if (!isInitialized ||
-                isLoading ||
-                !user?.Onboarding?.completed ||
-                !user?.preferences?.preferredCategories?.length) {
-                return;
-            }
-
-            try {
-                const recommender = new RecipeRecommender(
-                    recipes,
-                    user,
-                    ingredients,
-                );
-
-                const newRecommendations = recommender.getRecommendations(5, true);
-                if (newRecommendations && newRecommendations.length > 0) {
-                    setCurrentRecommendations(newRecommendations);
-                    setRecommendations(newRecommendations);
-                    setFilteredRecipes(newRecommendations);
-                }
-            } catch (error) {
-                console.error('Error loading recommendations:', error);
-            } finally {
-                setIsCalculating(false);
-            }
+            const top3Recipes = recipesData.filter(r => ["1", "2", "3"].includes(r.id));
+            setRecommendations(top3Recipes);
+            setFilteredRecipes(top3Recipes);
+            setIsCalculating(false);
         };
 
         loadRecommendations();
+
         return () => {
             setCurrentRecommendations([]);
             setRecommendations([]);
             setFilteredRecipes([]);
         };
-    }, [isInitialized, isLoading]);
+    }, []);
 
     const toggleFilter = (group: keyof typeof activeFilters, value: DietaryRestriction | Cuisine) => {
         setActiveFilters(prev => {
@@ -210,12 +203,12 @@ export default function Home() {
 
     const renderFilterSection = () => (
         <View style={styles.filterSection}>
-    <TouchableOpacity
-        style={styles.filterButton}
-        onPress={() => setShowFilterModal(true)}
-    >
-        <Ionicons name="filter" size={24} color="#F97316" />
-    </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.filterButton}
+                onPress={() => setShowFilterModal(true)}
+            >
+                <Ionicons name="filter" size={24} color="#F97316" />
+            </TouchableOpacity>
             <ScrollView horizontal scrollEnabled showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
                 {QUICK_FILTERS.restrictions.map((restriction) => (
                     <FilterTag
@@ -238,21 +231,15 @@ export default function Home() {
                 </TouchableOpacity>
             </View>
             <View>
-                <FoodItem
-                    id="1"
-                    title="Hamburguesa"
-                    imageUrl={require('../../../assets/images/cuisines/fast.jpg')}
-                />
-                <FoodItem
-                    id="2"
-                    title="Pizza"
-                    imageUrl={require('../../../assets/images/cuisines/italian.jpeg')}
-                />
-                <FoodItem
-                    id="3"
-                    title="Sushi"
-                    imageUrl={require('../../../assets/images/cuisines/japanese.webp')}
-                />
+                {filteredRecipes.map(recipe => (
+                    <FoodItem
+                        key={recipe.id}
+                        id={recipe.id}
+                        title={recipe.name}
+                        imageUrl={imageMap[recipe.image]}
+                        ingredientsCount={recipe.ingredients.length}
+                    />
+                ))}
             </View>
         </View>
     );

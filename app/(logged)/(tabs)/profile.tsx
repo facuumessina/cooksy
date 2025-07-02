@@ -130,8 +130,8 @@ const ProfileScreen = () => {
         STORAGE_KEYS.RECIPES
       ]);
       
-      // Redirigir al onboarding
-      router.replace("/(logged)/onboarding/onboardingSteps");
+      // Redirigir a la pantalla de autenticación paso 1
+      router.replace("/register/step1");
     } catch (error) {
       console.error('Error during logout:', error);
       Alert.alert(

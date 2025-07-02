@@ -8,7 +8,7 @@ export default function Step2() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity onPress={() => router.back()} style={{ position: 'absolute', top: 20, left: 20, zIndex: 10 }}>
+                    <TouchableOpacity onPress={() => router.push("/register/step1")} style={{ position: "absolute", left: 20, top: 30 }}>
                 <Ionicons name="arrow-back" size={24} color="#f57c00" />
             </TouchableOpacity>
             <View style={styles.header}>

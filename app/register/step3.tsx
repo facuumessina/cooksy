@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Step3() {
     const router = useRouter();
@@ -29,8 +29,8 @@ export default function Step3() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <TouchableOpacity onPress={() => router.back()} style={{ position: 'absolute', top: 20, left: 20, zIndex: 10 }}>
+        <SafeAreaView style={styles.container}>
+                    <TouchableOpacity onPress={() => router.push("/register/step2")} style={{ position: "absolute", left: 20, top: 30 }}>
                 <Ionicons name="arrow-back" size={24} color="#f57c00" />
             </TouchableOpacity>
             <Text style={styles.title}>Información personal</Text>
@@ -97,7 +97,7 @@ export default function Step3() {
             <TouchableOpacity style={styles.button} onPress={() => router.push('/onboarding/onboardingSteps')}>
                 <Text style={styles.buttonText}>Continuar</Text>
             </TouchableOpacity>
-        </ScrollView>
+        </SafeAreaView>
     );
 }
 
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     subtitle: { fontSize: 16, color: '#555', marginBottom: 20, alignSelf: 'center', textAlign: 'center' },
     label: { fontSize: 14, color: '#333', marginTop: 15, marginBottom: 5 },
     input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10 },
-    button: { backgroundColor: '#f57c00', paddingVertical: 14, borderRadius: 25, alignItems: 'center', marginTop: 30 },
+    button: { backgroundColor: '#F97316', padding: 15, borderRadius: 40, alignItems: 'center', marginTop: 10 },
     buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
     modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
     pickerContainer: { backgroundColor: '#fff', padding: 20, borderRadius: 10, alignItems: 'center' },

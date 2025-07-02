@@ -1,10 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Animated, { 
-  useAnimatedStyle, 
-  withSpring,
-  FadeIn
-} from 'react-native-reanimated';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface StepsIndicatorProps {
   currentStep: number;
@@ -42,7 +37,7 @@ const StepsIndicator: React.FC<StepsIndicatorProps> = ({ currentStep, totalSteps
               <View
                 style={[
                   styles.line,
-                  { backgroundColor: index < currentStep ? '#28A745' : '#D0D0D0' },
+                  { backgroundColor: index < currentStep ? '#FF6600' : '#D0D0D0' },
                 ]}
               />
             )}
@@ -79,7 +74,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   activeCircle: {
-    backgroundColor: '#28A745',
+    backgroundColor: '#FF6600',
   },
   inactiveCircle: {
     backgroundColor: '#D0D0D0',

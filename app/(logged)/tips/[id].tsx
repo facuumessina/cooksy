@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, Image, Dimensions } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import Icon from 'react-native-vector-icons/Feather';
 import { tipsData } from '@/assets/data/tips';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 
 const { width } = Dimensions.get('window');
 

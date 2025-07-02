@@ -16,7 +16,7 @@ import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { CameraType, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Dimensions, FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Button, Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface ScannedProduct {
@@ -52,6 +52,35 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCAN_AREA_SIZE = SCREEN_WIDTH * 0.7;
 
 export default function CreateRecipe() {
+  // Ingredient and instruction state/handlers for recipe creation
+  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '' }]);
+  const [instructionsList, setInstructionsList] = useState(['']);
+
+  const addIngredientRow = () => {
+    setIngredientsList([...ingredientsList, { name: '', amount: '' }]);
+  };
+
+  const updateIngredientName = (index, text) => {
+    const updated = [...ingredientsList];
+    updated[index].name = text;
+    setIngredientsList(updated);
+  };
+
+  const updateIngredientAmount = (index, text) => {
+    const updated = [...ingredientsList];
+    updated[index].amount = text;
+    setIngredientsList(updated);
+  };
+
+  const addInstructionRow = () => {
+    setInstructionsList([...instructionsList, '']);
+  };
+
+  const updateInstruction = (index, text) => {
+    const updated = [...instructionsList];
+    updated[index] = text;
+    setInstructionsList(updated);
+  };
   const [scanning, setScanning] = useState(false);
   const [isProcessingBarcode, setIsProcessingBarcode] = useState(false);
   const [facing, setFacing] = useState<CameraType>('back');
@@ -201,7 +230,7 @@ export default function CreateRecipe() {
     bottomSheetRef.current?.close();
   }, [mappedIngredient, setCurrentRecipeIngredientsState]);
 
-  const handleAddIngredientFromSearch = (ingredient) => {
+  const handleAddIngredientFromSearch = (ingredient: Ingredient) => {
     setCurrentRecipeIngredientsState((prevIngredients) => {
       const existingIndex = prevIngredients.findIndex((item) => item.id === ingredient.id);
 
@@ -347,7 +376,10 @@ export default function CreateRecipe() {
 
   return (
     <SafeAreaView style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 16 }}>Nueva Receta</Text>
+      <TouchableOpacity onPress={() => router.push('/(logged)/index')} style={{ marginBottom: 8 }}>
+        <Ionicons name="arrow-back" size={28} color="#FF6F00" />
+      </TouchableOpacity>
+      <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>Nueva Receta</Text>
 
       <Text style={{ fontSize: 16, marginBottom: 4 }}>Nombre de la receta</Text>
       <TextInput
@@ -366,43 +398,68 @@ export default function CreateRecipe() {
         <Text style={{ color: '#999' }}>Selecciona el tipo de receta</Text>
       </View>
 
+      {/* Ingredientes */}
       <Text style={{ fontSize: 18, marginBottom: 8 }}>Ingredientes</Text>
-      <FlatList
-        data={currentRecipeIngredients}
-        renderItem={renderItem}
-        keyExtractor={item => item.id?.toString() ?? ''}
-        contentContainerStyle={{ marginBottom: 8 }}
-        ListEmptyComponent={<Text style={{ color: '#999' }}>No hay ingredientes añadidos</Text>}
-      />
-      <TouchableOpacity onPress={handleOpenSearch}>
-        <Text style={{ color: '#2196F3', marginBottom: 16 }}>+ Añadir ingrediente</Text>
+      {ingredientsList.map((item, index) => (
+        <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+          <TextInput
+            value={item.name}
+            onChangeText={(text) => updateIngredientName(index, text)}
+            placeholder="Ingrediente"
+            style={{
+              flex: 1,
+              borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+              paddingHorizontal: 12, paddingVertical: 8, marginRight: 8
+            }}
+          />
+          <TextInput
+            value={item.amount}
+            onChangeText={(text) => updateIngredientAmount(index, text)}
+            placeholder="Cant."
+            style={{
+              width: 70,
+              borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+              paddingHorizontal: 12, paddingVertical: 8
+            }}
+          />
+        </View>
+      ))}
+      <TouchableOpacity onPress={addIngredientRow} style={{ alignSelf: 'flex-start', marginBottom: 16 }}>
+        <Ionicons name="add-circle-outline" size={32} color="#FF6F00" />
       </TouchableOpacity>
 
-      <Text style={{ fontSize: 18, marginBottom: 4 }}>Instrucciones</Text>
-      <TextInput
-        style={{
-          borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-          paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16, height: 80
-        }}
-        placeholder="Ingresa las instrucciones de la receta"
-        multiline
-      />
-
-      <TouchableOpacity style={{
-        borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-        padding: 16, alignItems: 'center', marginBottom: 24
-      }}>
-        <Text style={{ color: '#666' }}>Subí tu multimedia de la receta</Text>
+      {/* Instrucciones */}
+      <Text style={{ fontSize: 18, marginBottom: 8 }}>Instrucciones</Text>
+      {instructionsList.map((step, index) => (
+        <TextInput
+          key={index}
+          value={step}
+          onChangeText={(text) => updateInstruction(index, text)}
+          placeholder={`Paso ${index + 1}`}
+          multiline
+          style={{
+            borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+            paddingHorizontal: 12, paddingVertical: 8, marginBottom: 8
+          }}
+        />
+      ))}
+      <TouchableOpacity onPress={addInstructionRow} style={{ alignSelf: 'flex-start', marginBottom: 24 }}>
+        <Ionicons name="add-circle-outline" size={32} color="#FF6F00" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={{
-        backgroundColor: '#4CAF50', padding: 16, borderRadius: 18, alignItems: 'center', marginBottom: 12
-      }}>
-        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Crear Receta</Text>
-      </TouchableOpacity>
+      <View style={{ marginBottom: 24, alignItems: 'center' }}>
+        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Ionicons name="image-outline" size={28} color="#FF6F00" />
+          <Text style={{ marginLeft: 12, color: '#666', fontSize: 16 }}>
+            Subí tu multimedia de la receta
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Removed "Crear Receta" button */}
 
       <TouchableOpacity style={{
-        backgroundColor: '#2196F3', padding: 16, borderRadius: 18, alignItems: 'center'
+        backgroundColor: '#FF6F00', padding: 16, borderRadius: 18, alignItems: 'center'
       }}>
         <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Enviar para aprobación</Text>
       </TouchableOpacity>
