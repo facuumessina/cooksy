@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+const recipesDataTyped: Recipe[] = recipesData as Recipe[];
 
 // Filtros rápidos para el ScrollView horizontal
 const QUICK_FILTERS = {
@@ -145,7 +146,7 @@ export default function Home() {
 
     useEffect(() => {
         const loadRecommendations = () => {
-            const top3Recipes = recipesData.filter(r => ["1", "2", "3"].includes(r.id));
+            const top3Recipes = recipesDataTyped.filter(r => ["1", "2", "3"].includes(r.id));
             setRecommendations(top3Recipes);
             setFilteredRecipes(top3Recipes);
             setIsCalculating(false);
@@ -236,7 +237,7 @@ export default function Home() {
                         key={recipe.id}
                         id={recipe.id}
                         title={recipe.name}
-                        imageUrl={imageMap[recipe.image]}
+                        imageUrl={imageMap[recipe.image as keyof typeof imageMap]}
                         ingredientsCount={recipe.ingredients.length}
                     />
                 ))}

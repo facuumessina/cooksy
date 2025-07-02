@@ -88,7 +88,8 @@ const FavRecipesInfoItem = () => {
 };
 
 const MyRecipesInfoItem = () => {
-  const { myRecipes } = useData();
+  const data = useData();
+  const myRecipes = data?.myRecipes ?? [];
 
   if (!myRecipes || myRecipes.length === 0) {
     return (
@@ -100,7 +101,7 @@ const MyRecipesInfoItem = () => {
 
   return (
     <View>
-      {myRecipes.map((recipe, index) => (
+      {Array.isArray(myRecipes) && myRecipes.map((recipe, index) => (
         <View key={index} style={styles.recipeContainer}>
           <Image
             source={{ uri: recipe.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image}` : '' }}
@@ -239,7 +240,7 @@ const ProfileScreen = () => {
             />
           </ProfileSection>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={() => router.push('/changePassword')}>
+          <TouchableOpacity style={styles.logoutButton} onPress={() => router.push('/forgotPassword' as never)}>
             <LinearGradient
               colors={["#FFA500", "#FF8C00"]}
               start={{ x: 0, y: 0 }}
