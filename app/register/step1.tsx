@@ -23,7 +23,11 @@ const StepOne = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log("TOKEN:", data.token); 
+                console.log("USER ID:", data.id);
+
                 await AsyncStorage.setItem('token', data.token);
+                await AsyncStorage.setItem('userId', data.id);
+
                 router.replace('/(logged)');
             } else {
                 const error = await response.json();

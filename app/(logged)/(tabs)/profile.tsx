@@ -67,19 +67,19 @@ const FavRecipesInfoItem = () => {
       {favouriteRecipes.map((fav, index) => (
         <View key={index} style={styles.recipeContainer}>
           <Image
-            source={{uri: fav.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${fav.image}` : ''}}
+            source={{ uri: fav.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${fav.image}` : '' }}
             resizeMode="contain"
             style={styles.recipeImage}
           />
           <View style={styles.recipeContainerInfo}>
             <Text style={styles.recipeName}>{fav.name}</Text>
-              <TouchableOpacity onPress={() => router.push(
-                {
+            <TouchableOpacity onPress={() => router.push(
+              {
                 pathname: '/recommendations/[id]',
                 params: { id: fav.id, fromSearch: 'true' }
-                })}>
-          <Text style={styles.moreRecipeInfo}>Ver más</Text>
-        </TouchableOpacity>
+              })}>
+              <Text style={styles.moreRecipeInfo}>Ver más</Text>
+            </TouchableOpacity>
           </View>
         </View>
       ))}
@@ -128,25 +128,32 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const { user, updateUser } = useData();
 
-useEffect(() => {
-  const fetchProfile = async () => {
-    try {
-      const token = await AsyncStorage.getItem(STORAGE_KEYS.TOKEN);
-      const response = await fetch(`http://192.168.0.59:3000/user/profile`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) throw new Error('Error al cargar perfil');
-      const data = await response.json();
-      updateUser(data);
-    } catch (err) {
-      console.error("Error al traer perfil:", err);
-    }
-  };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        console.log("USER ID desde AsyncStorage:", userId);
 
-  fetchProfile();
-}, []);
+        if (!userId) throw new Error('No se encontró el ID del usuario');
+
+        const url = `http://192.168.0.59:3000/users/${userId}`;
+        console.log("Haciendo fetch a:", url);
+
+        const response = await fetch(url);
+        console.log("STATUS DEL RESPONSE:", response.status);
+
+        if (!response.ok) throw new Error('Error al cargar perfil');
+
+        const data = await response.json();
+        console.log("DATA DEL PERFIL:", data);
+        updateUser(data);
+      } catch (err) {
+        console.error("Error al traer perfil:", err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -172,19 +179,19 @@ useEffect(() => {
           preferredCuisines: []
         }
       };
-        
+
       // Actualizar el usuario en el Provider y AsyncStorage
       await updateUser(initialUser);
-      
+
       // Limpiar cualquier otra data relacionada al usuario
       await AsyncStorage.multiRemove([
-        STORAGE_KEYS.USER, 
+        STORAGE_KEYS.USER,
         STORAGE_KEYS.FAVORITE_RECIPES,
         STORAGE_KEYS.RECOMMENDATIONS,
         STORAGE_KEYS.INGREDIENTS,
         STORAGE_KEYS.RECIPES
       ]);
-      
+
       // Redirigir a la pantalla de autenticación paso 1
       router.replace("/register/step1");
     } catch (error) {

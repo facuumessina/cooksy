@@ -42,7 +42,10 @@ export async function login(req: Request, res: Response) {
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(401).json({ message: 'Credenciales inválidas' });
   const token = jwt.sign({ id: user._id, alias: user.alias }, JWT_SECRET, { expiresIn: '2h' });
-  return res.status(200).json({ token });
+  return res.status(200).json({ 
+    token,
+    id: user._id
+  });
 }
 
 // Recover password: generar código y “enviar”

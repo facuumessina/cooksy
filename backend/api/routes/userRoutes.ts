@@ -4,6 +4,7 @@ import {
     addSavedRecipe,
     deleteSavedRecipe,
     getProfile,
+    getProfileById,
     getSavedRecipes
 } from '../controller/userController';
 
@@ -13,5 +14,6 @@ router.get('/:id/saved-recipes', getSavedRecipes);
 router.post('/:id/saved-recipes', addSavedRecipe);
 router.delete('/:id/saved-recipes/:recipeId', deleteSavedRecipe);
 router.get('/:id/profile', getProfile);
+router.get('/:id', getProfileById);
 
 export default router;

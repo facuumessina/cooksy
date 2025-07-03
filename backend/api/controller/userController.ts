@@ -37,3 +37,10 @@ export const getProfile = async (req: Request, res: Response) => {
   if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
   res.json(user);
 };
+
+export const getProfileById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = await Usuario.findById(id).select('alias email nombre apellido fechaNacimiento');
+  if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+  res.json(user);
+};

@@ -3,7 +3,6 @@ import ScanLoader from '@/components/recipes/create/ScanLoader';
 import SearchIngredientModal from '@/components/SearchIngredientSheet';
 import { envConfig } from '@/configs/envConfig';
 import { useData } from '@/context/DataProvider';
-// Import addFavoriteRecipe and myRecipes if they exist
 import { useFetch } from '@/hooks/useFetch';
 import { useIngredientMapper } from '@/hooks/useIngredientMapper';
 import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
@@ -13,19 +12,37 @@ import { debounce } from '@/utils/debounce';
 import { checkScanArea, processProductData } from '@/utils/scannerUtils';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { CameraType, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// If addMyRecipe does not exist, define it here (mock implementation, you should move it to your DataProvider if needed)
-// Remove this block if you already have addMyRecipe in your context
-function addMyRecipe(recipe) {
-  // This is a placeholder. You should implement this inside your context/provider.
-  // For now, just log to console.
-  console.log('Recipe added (placeholder):', recipe);
-}
+
+  // Handler para crear la receta y enviarla al backend
+  const handleCreateRecipe = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      await axios.post(
+        'http://TU_IP_LOCAL:3000/recipes', // cambia TU_IP_LOCAL por tu IP o localhost si usas el emulador
+        {
+          nombre: recipeName,
+          tipo: recipeType,
+          ingredientes: ingredientsList,
+          instrucciones: instructionsList
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      router.push('/(logged)/(tabs)');
+    } catch (error: any) {
+      console.error('Error al crear receta:', error.response?.data || error.message);
+      alert('No se pudo crear la receta.');
+    }
+  };
 
 interface ScannedProduct {
   product_name: string;
@@ -467,16 +484,7 @@ export default function CreateRecipe() {
         {/* Removed "Crear Receta" button */}
 
         <TouchableOpacity
-          onPress={() => {
-            addMyRecipe({
-              name: recipeName,
-              type: recipeType,
-              ingredients: ingredientsList,
-              instructions: instructionsList,
-              image: null
-            });
-            router.push('/(logged)/(tabs)');
-          }}
+          onPress={handleCreateRecipe}
           style={{
             backgroundColor: '#FF6F00', padding: 16, borderRadius: 18, alignItems: 'center', marginBottom: 40
           }}
