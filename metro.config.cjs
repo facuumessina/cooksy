@@ -8,10 +8,12 @@ config.resolver.alias = {
 };
 
 config.watchFolders = [path.resolve(__dirname)];
+
 config.server = {
   ...config.server,
   enhanceMiddleware: middleware => middleware,
 };
+
 config.watcher = {
   usePolling: true,
 };
