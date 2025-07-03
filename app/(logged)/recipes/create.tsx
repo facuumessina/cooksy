@@ -3,7 +3,6 @@ import ScanLoader from '@/components/recipes/create/ScanLoader';
 import SearchIngredientModal from '@/components/SearchIngredientSheet';
 import { envConfig } from '@/configs/envConfig';
 import { useData } from '@/context/DataProvider';
-// Import addFavoriteRecipe and myRecipes if they exist
 import { useFetch } from '@/hooks/useFetch';
 import { useIngredientMapper } from '@/hooks/useIngredientMapper';
 import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
@@ -13,10 +12,11 @@ import { debounce } from '@/utils/debounce';
 import { checkScanArea, processProductData } from '@/utils/scannerUtils';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
+import axios from 'axios';
 import { CameraType, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // If addMyRecipe does not exist, define it here (mock implementation, you should move it to your DataProvider if needed)
@@ -154,6 +154,29 @@ export default function CreateRecipe() {
     setIsProcessingBarcode(false);
     setScanning(true);
   }, [permission, requestPermission]);
+
+  const handleSubmit = async () => {
+    try {
+      const body = {
+        nombre: recipeName,
+        tipo: recipeType,
+        ingredientes: ingredientsList.map(i => ({ nombre: i.name, cantidad: i.amount })),
+        instrucciones: instructionsList.map((desc, idx) => ({ paso: idx + 1, descripcion: desc, multimedia: [] })),
+        multimedia: [],
+        autor: user.id
+      };
+      const { data } = await axios.post(
+        `http://localhoast:3000/recipes`,
+        body,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      Alert.alert('Éxito', `Receta creada: ${data._id}`);
+      router.replace('/(logged)/(tabs)');
+    } catch (err: any) {
+      console.error(err);
+      Alert.alert('Error', err.response?.data?.message || err.message);
+    }
+  };
 
   const debouncedBarcodeHandler = useCallback((result: BarcodeScanningResult) => {
     if (!scanning || isProcessingBarcode) return;
