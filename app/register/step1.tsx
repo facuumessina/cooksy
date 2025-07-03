@@ -1,15 +1,37 @@
 import logo from '@/assets/images/logo.png'; // adjust path if needed
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const StepOne = () => {
     const router = useRouter();
-    const [alias, setAlias] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+
+    const handleLogin = async () => {
+        try {
+            const response = await fetch('http://192.168.0.59:3000/auth/login', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("TOKEN:", data.token); 
+                router.replace('/(logged)');
+            } else {
+                const error = await response.json();
+                Alert.alert("Error", error.message || 'Error al iniciar sesión');
+            }
+        } catch (err) {
+            console.error(err);
+            Alert.alert('Error', 'No se pudo conectar con el servidor.');
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -23,8 +45,8 @@ const StepOne = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Ingrese su correo"
-                value={alias}
-                onChangeText={setAlias}
+                value={email}
+                onChangeText={setEmail}
             />
 
             <View style={{ position: 'relative', marginBottom: 10 }}>
@@ -32,8 +54,8 @@ const StepOne = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Ingrese su contraseña"
-                    value={email}
-                    onChangeText={setEmail}
+                    value={password}
+                    onChangeText={setPassword}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
                 />
@@ -46,19 +68,19 @@ const StepOne = () => {
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-              <TouchableOpacity onPress={() => setRememberMe(!rememberMe)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{
-                  width: 20, height: 20, borderWidth: 1, borderColor: '#333',
-                  backgroundColor: rememberMe ? '#F26E04' : 'transparent', marginRight: 8
-                }} />
-                <Text>Recordar esta cuenta</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => router.push('/forgotPassword')}>
-                <Text style={{ color: '#F26E04' }}>Olvidé mi contraseña</Text>
-              </TouchableOpacity>
+                <TouchableOpacity onPress={() => setRememberMe(!rememberMe)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{
+                        width: 20, height: 20, borderWidth: 1, borderColor: '#333',
+                        backgroundColor: rememberMe ? '#F26E04' : 'transparent', marginRight: 8
+                    }} />
+                    <Text>Recordar esta cuenta</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push('/forgotPassword')}>
+                    <Text style={{ color: '#F26E04' }}>Olvidé mi contraseña</Text>
+                </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.replace('/(logged)')}>
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Iniciar sesión</Text>
             </TouchableOpacity>
 

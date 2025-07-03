@@ -70,3 +70,15 @@ export async function resetPassword(req: Request, res: Response) {
   await user.save();
   return res.status(200).json({ message: 'Clave cambiada exitosamente' });
 }
+
+// Check alias and email availability without saving
+export async function checkAvailability(req: Request, res: Response) {
+  const { email, alias } = req.body;
+  const emailInUse = await Usuario.findOne({ email });
+  const aliasInUse = await Usuario.findOne({ alias });
+
+  return res.status(200).json({
+    emailAvailable: !emailInUse,
+    aliasAvailable: !aliasInUse
+  });
+}

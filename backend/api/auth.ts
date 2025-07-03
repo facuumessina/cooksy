@@ -1,11 +1,11 @@
 import api from './api';
 import { handleApiError } from './errorHandler';
 import {
-    LoginDTO,
-    RecoverPasswordDTO,
-    RegisterStep1DTO,
-    RegisterStep2DTO,
-    ResetPasswordDTO,
+  LoginDTO,
+  RecoverPasswordDTO,
+  RegisterStep1DTO,
+  RegisterStep2DTO,
+  ResetPasswordDTO,
 } from './types';
 
 export const login = async (data: LoginDTO) => {
@@ -50,5 +50,14 @@ export const resetPassword = async (data: ResetPasswordDTO) => {
     return res.data;
   } catch (error) {
     handleApiError(error, 'resetPassword');
+  }
+};
+
+export const checkAvailability = async (data: { email?: string; alias?: string }) => {
+  try {
+    const res = await api.post('/auth/check-availability', data);
+    return res.data;
+  } catch (error) {
+    handleApiError(error, 'checkAvailability');
   }
 };

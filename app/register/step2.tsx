@@ -7,15 +7,13 @@ export default function Step2() {
     const router = useRouter();
     const [alias, setAlias] = useState('');
     const [email, setEmail] = useState('');
-    const [isAliasTaken, setIsAliasTaken] = useState(false);
-    const [suggestions, setSuggestions] = useState<string[]>([]);
 
     const validateEmail = (email: string) => {
         const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
         return regex.test(email);
     };
 
-    const canContinue = alias.trim() !== '' && email.trim() !== '' && validateEmail(email) && !isAliasTaken;
+    const canContinue = alias.trim() !== '' && email.trim() !== '' && validateEmail(email);
 
     const handleContinue = async () => {
         if (!validateEmail(email)) {
@@ -30,20 +28,15 @@ export default function Step2() {
                 body: JSON.stringify({ email, alias })
             });
 
+            const data = await response.json();
+
             if (response.status === 409) {
-                setIsAliasTaken(true);
-                setSuggestions([alias + '123', alias + '_ok', alias + '_2025']);
-                Alert.alert('Alias o correo en uso', 'El alias o correo ya está en uso. Prueba con alguna sugerencia.');
+                Alert.alert('Alias o correo en uso', data.message || 'El alias o correo ya está en uso.');
             } else if (response.ok) {
-                setIsAliasTaken(false);
-                setSuggestions([]);
-                // En vez de registrar, simplemente pasa los datos a step3
-                router.push({
-                    pathname: '/register/step3',
-                    params: { alias, email }
-                });
+                router.push(`/register/step3?alias=${encodeURIComponent(alias)}&email=${encodeURIComponent(email)}`);
             } else {
-                Alert.alert('Error', 'Hubo un problema al validar los datos.');
+                console.error('API validation error:', data);
+                Alert.alert('Error', data.message || 'Hubo un problema al registrar.');
             }
         } catch (err) {
             console.error(err);
@@ -53,7 +46,9 @@ export default function Step2() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity onPress={() => router.push("/register/step1")} style={{ position: "absolute", left: 20, top: 30 }}>
+            <TouchableOpacity onPress={() => {
+                router.push("/register/step1");
+            }} style={{ position: "absolute", left: 20, top: 30 }}>
                 <Ionicons name="arrow-back" size={24} color="#f57c00" />
             </TouchableOpacity>
             <View style={styles.header}>
@@ -66,23 +61,8 @@ export default function Step2() {
                     style={styles.input}
                     placeholder="Ingrese un alias"
                     value={alias}
-                    onChangeText={(text) => {
-                        setAlias(text);
-                        setIsAliasTaken(false);
-                        setSuggestions([]);
-                    }}
+                    onChangeText={setAlias}
                 />
-                {isAliasTaken && (
-                    <View style={{ marginTop: 5 }}>
-                        <Text style={{ color: '#f57c00' }}>Alias en uso. Sugerencias:</Text>
-                        {suggestions.map((s, i) => (
-                            <TouchableOpacity key={i} onPress={() => setAlias(s)}>
-                                <Text style={{ color: '#555' }}>{s}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                )}
-
                 <Text style={styles.label}>Correo electrónico</Text>
                 <TextInput
                     style={styles.input}

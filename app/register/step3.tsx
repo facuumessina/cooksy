@@ -5,7 +5,7 @@ import { FlatList, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOp
 
 export default function Step3() {
     const router = useRouter();
-    const { alias, correo } = useLocalSearchParams();
+    const { alias, email } = useLocalSearchParams();
 
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
@@ -51,13 +51,20 @@ export default function Step3() {
         if (!isValid) return;
 
         try {
-            const response = await fetch('http://192.168.0.59:3000/api/auth/register-step2', {
+            const response = await fetch('http://192.168.0.59:3000/auth/register-step2', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: correo, nombre: `${nombre} ${apellido}`, password })
+                body: JSON.stringify({
+                    email: email,
+                    alias: alias,
+                    nombre: `${nombre} ${apellido}`,
+                    fechaNacimiento,
+                    password
+                })
             });
+
+            const data = await response.json();
             if (!response.ok) {
-                const data = await response.json();
                 alert(data.message || 'Error al registrar usuario');
             } else {
                 router.push('/onboarding/onboardingSteps');
@@ -70,7 +77,11 @@ export default function Step3() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity onPress={() => router.back()} style={{ position: "absolute", left: 20, top: 30 }}>
+            <TouchableOpacity
+                onPress={() => {
+                    router.replace('/register/step2');
+                }}
+                style={{ position: "absolute", left: 20, top: 30 }}>
                 <Ionicons name="arrow-back" size={24} color="#f57c00" />
             </TouchableOpacity>
             <Text style={styles.title}>Información personal</Text>
@@ -80,7 +91,7 @@ export default function Step3() {
             <TextInput style={[styles.input, { backgroundColor: '#f0f0f0' }]} value={alias?.toString()} editable={false} />
 
             <Text style={styles.label}>Correo electrónico</Text>
-            <TextInput style={[styles.input, { backgroundColor: '#f0f0f0' }]} value={correo?.toString()} editable={false} />
+            <TextInput style={[styles.input, { backgroundColor: '#f0f0f0' }]} value={email?.toString()} editable={false} />
 
             <Text style={styles.label}>Nombre</Text>
             <TextInput style={styles.input} placeholder="Ingrese su nombre" value={nombre} onChangeText={setNombre} />
