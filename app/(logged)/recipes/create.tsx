@@ -411,9 +411,16 @@ export default function CreateRecipe() {
               style={{
                 width: 70,
                 borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-                paddingHorizontal: 12, paddingVertical: 8
+                paddingHorizontal: 12, paddingVertical: 8, marginRight: 8
               }}
             />
+            <TouchableOpacity onPress={() => {
+              const updated = [...ingredientsList];
+              updated.splice(index, 1);
+              setIngredientsList(updated);
+            }}>
+              <Ionicons name="trash-outline" size={24} color="#FF6F00" />
+            </TouchableOpacity>
           </View>
         ))}
         <TouchableOpacity onPress={addIngredientRow} style={{ alignSelf: 'flex-start', marginBottom: 16 }}>
@@ -423,17 +430,26 @@ export default function CreateRecipe() {
         {/* Instrucciones */}
         <Text style={{ fontSize: 18, marginBottom: 8 }}>Instrucciones</Text>
         {instructionsList.map((step, index) => (
-          <TextInput
-            key={index}
-            value={step}
-            onChangeText={(text) => updateInstruction(index, text)}
-            placeholder={`Paso ${index + 1}`}
-            multiline
-            style={{
-              borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-              paddingHorizontal: 12, paddingVertical: 8, marginBottom: 8
-            }}
-          />
+          <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+            <TextInput
+              value={step}
+              onChangeText={(text) => updateInstruction(index, text)}
+              placeholder={`Paso ${index + 1}`}
+              multiline
+              style={{
+                flex: 1,
+                borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+                paddingHorizontal: 12, paddingVertical: 8
+              }}
+            />
+            <TouchableOpacity onPress={() => {
+              const updated = [...instructionsList];
+              updated.splice(index, 1);
+              setInstructionsList(updated);
+            }}>
+              <Ionicons name="trash-outline" size={24} color="#FF6F00" style={{ marginLeft: 8 }} />
+            </TouchableOpacity>
+          </View>
         ))}
         <TouchableOpacity onPress={addInstructionRow} style={{ alignSelf: 'flex-start', marginBottom: 24 }}>
           <Ionicons name="add-circle-outline" size={32} color="#FF6F00" />
