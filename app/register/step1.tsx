@@ -14,7 +14,7 @@ const StepOne = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.0.59:3000/auth/login', { 
+            const response = await fetch('http://192.168.0.59:3000/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -22,7 +22,7 @@ const StepOne = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("TOKEN:", data.token); 
+                console.log("TOKEN:", data.token);
                 console.log("USER ID:", data.id);
 
                 await AsyncStorage.setItem('token', data.token);
@@ -55,21 +55,22 @@ const StepOne = () => {
                 onChangeText={setEmail}
             />
 
-            <View style={{ position: 'relative', marginBottom: 10 }}>
-                <Text style={styles.label}>Contraseña</Text>
+            <Text style={styles.label}>Contraseña</Text>
+            <View style={styles.passwordContainer}>
                 <TextInput
-                    style={styles.input}
+                    style={styles.passwordInput}
                     placeholder="Ingrese su contraseña"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
-                    onPress={() => setShowPassword(!showPassword)}
-                    style={{ position: 'absolute', right: 15, top: 0, bottom: 0, justifyContent: 'center' }}
-                >
-                    <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#555" />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <Ionicons
+                        name={showPassword ? "eye-off" : "eye"}
+                        size={20}
+                        color="#555"
+                    />
                 </TouchableOpacity>
             </View>
 
@@ -88,10 +89,6 @@ const StepOne = () => {
 
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Iniciar sesión</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.googleButton}>
-                <Text style={styles.googleButtonText}>G  Google</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push('/register/step2')}>
@@ -164,6 +161,21 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 15,
         textDecorationLine: 'underline'
+    },
+    passwordContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        backgroundColor: "#f9f9f9",
+        marginBottom: 10,
+    },
+    passwordInput: {
+        flex: 1,
+        paddingRight: 10, // espacio para que no se solape con el ícono
     }
 });
 

@@ -225,7 +225,7 @@ const ProfileScreen = () => {
           <View style={styles.headerContent}>
             <Ionicons name="person-circle-outline" size={120} color="#FFFFFF" />
             <Text style={styles.nameText}>
-              {user?.name || "Nombre no disponible"}
+              {user?.alias || "Nombre no disponible"}
             </Text>
             <Text style={styles.usernameText}>
               {user?.email || "Email no disponible"}

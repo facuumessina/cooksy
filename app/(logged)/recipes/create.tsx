@@ -21,28 +21,6 @@ import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOp
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-  // Handler para crear la receta y enviarla al backend
-  const handleCreateRecipe = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      await axios.post(
-        'http://TU_IP_LOCAL:3000/recipes', // cambia TU_IP_LOCAL por tu IP o localhost si usas el emulador
-        {
-          nombre: recipeName,
-          tipo: recipeType,
-          ingredientes: ingredientsList,
-          instrucciones: instructionsList
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-      router.push('/(logged)/(tabs)');
-    } catch (error: any) {
-      console.error('Error al crear receta:', error.response?.data || error.message);
-      alert('No se pudo crear la receta.');
-    }
-  };
 
 interface ScannedProduct {
   product_name: string;
@@ -82,6 +60,52 @@ export default function CreateRecipe() {
   const [recipeType, setRecipeType] = useState('');
   const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '' }]);
   const [instructionsList, setInstructionsList] = useState(['']);
+
+  // Handler para crear la receta y enviarla al backend
+  const handleCreateRecipe = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const userId = await AsyncStorage.getItem('userId');
+
+      const ingredientesMapped = ingredientsList.map(item => ({
+        nombre: item.name,
+        cantidad: item.amount
+      }));
+
+      const instruccionesMapped = instructionsList.map((desc, idx) => ({
+        paso: idx + 1,
+        descripcion: desc,
+        multimedia: []
+      }));
+
+      console.log('Payload que se enviará:', {
+        nombre: recipeName,
+        tipo: recipeType,
+        ingredientes: ingredientesMapped,
+        instrucciones: instruccionesMapped,
+        autor: userId
+      });
+
+      await axios.post(
+        'http://192.168.0.59:3000/recipes',
+        {
+          nombre: recipeName,
+          tipo: recipeType,
+          ingredientes: ingredientesMapped,
+          instrucciones: instruccionesMapped,
+          autor: userId
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      router.push('/(logged)/(tabs)');
+    } catch (error: any) {
+      console.error('Error al crear receta:', error.response?.data || error.message);
+      alert('No se pudo crear la receta.');
+    }
+  };
 
   const addIngredientRow = () => {
     setIngredientsList([...ingredientsList, { name: '', amount: '' }]);
@@ -375,7 +399,7 @@ export default function CreateRecipe() {
   }, [updateQuantity]);
 
 
-   
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
