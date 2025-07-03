@@ -21,7 +21,12 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
-      router.replace('/register/step1'); // fuerza a que siempre arranque en register
+      const hasUser = false; // TODO: replace with real user check from context or storage
+      if (hasUser) {
+        router.replace('/(logged)/');
+      } else {
+        router.replace('/register/step1');
+      }
     }
   }, [loaded]);
 

@@ -58,7 +58,7 @@ const StepOne = () => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.push('/(logged)')}>
+            <TouchableOpacity style={styles.button} onPress={() => router.replace('/(logged)')}>
                 <Text style={styles.buttonText}>Iniciar sesión</Text>
             </TouchableOpacity>
 
