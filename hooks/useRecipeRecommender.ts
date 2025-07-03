@@ -1,8 +1,8 @@
-import { DietaryRestriction, FoodCategory, Goal } from "@/types/enums";
+import { DietaryRestriction, Goal } from "@/types/enums";
 import {
+    Ingredient,
     Recipe,
-    User,
-    Ingredient
+    User
 } from "@/types/types";
 
 export class RecipeRecommender {

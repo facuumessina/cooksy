@@ -1,5 +1,5 @@
 // constants/categoryImages.ts
-import { FoodCategory, Cuisine } from '@/types/enums';
+import { Cuisine, FoodCategory } from '@/types/enums';
 
 export const FOOD_CATEGORY_IMAGES: Record<FoodCategory, any> = {
   [FoodCategory.VEGETABLES]: require('@/assets/images/categories/vegetables.png'),

@@ -1,11 +1,10 @@
-import React from 'react';
-import { Animated, Platform } from 'react-native';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
 import { ActivityLevel } from '@/types/enums';
-import { translateActivityLevel } from '@/utils/enum-translations';
 import { UserMeasurements } from '@/types/types';
+import { translateActivityLevel } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { Animated, StyleSheet, Text, TextInput, View } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 
 interface MeasurementsFormProps {
     measurements: UserMeasurements;

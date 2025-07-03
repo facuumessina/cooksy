@@ -1,15 +1,15 @@
-import React, { useState, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  FlatList, 
-  TouchableOpacity, 
-  Modal, 
-  StyleSheet 
-} from 'react-native';
 import { Ingredient } from '@/types/types';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useCallback, useState } from 'react';
+import {
+    FlatList,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 interface SearchIngredientModalProps {
   visible: boolean;

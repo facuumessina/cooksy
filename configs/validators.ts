@@ -1,11 +1,11 @@
 import {
-    FoodUnit,
-    FoodCategory,
-    DietaryRestriction,
     Cuisine,
     CulinaryCategory,
-    NutritionalProperty,
-    DietType
+    DietaryRestriction,
+    DietType,
+    FoodCategory,
+    FoodUnit,
+    NutritionalProperty
 } from '@/types/enums';
 
 // Helper function para validar enums

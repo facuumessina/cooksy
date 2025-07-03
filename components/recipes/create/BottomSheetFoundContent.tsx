@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import React, { useEffect } from 'react';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { Ionicons } from '@expo/vector-icons';
-import { 
+import {
     Ingredient,
 } from '@/types/types';
+import { Ionicons } from '@expo/vector-icons';
+import { BottomSheetView } from '@gorhom/bottom-sheet';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface BottomSheetFoundContentProps {
     scannedProduct: any;

@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import { Ingredient } from "@/types/types";
 import { FoodCategory } from '@/types/enums';
+import { Ingredient } from "@/types/types";
+import { useCallback, useState } from 'react';
 
 interface MatchResult {
     ingredient: Ingredient;

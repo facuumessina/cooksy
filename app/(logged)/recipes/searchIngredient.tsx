@@ -1,22 +1,22 @@
 // components/recipes/create/SearchIngredientSheet.tsx
-import React, { useState, useCallback } from 'react';
+import { envConfig } from '@/configs/envConfig';
+import { useFetch } from '@/hooks/useFetch';
+import { useIngredientMapper } from '@/hooks/useIngredientMapper';
+import { Ingredient } from '@/types/types';
+import { debounce } from '@/utils/debounce';
+import { Ionicons } from '@expo/vector-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, { useCallback, useState } from 'react';
 import {
-    View,
+    ActivityIndicator,
+    FlatList,
+    Image,
+    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    StyleSheet,
-    Image,
-    FlatList,
-    ActivityIndicator
+    View
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useFetch } from '@/hooks/useFetch';
-import { useIngredientMapper } from '@/hooks/useIngredientMapper';
-import { envConfig } from '@/configs/envConfig';
-import { Ingredient } from '@/types/types';
-import { debounce } from '@/utils/debounce';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 interface SearchIngredientSheetProps {
     bottomSheetRef: React.RefObject<BottomSheetModal>;

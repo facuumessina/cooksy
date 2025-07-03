@@ -3,9 +3,9 @@ import { STORAGE_KEYS } from "@/service/storage";
 import { ActivityLevel } from "@/types/enums";
 import { User } from "@/types/types";
 import {
-  translateCuisine,
-  translateDietaryRestriction,
-  translateFood
+    translateCuisine,
+    translateDietaryRestriction,
+    translateFood
 } from "@/utils/enum-translations";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,14 +14,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
 import {
-  Alert,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useData } from "../../../context/DataProvider";
 

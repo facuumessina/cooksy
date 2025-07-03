@@ -1,22 +1,22 @@
-import React, { useState, useCallback, useRef } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    ScrollView,
-    Keyboard,
-    TouchableWithoutFeedback,
-    Image
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { envConfig } from '@/configs/envConfig';
 import { useData } from '@/context/DataProvider';
 import { Recipe } from '@/types/types';
 import { debounce } from '@/utils/debounce';
+import { translateCategory, translateCuisine } from '@/utils/enum-translations';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { envConfig } from '@/configs/envConfig';
-import { translateCuisine, translateCategory } from '@/utils/enum-translations';
+import React, { useCallback, useRef, useState } from 'react';
+import {
+    Image,
+    Keyboard,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from 'react-native';
 
 
 interface SearchDropdownProps {

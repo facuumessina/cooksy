@@ -1,5 +1,5 @@
 // utils/enumTranslations.ts
-import { DietaryRestriction, FoodCategory, Cuisine, Goal, FoodUnit, ActivityLevel, CulinaryCategory } from '@/types/enums';
+import { ActivityLevel, Cuisine, CulinaryCategory, DietaryRestriction, FoodCategory, FoodUnit, Goal } from '@/types/enums';
 import { Ingredient } from '@/types/types';
 
 export const translateFood = (category: FoodCategory): string => {
