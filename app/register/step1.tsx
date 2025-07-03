@@ -1,4 +1,5 @@
 import logo from '@/assets/images/logo.png'; // adjust path if needed
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -22,6 +23,7 @@ const StepOne = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log("TOKEN:", data.token); 
+                await AsyncStorage.setItem('token', data.token);
                 router.replace('/(logged)');
             } else {
                 const error = await response.json();

@@ -3,25 +3,25 @@ import { STORAGE_KEYS } from "@/service/storage";
 import { ActivityLevel } from "@/types/enums";
 import { User } from "@/types/types";
 import {
-    translateCuisine,
-    translateDietaryRestriction,
-    translateFood
+  translateCuisine,
+  translateDietaryRestriction,
+  translateFood
 } from "@/utils/enum-translations";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import {
-    Alert,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useData } from "../../../context/DataProvider";
 
@@ -128,6 +128,26 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const { user, updateUser } = useData();
 
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem(STORAGE_KEYS.TOKEN);
+      const response = await fetch(`http://192.168.0.59:3000/user/profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Error al cargar perfil');
+      const data = await response.json();
+      updateUser(data);
+    } catch (err) {
+      console.error("Error al traer perfil:", err);
+    }
+  };
+
+  fetchProfile();
+}, []);
+
   const handleLogout = async () => {
     try {
       // Usuario inicial sin preferencias ni datos
@@ -159,8 +179,7 @@ const ProfileScreen = () => {
       // Limpiar cualquier otra data relacionada al usuario
       await AsyncStorage.multiRemove([
         STORAGE_KEYS.USER, 
-        STORAGE_KEYS.FAVORITE_RECIPES, 
-        STORAGE_KEYS.SHOPPING_LIST, 
+        STORAGE_KEYS.FAVORITE_RECIPES,
         STORAGE_KEYS.RECOMMENDATIONS,
         STORAGE_KEYS.INGREDIENTS,
         STORAGE_KEYS.RECIPES

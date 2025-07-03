@@ -1,5 +1,5 @@
 // storageService.ts
-import { Ingredient, Recipe, ShoppingListItem, User } from "@/types/types";
+import { Ingredient, Recipe, User } from "@/types/types";
 import { transformIngredient, transformRecipe, transformUser } from '@/utils/data-transformations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
@@ -9,9 +9,9 @@ const STORAGE_KEYS = {
   INGREDIENTS: 'app_ingredients',
   RECIPES: 'app_recipes',
   USER: 'app_user',
+  TOKEN: 'app_token',
   RECOMMENDATIONS: 'app_recommendations',
-  FAVORITE_RECIPES: 'app_favorite_recipes',
-  SHOPPING_LIST: 'app_shopping_list',
+  FAVORITE_RECIPES: 'app_favorite_recipes'
 } as const;
 
 class StorageService {
@@ -147,24 +147,7 @@ export const useDataPersistence = () => {
     return await StorageService.saveData(STORAGE_KEYS.RECOMMENDATIONS, recommendations);
   };
 
-  const getShoppingList = async (): Promise<ShoppingListItem[]> => {
-    try {
-      const data = await AsyncStorage.getItem(STORAGE_KEYS.SHOPPING_LIST);
-      return data ? JSON.parse(data) : [];
-    } catch (error) {
-      console.error('Error loading shopping list:', error);
-      return [];
-    }
-  }
-
-  const saveShoppingList = async (items: ShoppingListItem[]): Promise<void> => {
-    try {
-      return await AsyncStorage.setItem(STORAGE_KEYS.SHOPPING_LIST, JSON.stringify(items));
-    } catch (error) {
-      console.error('Error saving shopping list:', error);
-      throw error;
-    }
-  }
+ 
 
   return {
     saveIngredients,
@@ -173,9 +156,7 @@ export const useDataPersistence = () => {
     saveRecommendations,
     saveFavoritesRecipes,
     getFavoritesRecipes,
-    getShoppingList,
-    getUser,
-    saveShoppingList
+    getUser
   };
 };
 

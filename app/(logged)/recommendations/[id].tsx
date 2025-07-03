@@ -3,7 +3,7 @@ import recipesData from '@/assets/data/recipes.json';
 import FavoriteButton from '@/components/FavoriteButton';
 import Toast from '@/components/Toast';
 import { useData } from '@/context/DataProvider';
-import { Ingredient, Recipe, ShoppingListItem } from '@/types/types';
+import { Ingredient, Recipe } from '@/types/types';
 import { translateFoodUnit } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -23,7 +23,6 @@ const RecipeDetailScreen = () => {
   const router = useRouter();
   const {
     currentRecipeIngredients,
-    addToShoppingList,
     user,
   } = useData();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -66,20 +65,9 @@ const RecipeDetailScreen = () => {
     );
   }
 
-  const handleAddToShoppingList = async () => {
-    if (!recipe || !missingIngredients.length) return;
+  
 
-    const shoppingItems: ShoppingListItem[] = missingIngredients.map(ingredient => ({
-      ingredient,
-      quantity: recipe.ingredients.find(i => i.id === ingredient.id)?.quantity || 0,
-      recipeId: recipe.id,
-      recipeName: recipe.name,
-      addedAt: new Date() // Agregamos la fecha de creación
-    }));
-
-    await addToShoppingList(shoppingItems);
-    setToastVisible(true);
-  };
+ 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -224,21 +212,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  addToShoppingListButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#E8F5E9',
-    padding: 12,
-    borderRadius: 12,
-    marginTop: 8,
-  },
-  addToShoppingListText: {
-    color: '#4CAF50',
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 8,
   },
   loadingText: {
     fontSize: 16,

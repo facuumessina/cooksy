@@ -1,5 +1,5 @@
 import { STORAGE_KEYS, useDataPersistence } from '@/service/storage';
-import { Ingredient, Recipe, ShoppingListItem, User } from "@/types/types";
+import { Ingredient, Recipe, User } from "@/types/types";
 import { transformIngredient, transformRecipe, transformUser } from '@/utils/data-transformations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from "react";
@@ -11,11 +11,8 @@ interface DataContextType {
   currentRecommendations: Recipe[];
   currentRecipeIngredients: Ingredient[];
   favouriteRecipes: Recipe[];
-  shoppingList: ShoppingListItem[];
   isInitialized: boolean;
   isLoading: boolean;
-  addToShoppingList: (items: ShoppingListItem[]) => Promise<void>;
-  removeFromShoppingList: (ingredientIds: string[]) => Promise<void>;
   toggleFavourite: (recipe: Recipe) => Promise<void>;
   setCurrentRecipeIngredientsState: React.Dispatch<React.SetStateAction<Ingredient[]>>;
   setCurrentRecommendations: (recipes: Recipe[]) => void;
@@ -36,7 +33,6 @@ export const DataProvider: React.FC<{
   const [favouriteRecipes, setFavouriteRecipes] = useState<Recipe[]>([]);
   const [currentRecipeIngredients, setCurrentRecipeIngredients] = useState<Ingredient[]>([]);
   const [currentRecommendations, setCurrentRecommendations] = useState<Recipe[]>([]);
-  const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const storage = useDataPersistence();
@@ -51,20 +47,17 @@ export const DataProvider: React.FC<{
         storedRecipes,
         storedUser,
         storedFavorites,
-        storedShoppingList
       ] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEYS.INGREDIENTS),
         AsyncStorage.getItem(STORAGE_KEYS.RECIPES),
         AsyncStorage.getItem(STORAGE_KEYS.USER),
         AsyncStorage.getItem(STORAGE_KEYS.FAVORITE_RECIPES),
-        AsyncStorage.getItem(STORAGE_KEYS.SHOPPING_LIST)
       ]);
 
       let validIngredients: Ingredient[] = [];
       let validRecipes: Recipe[] = [];
       let validUser: User | null = null;
       let validFavorites: Recipe[] = [];
-      let validShoppingList: ShoppingListItem[] = [];
 
       // Procesar ingredientes
       if (storedIngredients) {
@@ -107,16 +100,12 @@ export const DataProvider: React.FC<{
         );
       }
 
-      // Procesar lista de compras
-      if (storedShoppingList) {
-        validShoppingList = JSON.parse(storedShoppingList);
-      }
+      
 
       setIngredients(validIngredients);
       setRecipesState(validRecipes);
       setUser(validUser);
       setFavouriteRecipes(validFavorites);
-      setShoppingList(validShoppingList);
       setIsInitialized(true);
 
     } catch (error) {
@@ -183,42 +172,11 @@ export const DataProvider: React.FC<{
     }
   };
 
-  const getShoppingList = async () => {
-    try {
-      const storedList = await storage.getShoppingList();
-      setShoppingList(storedList);
-    } catch (error) {
-      console.error('Error getting shopping list:', error);
-    }
-  };
+  
 
-  const addToShoppingList = async (items: ShoppingListItem[]) => {
-    try {
-      const currentIds = new Set(shoppingList.map(item => item.ingredient.id));
-      const newItems = items.filter(item => !currentIds.has(item.ingredient.id));
-      const updatedList = [...shoppingList, ...newItems];
+  
 
-      // Guardar en AsyncStorage
-      await AsyncStorage.setItem(STORAGE_KEYS.SHOPPING_LIST, JSON.stringify(updatedList));
-      setShoppingList(updatedList);
-    } catch (error) {
-      console.error('Error adding to shopping list:', error);
-    }
-  };
-
-  const removeFromShoppingList = async (ingredientIds: string[]) => {
-    try {
-      const updatedList = shoppingList.filter(
-        item => item.ingredient.id !== undefined && !ingredientIds.includes(item.ingredient.id.toString())
-      );
-
-      // Guardar en AsyncStorage
-      await AsyncStorage.setItem(STORAGE_KEYS.SHOPPING_LIST, JSON.stringify(updatedList));
-      setShoppingList(updatedList);
-    } catch (error) {
-      console.error('Error removing from shopping list:', error);
-    }
-  };
+  
 
   useEffect(() => {
     loadInitialData();
@@ -253,12 +211,6 @@ export const DataProvider: React.FC<{
       await storage.saveUser(updatedUser);
       setUser(updatedUser);
 
-      // No modificamos currentRecipeIngredients aquí
-
-      if (ingredient.id !== undefined) {
-        await removeFromShoppingList([ingredient.id.toString()]);
-      }
-
     } catch (error) {
       throw new Error('Error marking ingredient as owned');
     }
@@ -277,15 +229,11 @@ export const DataProvider: React.FC<{
     currentRecipeIngredients,
     isInitialized,
     isLoading,
-    shoppingList,
     markIngredientAsOwned,
     saveIngredients,
-    removeFromShoppingList,
     setCurrentRecipeIngredientsState: setCurrentRecipeIngredients,
     setCurrentRecommendations,
-    addToShoppingList,
     saveRecipes,
-    getShoppingList,
     getFavoritesRecipes,
     updateUser,
     toggleFavourite,

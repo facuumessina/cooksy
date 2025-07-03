@@ -13,10 +13,6 @@ export interface Ingredient {
     keywords: string[];
 }
 
-export interface ShoppingListItem {
-    ingredient: Ingredient;
-    quantity: number;
-}
 
 export interface Recipe {
     id: string;

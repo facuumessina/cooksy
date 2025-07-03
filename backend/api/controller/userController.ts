@@ -30,3 +30,10 @@ export const deleteSavedRecipe = async (req: Request, res: Response) => {
   await user.save();
   res.status(204).end();
 };
+
+export const getProfile = async (req: Request, res: Response) => {
+  const userId = req.userId; // obtenido del middleware auth
+  const user = await Usuario.findById(userId).select('alias email nombre apellido fechaNacimiento');
+  if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+  res.json(user);
+};
