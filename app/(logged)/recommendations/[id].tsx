@@ -8,7 +8,7 @@ import { translateFoodUnit } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const imageMap = {
   "1.jpg": require('@/assets/images/cuisines/carbonara.jpg'),
@@ -29,6 +29,8 @@ const RecipeDetailScreen = () => {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [missingIngredients, setMissingIngredients] = useState<Ingredient[]>([]);
   const [toastVisible, setToastVisible] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
     const foundRecipe = recipesData.find(r => r.id === id) || null;
@@ -126,6 +128,55 @@ const RecipeDetailScreen = () => {
                   <Text style={styles.stepText}>{step}</Text>
                 </View>
               ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Valorar</Text>
+            <View style={{ flexDirection: 'row', marginVertical: 8 }}>
+              {[1,2,3,4,5].map((star) => (
+                <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                  <Ionicons
+                    name={star <= rating ? "star" : "star-outline"}
+                    size={32}
+                    color="#FFA500"
+                    style={{ marginHorizontal: 4 }}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Comentarios</Text>
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 8,
+              paddingHorizontal: 12,
+              marginBottom: 8,
+            }}>
+              <TextInput
+                style={{
+                  flex: 1,
+                  fontSize: 16,
+                  color: '#333',
+                  paddingVertical: 8,
+                }}
+                placeholder="Escribí tu comentario..."
+                value={comment}
+                onChangeText={setComment}
+                multiline
+              />
+              <TouchableOpacity onPress={() => {
+                console.log(`Comentario: ${comment}, Rating: ${rating}`);
+                setComment('');
+                setRating(0);
+              }}>
+                <Ionicons name="send" size={24} color="#FFA500" />
+              </TouchableOpacity>
             </View>
           </View>
         </View>
