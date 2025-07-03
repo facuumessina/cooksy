@@ -1,0 +1,31 @@
+{
+    "id": 1,
+    "name": "John Doe",
+    "email": "johndoe@gmail.com",
+    "image": "userProfile.jpg",
+    "onboarding": {
+        "completed": "false",
+        "step": 0
+    },
+    "preferences": {
+        "dietaryRestrictions": [
+        ],
+        "goals": [
+        ],
+        "preferredCategories": [
+        ],
+        "preferredCuisines": [
+        ]
+    },
+    "measurements": {
+        "weight": null,
+        "height": null,
+        "age": null,
+        "activityLevel": null,
+        "bmr": null,
+        "dailyCalories": null
+    },
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "lastLogin": "2024-01-01T00:00:00.000Z"
+}

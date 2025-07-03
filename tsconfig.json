@@ -5,8 +5,15 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
-    "rootDir": ".",
-    "outDir": "dist"
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.jsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }
