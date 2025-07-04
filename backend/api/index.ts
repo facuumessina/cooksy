@@ -16,7 +16,7 @@ mongoose
   .then(() => console.log('✅ Conectado a MongoDB'))
   .catch(err => console.error('❌ Error al conectar MongoDB:', err));
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 app.use('/auth', authRoutes);
