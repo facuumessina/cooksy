@@ -18,6 +18,7 @@ mongoose
 
 app.use(cors({ origin: '*' }));
 app.use(express.json());
+app.options('*', cors());
 
 app.use('/auth', authRoutes);
 app.use('/recipes', recipeRoutes);
