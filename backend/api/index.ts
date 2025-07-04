@@ -28,5 +28,5 @@ app.get('/test', (_req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`API corriendo en http://localhost:${port}`);
+  console.log(`API corriendo en ${process.env.PORT}`);
 });
