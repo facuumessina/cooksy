@@ -87,7 +87,7 @@ export default function CreateRecipe() {
       });
 
       await axios.post(
-        'http://192.168.0.59:3000/recipes',
+        'https://cooksy-p77y.onrender.com/recipes',
         {
           nombre: recipeName,
           tipo: recipeType,

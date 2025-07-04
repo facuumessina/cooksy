@@ -14,7 +14,7 @@ const StepOne = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.0.59:3000/auth/login', {
+            const response = await fetch('https://cooksy-p77y.onrender.com/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

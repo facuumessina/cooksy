@@ -145,7 +145,7 @@ export default function Home() {
     // Mover la función loadRecommendations fuera del useEffect para reutilización
     const loadRecommendations = async () => {
         try {
-            const response = await fetch('http://192.168.0.59:3000/recipes/latest');
+            const response = await fetch('https://cooksy-p77y.onrender.com/recipes/latest');
             if (!response.ok) throw new Error('Error al cargar recetas');
             const data = await response.json();
             setRecommendations(data);

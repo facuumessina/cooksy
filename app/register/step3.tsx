@@ -51,7 +51,7 @@ export default function Step3() {
         if (!isValid) return;
 
         try {
-            const response = await fetch('http://192.168.0.59:3000/auth/register-step2', {
+            const response = await fetch('https://cooksy-p77y.onrender.com/auth/register-step2', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

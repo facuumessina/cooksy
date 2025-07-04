@@ -22,7 +22,7 @@ export default function Step2() {
         }
 
         try {
-            const response = await fetch('http://192.168.0.59:3000/auth/register-step1', {
+            const response = await fetch('https://cooksy-p77y.onrender.com/auth/register-step1', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, alias })
