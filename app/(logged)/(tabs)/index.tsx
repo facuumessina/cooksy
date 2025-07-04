@@ -1,4 +1,3 @@
-import recipesData from '@/assets/data/recipes.json';
 import SearchBar from '@/components/Search';
 import { useData } from '@/context/DataProvider';
 import { Cuisine, DietaryRestriction } from '@/types/enums';
@@ -10,7 +9,6 @@ import React, { useEffect, useState } from 'react';
 import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-const recipesDataTyped: Recipe[] = recipesData as Recipe[];
 
 // Filtros rápidos para el ScrollView horizontal
 const QUICK_FILTERS = {
@@ -102,9 +100,9 @@ import type { ImageSourcePropType } from 'react-native';
 
 // Mapeo de imágenes locales
 const imageMap = {
-  "1.jpg": require('@/assets/images/cuisines/carbonara.jpg'),
-  "2.jpg": require('@/assets/images/cuisines/guacamole.jpeg'),
-  "3.webp": require('@/assets/images/cuisines/mediterranean.webp'),
+    "1.jpg": require('@/assets/images/cuisines/carbonara.jpg'),
+    "2.jpg": require('@/assets/images/cuisines/guacamole.jpeg'),
+    "3.webp": require('@/assets/images/cuisines/mediterranean.webp'),
 };
 const FoodItem = ({ title, imageUrl, id, ingredientsCount }: { id: string, title: string; imageUrl: ImageSourcePropType, ingredientsCount: number }) => (
     <TouchableOpacity
@@ -145,11 +143,18 @@ export default function Home() {
     });
 
     useEffect(() => {
-        const loadRecommendations = () => {
-            const top3Recipes = recipesDataTyped.filter(r => ["1", "2", "3"].includes(r.id));
-            setRecommendations(top3Recipes);
-            setFilteredRecipes(top3Recipes);
-            setIsCalculating(false);
+        const loadRecommendations = async () => {
+            try {
+                const response = await fetch('http://192.168.0.59:3000/recipes/latest');
+                if (!response.ok) throw new Error('Error al cargar recetas');
+                const data = await response.json();
+                setRecommendations(data);
+                setFilteredRecipes(data);
+            } catch (err) {
+                console.error("Error al traer recetas:", err);
+            } finally {
+                setIsCalculating(false);
+            }
         };
 
         loadRecommendations();
@@ -232,14 +237,25 @@ export default function Home() {
                 </TouchableOpacity>
             </View>
             <View>
-                {filteredRecipes.map(recipe => (
-                    <FoodItem
-                        key={recipe.id}
-                        id={recipe.id}
-                        title={recipe.name}
-                        imageUrl={imageMap[recipe.image as keyof typeof imageMap]}
-                        ingredientsCount={recipe.ingredients.length}
-                    />
+                {filteredRecipes?.map(recipe => (
+                    <TouchableOpacity
+                        key={recipe._id}
+                        onPress={() => router.push(`/recommendations/${recipe._id}`)}
+                        style={styles.foodItem}
+                    >
+                        <View style={[styles.foodImage, styles.imagePlaceholder]} />
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginTop: 4 }}>
+                            <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>
+                                {recipe.nombre}
+                            </Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Ionicons name="restaurant-outline" size={16} color="#666" style={{ marginRight: 4 }} />
+                                <Text style={{ fontSize: 14, color: '#666' }}>
+                                    {recipe.ingredientes?.length || 0}
+                                </Text>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
                 ))}
             </View>
         </View>

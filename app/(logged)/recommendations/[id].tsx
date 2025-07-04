@@ -1,20 +1,12 @@
-import ingredientsData from '@/assets/data/ingredients.json';
-import recipesData from '@/assets/data/recipes.json';
 import FavoriteButton from '@/components/FavoriteButton';
 import Toast from '@/components/Toast';
 import { useData } from '@/context/DataProvider';
 import { Ingredient, Recipe } from '@/types/types';
-import { translateFoodUnit } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-const imageMap = {
-  "1.jpg": require('@/assets/images/cuisines/carbonara.jpg'),
-  "2.jpg": require('@/assets/images/cuisines/guacamole.jpeg'),
-  "3.webp": require('@/assets/images/cuisines/mediterranean.webp'),
-};
 
 const width = Dimensions.get('window').width;
 
@@ -31,19 +23,28 @@ const RecipeDetailScreen = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
 
-  useEffect(() => {
-    const foundRecipe = recipesData.find(r => r.id === id) || null;
-    setRecipe(foundRecipe);
-
-    if (foundRecipe) {
-      const missing = foundRecipe.ingredients.filter((ingredient) => {
-        const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
-        const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
-        return !isInCurrentRecipe && !isInUserIngredients;
-      });
-      setMissingIngredients(missing || []);
+useEffect(() => {
+  const fetchRecipe = async () => {
+    try {
+      const response = await fetch(`http://192.168.0.59:3000/recipes/${id}`);
+      if (!response.ok) throw new Error('Error al cargar receta');
+      const data = await response.json();
+      setRecipe(data);
+      if (data) {
+        const missing = data.ingredients.filter((ingredient: Ingredient) => {
+          const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
+          const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
+          return !isInCurrentRecipe && !isInUserIngredients;
+        });
+        setMissingIngredients(missing || []);
+      }
+    } catch (err) {
+      console.error("Error al traer receta:", err);
     }
-  }, [id]);
+  };
+
+  fetchRecipe();
+}, [id]);
 
   const isIngredientMissing = (ingredient: Ingredient): boolean => {
     const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
@@ -79,10 +80,9 @@ const RecipeDetailScreen = () => {
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <FavoriteButton recipe={recipe} style={styles.favouriteButton} />
-        <Image
-          source={imageMap[recipe.image]}
-          style={styles.recipeImage}
-        />
+        <View style={[styles.recipeImage, {backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center'}]}>
+          <Ionicons name="fast-food-outline" size={64} color="#999" />
+        </View>
 
         <View style={styles.contentContainer}>
           <Text style={styles.title}>{recipe.name}</Text>
@@ -90,15 +90,11 @@ const RecipeDetailScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ingredientes</Text>
             <View style={styles.sectionContainer}>
-              {recipe.ingredients.map((ingredient, index) => (
+              {recipe.ingredientes.map((ingredient, index) => (
                 <View key={index} style={styles.ingredientRow}>
-                  <Ionicons
-                    name="ellipse"
-                    size={20}
-                    color="#333"
-                  />
+                  <Ionicons name="ellipse" size={20} color="#333" />
                   <Text style={styles.ingredientText}>
-                    {JSON.stringify(ingredientsData.find(i => Number(i.id) === Number(ingredient.id)))} - {ingredient.quantity} {translateFoodUnit(ingredient)}
+                    {ingredient.nombre} - {ingredient.cantidad}
                   </Text>
                 </View>
               ))}
@@ -108,12 +104,12 @@ const RecipeDetailScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Preparación</Text>
             <View style={styles.sectionContainer}>
-              {recipe.steps.map((step, index) => (
+              {recipe.instrucciones.map((step, index) => (
                 <View key={index} style={styles.stepRow}>
                   <View style={styles.stepBullet}>
-                    <Text style={styles.stepNumber}>{index + 1}</Text>
+                    <Text style={styles.stepNumber}>{step.paso}</Text>
                   </View>
-                  <Text style={styles.stepText}>{step}</Text>
+                  <Text style={styles.stepText}>{step.descripcion}</Text>
                 </View>
               ))}
             </View>

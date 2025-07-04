@@ -6,7 +6,7 @@ import {
     createRecipe,
     deleteRecipe,
     getComments,
-    getLatestRecipes,
+    getLatestApprovedRecipes,
     getRecipeById,
     searchRecipes,
     updateRecipe
@@ -14,7 +14,7 @@ import {
 
 const router = Router();
 
-router.get('/latest', getLatestRecipes);
+router.get('/latest', getLatestApprovedRecipes);
 router.get('/search',  searchRecipes);
 router.post('/',       createRecipe);
 

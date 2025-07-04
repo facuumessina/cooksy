@@ -1,5 +1,6 @@
 // app/api/controller/recipeController.ts
 import type { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Receta from '../model/Receta';
 
 export async function getLatestRecipes(_req: Request, res: Response) {
@@ -39,6 +40,10 @@ export async function createRecipe(req: Request, res: Response) {
 }
 
 export async function getRecipeById(req: Request, res: Response) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ message: 'ID inválido' });
+  }
+
   const receta = await Receta.findById(req.params.id).populate('autor', 'email alias nombre');
   if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
   res.json(receta);
@@ -94,4 +99,11 @@ export async function adjustRecipe(req: Request, res: Response) {
   }));
 
   res.json({ porciones: porciones || 1, ingredientes: ajustados });
+}
+export async function getLatestApprovedRecipes(_req: Request, res: Response) {
+  const latest = await Receta.find({ estado: 'aprobada' })
+    .sort({ createdAt: -1 })
+    .limit(3)
+    .populate('autor', 'alias email nombre');
+  res.json(latest);
 }
