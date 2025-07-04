@@ -30,7 +30,7 @@ export async function searchRecipes(req: Request, res: Response) {
 
 export async function createRecipe(req: Request, res: Response) {
   try {
-    const receta = new Receta({ ...req.body, estado: 'pendiente' });
+    const receta = new Receta({ ...req.body, estado: 'aprobada' });
     await receta.save();
     res.status(201).json(receta);
   } catch (e: any) {

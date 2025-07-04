@@ -4,7 +4,7 @@ import { Cuisine, DietaryRestriction } from '@/types/enums';
 import { Recipe } from '@/types/types';
 import { translateCuisine, translateDietaryRestriction } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
-import { router, useRouter } from 'expo-router';
+import { router, useFocusEffect, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import 'react-native-reanimated';
@@ -142,21 +142,22 @@ export default function Home() {
         cuisines: new Set()
     });
 
-    useEffect(() => {
-        const loadRecommendations = async () => {
-            try {
-                const response = await fetch('http://192.168.0.59:3000/recipes/latest');
-                if (!response.ok) throw new Error('Error al cargar recetas');
-                const data = await response.json();
-                setRecommendations(data);
-                setFilteredRecipes(data);
-            } catch (err) {
-                console.error("Error al traer recetas:", err);
-            } finally {
-                setIsCalculating(false);
-            }
-        };
+    // Mover la función loadRecommendations fuera del useEffect para reutilización
+    const loadRecommendations = async () => {
+        try {
+            const response = await fetch('http://192.168.0.59:3000/recipes/latest');
+            if (!response.ok) throw new Error('Error al cargar recetas');
+            const data = await response.json();
+            setRecommendations(data);
+            setFilteredRecipes(data);
+        } catch (err) {
+            console.error("Error al traer recetas:", err);
+        } finally {
+            setIsCalculating(false);
+        }
+    };
 
+    useEffect(() => {
         loadRecommendations();
 
         return () => {
@@ -165,6 +166,12 @@ export default function Home() {
             setFilteredRecipes([]);
         };
     }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            loadRecommendations();
+        }, [])
+    );
 
     const toggleFilter = (group: keyof typeof activeFilters, value: DietaryRestriction | Cuisine) => {
         setActiveFilters(prev => {

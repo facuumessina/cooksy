@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, { useEffect } from "react";
 import {
   Alert,
@@ -154,6 +154,36 @@ const ProfileScreen = () => {
 
     fetchProfile();
   }, []);
+
+  // Recargar perfil cada vez que se vuelve a la pantalla
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchProfile = async () => {
+        try {
+          const userId = await AsyncStorage.getItem('userId');
+          console.log("USER ID desde AsyncStorage:", userId);
+
+          if (!userId) throw new Error('No se encontró el ID del usuario');
+
+          const url = `http://192.168.0.59:3000/users/${userId}`;
+          console.log("Haciendo fetch a:", url);
+
+          const response = await fetch(url);
+          console.log("STATUS DEL RESPONSE:", response.status);
+
+          if (!response.ok) throw new Error('Error al cargar perfil');
+
+          const data = await response.json();
+          console.log("DATA DEL PERFIL:", data);
+          updateUser(data);
+        } catch (err) {
+          console.error("Error al traer perfil:", err);
+        }
+      };
+
+      fetchProfile();
+    }, [])
+  );
 
   const handleLogout = async () => {
     try {
