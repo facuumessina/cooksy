@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "frantron01",
     "name": "cooksy",
     "slug": "cooksy",
     "newArchEnabled": true,
@@ -53,7 +54,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "27b09d9e-5662-4fff-8d38-ff6a796e8208"
+        "projectId": "7cf2912a-95e5-44e9-bcda-1587138b586c"
       }
     }
   }

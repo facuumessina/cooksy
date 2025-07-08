@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface DataContextType {
+  [x: string]: never[];
   ingredients: Ingredient[];
   recipes: Recipe[];
   user: User | null;
@@ -257,3 +258,4 @@ const useData = () => {
 }
 
 export { useData };
+
