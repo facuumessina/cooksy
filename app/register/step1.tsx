@@ -22,6 +22,7 @@ const StepOne = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const checkScale = useRef(new Animated.Value(0)).current;
 
   const spinAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0.3)).current;
@@ -76,6 +77,14 @@ const StepOne = () => {
       opacityAnim.stopAnimation();
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    Animated.timing(checkScale, {
+      toValue: rememberMe ? 1 : 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  }, [rememberMe]);
 
   const spin = spinAnim.interpolate({
     inputRange: [0, 1],
@@ -190,8 +199,15 @@ const StepOne = () => {
               borderColor: "#333",
               backgroundColor: rememberMe ? "#F26E04" : "transparent",
               marginRight: 8,
+              justifyContent: "center",
+              alignItems: "center",
             }}
-          />
+          >
+            <Animated.View style={{ transform: [{ scale: checkScale }] }}>
+              <Ionicons name="checkmark" size={14} color="#fff" />
+            </Animated.View>
+          </View>
+
           <Text>Recordar esta cuenta</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push("/forgotPassword")}>

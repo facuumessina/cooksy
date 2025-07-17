@@ -1,7 +1,19 @@
+import logo from '@/assets/images/logo.png';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { FlatList, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    Animated,
+    Easing,
+    FlatList,
+    Modal,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 export default function Step3() {
     const router = useRouter();
@@ -13,7 +25,6 @@ export default function Step3() {
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
     const [showPicker, setShowPicker] = useState(false);
-
     const [errors, setErrors] = useState({ nombre: '', apellido: '', fecha: '', password: '', repeat: '' });
 
     const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -24,8 +35,48 @@ export default function Step3() {
     const [selectedMonth, setSelectedMonth] = useState(1);
     const [selectedYear, setSelectedYear] = useState(2000);
 
+    const [isLoading, setIsLoading] = useState(false);
+    const spinAnim = useRef(new Animated.Value(0)).current;
+    const opacityAnim = useRef(new Animated.Value(0.3)).current;
+
+    useEffect(() => {
+        if (isLoading) {
+            Animated.loop(
+                Animated.timing(spinAnim, {
+                    toValue: 1,
+                    duration: 1500,
+                    easing: Easing.linear,
+                    useNativeDriver: true,
+                })
+            ).start();
+
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(opacityAnim, {
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(opacityAnim, {
+                        toValue: 0.3,
+                        duration: 1000,
+                        useNativeDriver: true,
+                    }),
+                ])
+            ).start();
+        } else {
+            spinAnim.stopAnimation();
+            opacityAnim.stopAnimation();
+        }
+    }, [isLoading]);
+
+    const spin = spinAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg'],
+    });
+
     const confirmDate = () => {
-        setFechaNacimiento(`${selectedDay.toString().padStart(2,'0')}/${selectedMonth.toString().padStart(2,'0')}/${selectedYear}`);
+        setFechaNacimiento(`${selectedDay.toString().padStart(2, '0')}/${selectedMonth.toString().padStart(2, '0')}/${selectedYear}`);
         setShowPicker(false);
     };
 
@@ -50,6 +101,7 @@ export default function Step3() {
         setErrors(newErrors);
         if (!isValid) return;
 
+        setIsLoading(true);
         try {
             const response = await fetch('https://cooksy-p77y.onrender.com/auth/register-step2', {
                 method: 'POST',
@@ -72,11 +124,28 @@ export default function Step3() {
         } catch (err) {
             console.error(err);
             alert('Error de conexión');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <SafeAreaView style={styles.container}>
+            {isLoading && (
+                <View style={styles.loadingOverlay}>
+                    <Animated.Image
+                        source={logo}
+                        style={[
+                            styles.loadingLogo,
+                            {
+                                transform: [{ rotate: spin }],
+                                opacity: opacityAnim,
+                            },
+                        ]}
+                    />
+                </View>
+            )}
+
             <TouchableOpacity
                 onPress={() => {
                     router.replace('/register/step2');
@@ -84,6 +153,7 @@ export default function Step3() {
                 style={{ position: "absolute", left: 20, top: 30 }}>
                 <Ionicons name="arrow-back" size={24} color="#f57c00" />
             </TouchableOpacity>
+
             <Text style={styles.title}>Información personal</Text>
             <Text style={styles.subtitle}>Por favor ingrese sus datos para continuar</Text>
 
@@ -102,7 +172,10 @@ export default function Step3() {
             {errors.apellido ? <Text style={styles.error}>{errors.apellido}</Text> : null}
 
             <Text style={styles.label}>Fecha de nacimiento</Text>
-            <TouchableOpacity style={[styles.input, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]} onPress={() => setShowPicker(true)}>
+            <TouchableOpacity
+                style={[styles.input, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}
+                onPress={() => setShowPicker(true)}
+            >
                 <Text>{fechaNacimiento || 'DD/MM/AAAA'}</Text>
                 <Ionicons name="calendar-outline" size={20} color="#555" />
             </TouchableOpacity>
@@ -169,5 +242,21 @@ const styles = StyleSheet.create({
     pickerContainer: { backgroundColor: '#fff', padding: 20, borderRadius: 10, alignItems: 'center' },
     pickerItem: { margin: 5, padding: 10 },
     selected: { backgroundColor: '#eee', borderRadius: 5 },
-    error: { color: 'red', fontSize: 12, marginTop: 2 }
+    error: { color: 'red', fontSize: 12, marginTop: 2 },
+    loadingOverlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(255,255,255,0.8)",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1000,
+    },
+    loadingLogo: {
+        width: 120,
+        height: 120,
+        resizeMode: "contain",
+    },
 });
