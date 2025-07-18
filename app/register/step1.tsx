@@ -108,6 +108,7 @@ const StepOne = () => {
         const data = await response.json();
         await AsyncStorage.setItem("token", data.token);
         await AsyncStorage.setItem("userId", data.id);
+        await AsyncStorage.removeItem("isGuestMode"); // Remove guest mode flag on login
 
         if (rememberMe) {
           await AsyncStorage.setItem("savedEmail", email);
