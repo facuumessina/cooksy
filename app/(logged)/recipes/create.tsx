@@ -425,6 +425,7 @@ export default function CreateRecipe() {
     { label: 'cucharadita (cdta)', value: 'cdta', short: 'cdta' },
     { label: 'cucharadas soperas (cda)', value: 'cda', short: 'cda' },
     { label: 'mililitros (ml)', value: 'ml', short: 'ml' },
+    { label: 'centímetros cúbicos (cm3)', value: 'cm3', short: 'cm3' },
     { label: 'litros (l)', value: 'l', short: 'l' },
     { label: 'onzas líquidas (oz)', value: 'oz', short: 'oz' },
   ];
