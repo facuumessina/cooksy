@@ -117,7 +117,7 @@ export default function Step2() {
 
             <TouchableOpacity
                 onPress={() => {
-                    router.push("/register/step1");
+                    router.back();
                 }}
                 style={{ position: "absolute", left: 20, top: 30 }}
             >

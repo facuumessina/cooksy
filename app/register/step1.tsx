@@ -130,6 +130,21 @@ const StepOne = () => {
     }
   };
 
+  const handleGuestLogin = async () => {
+    setIsLoading(true);
+    try {
+      // Store guest mode flag
+      await AsyncStorage.setItem("isGuestMode", "true");
+      // Navigate to logged in area
+      router.replace("/(logged)");
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "No se pudo iniciar como invitado.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {isLoading && (
@@ -217,6 +232,13 @@ const StepOne = () => {
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Iniciar sesión</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={[styles.button, styles.guestButton]} 
+        onPress={handleGuestLogin}
+      >
+        <Text style={styles.buttonText}>Modo Invitado</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push("/register/step2")}>
@@ -317,6 +339,10 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     resizeMode: "contain",
+  },
+  guestButton: {
+    backgroundColor: "#666",
+    marginTop: 10,
   },
 });
 

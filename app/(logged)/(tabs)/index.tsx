@@ -83,6 +83,7 @@ export default function Home() {
         restrictions: new Set(),
         cuisines: new Set()
     });
+    const [isGuest, setIsGuest] = useState(false);
 
     const loadRecommendations = async () => {
         try {
@@ -145,6 +146,12 @@ export default function Home() {
         setFilteredRecipes(filtered);
     }, [activeFilters, recommendations]);
 
+    useEffect(() => {
+        AsyncStorage.getItem('isGuestMode').then(val => {
+            setIsGuest(val === 'true');
+        });
+    }, []);
+
     const toggleFilter = (group, value) => {
         setActiveFilters(prev => {
             const newSet = new Set(prev[group]);
@@ -167,8 +174,14 @@ export default function Home() {
                             <TouchableOpacity onPress={() => router.navigate('/(logged)/profile')}>
                                 <Ionicons name="person-circle-outline" size={40} color="black" style={{ marginRight: 8 }} />
                             </TouchableOpacity>
-                            <Text style={styles.greeting}>Hola,</Text>
-                            <Text style={styles.userName}>{user?.name || user?.alias || 'Usuario'}</Text>
+                            {isGuest ? (
+                                <Text style={styles.greeting}>Hola, te encuentras en el modo invitado.</Text>
+                            ) : (
+                                <>
+                                    <Text style={styles.greeting}>Hola,</Text>
+                                    <Text style={styles.userName}>{user?.name || user?.alias || 'Usuario'}</Text>
+                                </>
+                            )}
                         </View>
                     </View>
                     <TouchableOpacity>
@@ -233,8 +246,15 @@ export default function Home() {
 
             <View style={[styles.createRecipeButtonContainer, { paddingBottom: insets.bottom + 16 }]}>
                 <TouchableOpacity
-                    style={styles.createRecipeButton}
-                    onPress={() => navigation.push('/(logged)/recipes/create')}
+                    style={[styles.createRecipeButton, isGuest && { backgroundColor: '#ccc', opacity: 0.6 }]}
+                    onPress={() => {
+                        if (isGuest) {
+                            alert('Funcionalidad solo disponible para usuarios registrados.');
+                        } else {
+                            navigation.push('/(logged)/recipes/create');
+                        }
+                    }}
+                    disabled={isGuest}
                 >
                     <Text style={styles.createRecipeText}>Crear Receta</Text>
                 </TouchableOpacity>

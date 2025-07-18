@@ -60,9 +60,20 @@ export default function CreateRecipe() {
   const [recipeType, setRecipeType] = useState('');
   const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '' }]);
   const [instructionsList, setInstructionsList] = useState(['']);
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('isGuestMode').then(val => {
+      setIsGuest(val === 'true');
+    });
+  }, []);
 
   // Handler para crear la receta y enviarla al backend
   const handleCreateRecipe = async () => {
+    if (isGuest) {
+      alert('Funcionalidad solo disponible para usuarios registrados.');
+      return;
+    }
     try {
       const token = await AsyncStorage.getItem('token');
       const userId = await AsyncStorage.getItem('userId');
@@ -510,8 +521,14 @@ export default function CreateRecipe() {
         <TouchableOpacity
           onPress={handleCreateRecipe}
           style={{
-            backgroundColor: '#FF6F00', padding: 16, borderRadius: 18, alignItems: 'center', marginBottom: 40
+            backgroundColor: isGuest ? '#ccc' : '#FF6F00',
+            padding: 16,
+            borderRadius: 18,
+            alignItems: 'center',
+            marginBottom: 40,
+            opacity: isGuest ? 0.6 : 1,
           }}
+          disabled={isGuest}
         >
           <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Enviar para aprobación</Text>
         </TouchableOpacity>

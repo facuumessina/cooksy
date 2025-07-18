@@ -3,25 +3,25 @@ import { STORAGE_KEYS } from "@/service/storage";
 import { ActivityLevel } from "@/types/enums";
 import { User } from "@/types/types";
 import {
-  translateCuisine,
-  translateDietaryRestriction,
-  translateFood
+    translateCuisine,
+    translateDietaryRestriction,
+    translateFood
 } from "@/utils/enum-translations";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Alert,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useData } from "../../../context/DataProvider";
 
@@ -127,6 +127,7 @@ const MyRecipesInfoItem = () => {
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { user, updateUser } = useData();
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -153,6 +154,12 @@ const ProfileScreen = () => {
     };
 
     fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.getItem('isGuestMode').then(val => {
+      setIsGuest(val === 'true');
+    });
   }, []);
 
   // Recargar perfil cada vez que se vuelve a la pantalla
@@ -235,106 +242,127 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        <LinearGradient
-          colors={["#FFA726", "#FB8C00"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.headerGradient}
-        >
-          {/* Edit pencil icon, top right */}
+      {isGuest ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 18, color: '#FB8C00', textAlign: 'center', fontWeight: 'bold', marginBottom: 24 }}>
+            Funcionalidad no disponible en modo invitado.
+          </Text>
           <TouchableOpacity
-            style={{ position: 'absolute', top: 60, right: 20 }}
-            onPress={() => console.log('Editar perfil')}
+            style={{ backgroundColor: '#FB8C00', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 25 }}
+            onPress={() => router.push('/register/step2')}
           >
-            <Ionicons name="create-outline" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <View style={styles.headerContent}>
-            <Ionicons name="person-circle-outline" size={120} color="#FFFFFF" />
-            <Text style={styles.nameText}>
-              {user?.alias || "Nombre no disponible"}
-            </Text>
-            <Text style={styles.usernameText}>
-              {user?.email || "Email no disponible"}
-            </Text>
-          </View>
-        </LinearGradient>
-
-        <View style={styles.contentContainer}>
-
-          <View style={{ marginTop: 20 }}>
-            <ProfileSection title="Recetas favoritas" icon="heart-outline">
-              <FavRecipesInfoItem />
-            </ProfileSection>
-          </View>
-          <ProfileSection title="Mis recetas" icon="restaurant-outline">
-            <MyRecipesInfoItem />
-          </ProfileSection>
-
-          {/* Preferences Section */}
-          <ProfileSection title="Preferencias" icon="options-outline">
-            <InfoItem
-              label="Restricciones Dietéticas"
-              value={user?.preferences?.dietaryRestrictions
-                ?.map((d) => translateDietaryRestriction(d))
-                .join(", ")}
-            />
-            <InfoItem
-              label="Categorías Preferidas"
-              value={user?.preferences?.preferredCategories
-                ?.map((pc) => translateFood(pc))
-                .join(", ")}
-            />
-            <InfoItem
-              label="Cocinas Preferidas"
-              value={user?.preferences?.preferredCuisines
-                ?.map((c) => translateCuisine(c))
-                .join(", ")}
-            />
-          </ProfileSection>
-
-          <TouchableOpacity style={styles.logoutButton} onPress={() => router.push('/forgotPassword' as never)}>
-            <LinearGradient
-              colors={["#FFA500", "#FF8C00"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.logoutGradient}
-            >
-              <Ionicons
-                name="key-outline"
-                size={20}
-                color="#FFFFFF"
-                style={styles.logoutIcon}
-              />
-              <Text style={styles.logoutText}>
-                Cambiar contraseña
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <LinearGradient
-              colors={["#FF4B4B", "#FF3636"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.logoutGradient}
-            >
-              <Ionicons
-                name="log-out-outline"
-                size={20}
-                color="#FFFFFF"
-                style={styles.logoutIcon}
-              />
-              <Text onPress={handleLogout} style={styles.logoutText}>
-                Cerrar Sesión
-              </Text>
-            </LinearGradient>
+            <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Registrarme</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
+          <LinearGradient
+            colors={["#FFA726", "#FB8C00"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.headerGradient}
+          >
+            {/* Edit pencil icon, top right */}
+            <TouchableOpacity
+              style={{ position: 'absolute', top: 60, right: 20, opacity: isGuest ? 0.5 : 1 }}
+              onPress={() => {
+                if (isGuest) {
+                  alert('Funcionalidad solo disponible para usuarios registrados.');
+                } else {
+                  console.log('Editar perfil');
+                }
+              }}
+              disabled={isGuest}
+            >
+              <Ionicons name="create-outline" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+            <View style={styles.headerContent}>
+              <Ionicons name="person-circle-outline" size={120} color="#FFFFFF" />
+              <Text style={styles.nameText}>
+                {user?.alias || "Nombre no disponible"}
+              </Text>
+              <Text style={styles.usernameText}>
+                {user?.email || "Email no disponible"}
+              </Text>
+            </View>
+          </LinearGradient>
+
+          <View style={styles.contentContainer}>
+
+            <View style={{ marginTop: 20 }}>
+              <ProfileSection title="Recetas favoritas" icon="heart-outline">
+                <FavRecipesInfoItem />
+              </ProfileSection>
+            </View>
+            <ProfileSection title="Mis recetas" icon="restaurant-outline">
+              <MyRecipesInfoItem />
+            </ProfileSection>
+
+            {/* Preferences Section */}
+            <ProfileSection title="Preferencias" icon="options-outline">
+              <InfoItem
+                label="Restricciones Dietéticas"
+                value={user?.preferences?.dietaryRestrictions
+                  ?.map((d) => translateDietaryRestriction(d))
+                  .join(", ")}
+              />
+              <InfoItem
+                label="Categorías Preferidas"
+                value={user?.preferences?.preferredCategories
+                  ?.map((pc) => translateFood(pc))
+                  .join(", ")}
+              />
+              <InfoItem
+                label="Cocinas Preferidas"
+                value={user?.preferences?.preferredCuisines
+                  ?.map((c) => translateCuisine(c))
+                  .join(", ")}
+              />
+            </ProfileSection>
+
+            <TouchableOpacity style={styles.logoutButton} onPress={() => router.push('/forgotPassword' as never)}>
+              <LinearGradient
+                colors={["#FFA500", "#FF8C00"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.logoutGradient}
+              >
+                <Ionicons
+                  name="key-outline"
+                  size={20}
+                  color="#FFFFFF"
+                  style={styles.logoutIcon}
+                />
+                <Text style={styles.logoutText}>
+                  Cambiar contraseña
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <LinearGradient
+                colors={["#FF4B4B", "#FF3636"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.logoutGradient}
+              >
+                <Ionicons
+                  name="log-out-outline"
+                  size={20}
+                  color="#FFFFFF"
+                  style={styles.logoutIcon}
+                />
+                <Text onPress={handleLogout} style={styles.logoutText}>
+                  Cerrar Sesión
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
