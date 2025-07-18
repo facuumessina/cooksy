@@ -70,6 +70,19 @@ const FilterModal = ({ visible, onClose, activeFilters, onToggleFilter }) => (
     </Modal>
 );
 
+// Add GuestBanner component at the top
+const GuestBanner = ({ onRegister }) => (
+  <View style={{ backgroundColor: '#FB8C00', padding: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 15 }}>Estás en modo invitado</Text>
+    <TouchableOpacity
+      style={{ backgroundColor: '#fff', paddingVertical: 6, paddingHorizontal: 16, borderRadius: 20, marginLeft: 12 }}
+      onPress={onRegister}
+    >
+      <Text style={{ color: '#FB8C00', fontWeight: 'bold' }}>Registrarme</Text>
+    </TouchableOpacity>
+  </View>
+);
+
 export default function Home() {
     const insets = useSafeAreaInsets();
     const navigation = useRouter();
@@ -167,26 +180,27 @@ export default function Home() {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
-            <ScrollView style={styles.scrollView}>
-                <View style={styles.header}>
+            {isGuest && <GuestBanner onRegister={() => router.push('/register/step2')} />}
+            <ScrollView style={[styles.scrollView, isGuest && { paddingTop: 0, marginTop: 0 }]}>
+                <View style={[styles.header, isGuest && { paddingTop: 0, marginTop: 0, marginBottom: 0, height: 0, minHeight: 0 }]}>
                     <View style={styles.userInfo}>
                         <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => router.navigate('/(logged)/profile')}>
-                                <Ionicons name="person-circle-outline" size={40} color="black" style={{ marginRight: 8 }} />
-                            </TouchableOpacity>
-                            {isGuest ? (
-                                <Text style={styles.greeting}>Hola, te encuentras en el modo invitado.</Text>
-                            ) : (
+                            {!isGuest && (
                                 <>
+                                    <TouchableOpacity onPress={() => router.navigate('/(logged)/profile')}>
+                                        <Ionicons name="person-circle-outline" size={40} color="black" style={{ marginRight: 8 }} />
+                                    </TouchableOpacity>
                                     <Text style={styles.greeting}>Hola,</Text>
                                     <Text style={styles.userName}>{user?.name || user?.alias || 'Usuario'}</Text>
                                 </>
                             )}
                         </View>
                     </View>
-                    <TouchableOpacity>
-                        <Ionicons name="notifications-outline" size={24} color="black" />
-                    </TouchableOpacity>
+                    {!isGuest && (
+                        <TouchableOpacity>
+                            <Ionicons name="notifications-outline" size={24} color="black" />
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 <SearchBar />
