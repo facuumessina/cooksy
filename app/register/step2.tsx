@@ -157,6 +157,16 @@ export default function Step2() {
             >
                 <Text style={styles.buttonText}>Continuar</Text>
             </TouchableOpacity>
+
+            <View style={{ alignItems: 'center', marginTop: 20 }}>
+                <Text style={{ color: '#333', fontSize: 15 }}>
+                    ¿Ya tienes cuenta?
+                    <Text
+                        style={{ color: '#F97316', fontWeight: 'bold' }}
+                        onPress={() => router.push('/register/step1')}
+                    > Inicia sesión</Text>
+                </Text>
+            </View>
         </SafeAreaView>
     );
 }
