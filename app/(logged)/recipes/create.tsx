@@ -81,8 +81,7 @@ export default function CreateRecipe() {
 
       const ingredientesMapped = ingredientsList.map(item => ({
         nombre: item.name,
-        cantidad: item.amount,
-        unidad: item.unit
+        cantidad: `${item.amount} ${item.unit}`
       }));
 
       const instruccionesMapped = instructionsList.map((desc, idx) => ({
@@ -451,15 +450,37 @@ export default function CreateRecipe() {
         />
 
         <Text style={{ fontSize: 16, marginBottom: 4 }}>Tipo de receta</Text>
-        <TextInput
-          value={recipeType}
-          onChangeText={setRecipeType}
-          style={{
-            borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-            paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16
-          }}
-          placeholder="Selecciona el tipo de receta"
-        />
+        <View style={{
+          borderWidth: 1,
+          borderColor: '#ccc',
+          borderRadius: 8,
+          marginBottom: 16,
+          overflow: 'hidden'
+        }}>
+          <Picker
+            selectedValue={recipeType}
+            onValueChange={(value) => setRecipeType(value)}
+            mode="dropdown"
+            style={{ height: 50 }}
+          >
+            <Picker.Item label="Selecciona un tipo" value="" />
+            <Picker.Item label="DESAYUNO" value="DESAYUNO" />
+            <Picker.Item label="MERIENDA" value="MERIENDA" />
+            <Picker.Item label="PLATO PRINCIPAL" value="PLATO PRINCIPAL" />
+            <Picker.Item label="ENTRADA" value="ENTRADA" />
+            <Picker.Item label="ITALIANA" value="ITALIANA" />
+            <Picker.Item label="MEXICANA" value="MEXICANA" />
+            <Picker.Item label="JAPONESA" value="JAPONESA" />
+            <Picker.Item label="MEDITERRANEA" value="MEDITERRANEA" />
+            <Picker.Item label="AMERICANA" value="AMERICANA" />
+            <Picker.Item label="LATINA" value="LATINA" />
+            <Picker.Item label="PANADERIA" value="PANADERIA" />
+            <Picker.Item label="COMIDA RAPIDA" value="COMIDA RAPIDA" />
+            <Picker.Item label="VEGETARIANA" value="VEGETARIANA" />
+            <Picker.Item label="INDIA" value="INDIA" />
+            <Picker.Item label="INTERNACIONAL" value="INTERNACIONAL" />
+          </Picker>
+        </View>
 
         {/* Ingredientes */}
         <Text style={{ fontSize: 18, marginBottom: 8 }}>Ingredientes</Text>

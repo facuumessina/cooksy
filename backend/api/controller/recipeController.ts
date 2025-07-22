@@ -34,20 +34,27 @@ export async function searchRecipes(req: Request, res: Response) {
       filter.tipo = { $in: tipos };
     }
 
-    if (ingredients || excludedIngredients) {
-      const ingredientesQuery: any = {};
+    // ingredients filter (debe ir antes que excludedIngredients)
+    if (ingredients) {
+      const incluidosRaw = Array.isArray(ingredients) ? ingredients : (ingredients as string).split(',');
+      const incluidos = incluidosRaw.map(i => i.trim().toLowerCase());
 
-      if (ingredients) {
-        const incluidos = Array.isArray(ingredients) ? ingredients : [ingredients];
-        ingredientesQuery.$all = incluidos;
-      }
+      filter['ingredientes.nombre'] = { $all: incluidos.map(i => new RegExp(`^${i}$`, 'i')) };
+    }
 
-      if (excludedIngredients) {
-        const excluidos = Array.isArray(excludedIngredients) ? excludedIngredients : [excludedIngredients];
-        ingredientesQuery.$nin = excluidos;
-      }
+    // excludedIngredients filter (después de ingredients)
+    if (excludedIngredients) {
+      const excluidosRaw = Array.isArray(excludedIngredients)
+        ? excludedIngredients
+        : (excludedIngredients as string).split(',');
+      const excluidos = excluidosRaw.map(i => i.trim().toLowerCase());
 
-      filter['ingredientes.nombre'] = ingredientesQuery;
+      filter['ingredientes.nombre'] = {
+        ...(filter['ingredientes.nombre'] || {}),
+        $not: {
+          $in: excluidos.map(i => new RegExp(`^${i}$`, 'i'))
+        }
+      };
     }
 
     const recetas = await Receta.find(filter)

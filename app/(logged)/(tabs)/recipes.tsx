@@ -1,6 +1,7 @@
 import { Cuisine } from '@/types/enums';
 import { translateCuisine } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -13,6 +14,7 @@ const INGREDIENT_RANGES = [
 ];
 
 const recipes = () => {
+  const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCuisines, setSelectedCuisines] = useState<Set<Cuisine>>(new Set());
   const [ingredientsRange, setIngredientsRange] = useState('Cualquiera');
@@ -30,8 +32,6 @@ const recipes = () => {
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
-  // Estado para recetas filtradas
-  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
 
   const fetchUsersWithRecipes = async () => {
     try {
@@ -50,30 +50,15 @@ const recipes = () => {
   useEffect(() => {
     fetchUsersWithRecipes();
   }, []);
-  // Función para buscar recetas filtradas
-  const handleSearch = async () => {
-    try {
-      const queryParams = new URLSearchParams();
-
-      if (searchTerm) queryParams.append('searchTerm', searchTerm);
-      if (userSearch) queryParams.append('user', userSearch);
-      if (selectedCuisines.size > 0) {
-        selectedCuisines.forEach((c) => queryParams.append('cuisines', c));
-      }
-      if (selectedIngredients.length > 0) {
-        selectedIngredients.forEach((i) => queryParams.append('ingredients', i));
-      }
-      if (selectedExcludedIngredients.length > 0) {
-        selectedExcludedIngredients.forEach((e) => queryParams.append('excludedIngredients', e));
-      }
-
-      const res = await fetch(`http://10.0.2.2:3000/recipes/search?${queryParams.toString()}`);
-      const data = await res.json();
-      setFilteredRecipes(data);
-      console.log("Recetas filtradas:", data);
-    } catch (error) {
-      console.error("Error al filtrar recetas:", error);
-    }
+  // Navegar a la pantalla de resultados de búsqueda pasando los parámetros actuales
+  const handleSearch = () => {
+    navigation.navigate('recipes/searchRecipes', {
+      searchTerm,
+      userSearch,
+      selectedCuisines: [...selectedCuisines],
+      selectedIngredients,
+      selectedExcludedIngredients,
+    });
   };
 
 
@@ -143,6 +128,7 @@ const recipes = () => {
       </View>
     </Modal>
   );
+
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: 30 }}>
@@ -349,18 +335,6 @@ const recipes = () => {
           INGREDIENT_RANGES,
           ingredientsRange,
           setIngredientsRange
-        )}
-        {/* Mostrar resultados filtrados */}
-        {filteredRecipes.length > 0 && (
-          <View style={{ marginTop: 16 }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>Resultados:</Text>
-            {filteredRecipes.map((recipe) => (
-              <View key={recipe._id} style={{ marginBottom: 16 }}>
-                <Text style={{ fontSize: 16 }}>{recipe.name}</Text>
-                <Text style={{ fontSize: 14, color: '#888' }}>{recipe.user.alias}</Text>
-              </View>
-            ))}
-          </View>
         )}
       </View>
     </SafeAreaView>
