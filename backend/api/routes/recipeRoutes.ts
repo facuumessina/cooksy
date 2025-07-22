@@ -8,6 +8,7 @@ import {
     getComments,
     getLatestApprovedRecipes,
     getRecipeById,
+    getUsersWithRecipes,
     searchRecipes,
     updateRecipe
 } from '../controller/recipeController';
@@ -17,6 +18,8 @@ const router = Router();
 router.get('/latest', getLatestApprovedRecipes);
 router.get('/search',  searchRecipes);
 router.post('/',       createRecipe);
+
+router.get('/userslist', getUsersWithRecipes);
 
 router.get('/:id',     getRecipeById);
 router.put('/:id',     updateRecipe);

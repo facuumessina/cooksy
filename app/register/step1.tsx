@@ -3,15 +3,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Alert,
-    Animated,
-    Easing,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Animated,
+  Easing,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -96,7 +96,7 @@ const StepOne = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "https://cooksy-p77y.onrender.com/auth/login",
+        "http://10.0.2.2:3000/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

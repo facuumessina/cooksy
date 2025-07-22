@@ -1,10 +1,12 @@
 // app/api/index.ts
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes';
 import recipeRoutes from './routes/recipeRoutes';
 import userRoutes from './routes/userRoutes';
+dotenv.config();
 
 const app = express();
 
@@ -27,6 +29,7 @@ app.use('/users', userRoutes);
 app.get('/test', (_req, res) => {
   res.send('funcionó');
 });
+
 
 app.listen(port, () => {
   console.log(`API corriendo en ${process.env.PORT}`);

@@ -1,8 +1,8 @@
-import { Cuisine, DietaryRestriction, DietType } from '@/types/enums';
-import { translateCuisine, translateDietaryRestriction } from '@/utils/enum-translations';
+import { Cuisine, DietType } from '@/types/enums';
+import { translateCuisine } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const INGREDIENT_RANGES = [
@@ -15,40 +15,43 @@ const INGREDIENT_RANGES = [
 
 const recipes = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRestrictions, setSelectedRestrictions] = useState<Set<DietaryRestriction>>(new Set());
   const [selectedCuisines, setSelectedCuisines] = useState<Set<Cuisine>>(new Set());
   const [selectedDietTypes, setSelectedDietTypes] = useState<Set<DietType>>(new Set());
   const [ingredientsRange, setIngredientsRange] = useState('Cualquiera');
   const [showIngredientsModal, setShowIngredientsModal] = useState(false);
   const [showDietTypeModal, setShowDietTypeModal] = useState(false);
-  // Ingredients filter modal state
-  const [ingredientsModalVisible, setIngredientsModalVisible] = useState(false);
-  const [allIngredients] = useState<string[]>([
-    'Pasta', 'Huevo', 'Bacon', 'Queso Parmesano', 'Pimienta Negra', 'Aceite de Oliva',
-    'Palta', 'Cebolla', 'Tomate', 'Cilantro', 'Lima', 'Sal'
-  ]);
-  const [filteredIngredients, setFilteredIngredients] = useState(allIngredients);
+ 
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
-  const [ingredientSearch, setIngredientSearch] = useState('');
+  // For input field to add ingredient manually
+  const [ingredientInput, setIngredientInput] = useState('');
 
-  const [excludedIngredientsModalVisible, setExcludedIngredientsModalVisible] = useState(false);
-  const [excludedIngredientSearch, setExcludedIngredientSearch] = useState('');
-  const [filteredExcludedIngredients, setFilteredExcludedIngredients] = useState(allIngredients);
   const [selectedExcludedIngredients, setSelectedExcludedIngredients] = useState<string[]>([]);
+  // For input field to add excluded ingredient manually
+  const [excludedIngredientInput, setExcludedIngredientInput] = useState('');
   // Usuario filter state
   const [userSearch, setUserSearch] = useState('');
+  const [userSuggestions, setUserSuggestions] = useState([]);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
-  const handleToggleRestriction = (restriction: DietaryRestriction) => {
-    setSelectedRestrictions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(restriction)) {
-        newSet.delete(restriction);
-      } else {
-        newSet.add(restriction);
-      }
-      return newSet;
-    });
+  const fetchUsersWithRecipes = async () => {
+    try {
+      setLoadingUsers(true);
+      const res = await fetch('http://10.0.2.2:3000/recipes/userslist');
+      const data = await res.json();
+      console.log('Usuarios traídos:', data);
+      setUserSuggestions(data);
+    } catch (error) {
+      console.error('Error al obtener usuarios con recetas:', error);
+    } finally {
+      setLoadingUsers(false);
+    }
   };
+
+  useEffect(() => {
+    fetchUsersWithRecipes();
+  }, []);
+
 
   const handleToggleCuisine = (cuisine: Cuisine) => {
     setSelectedCuisines(prev => {
@@ -147,15 +150,45 @@ const recipes = () => {
           {/* Usuario filter section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Usuario</Text>
-            <View style={styles.searchContainer}>
+            <TouchableOpacity
+              style={[styles.searchContainer, { marginBottom: 0 }]}
+              onPress={() => setShowUserDropdown(!showUserDropdown)}
+            >
               <Ionicons name="person" size={20} color="#333" />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Buscar por usuario"
-                value={userSearch}
-                onChangeText={setUserSearch}
-              />
-            </View>
+              {userSearch ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                  <Text style={styles.searchInput}>{userSearch}</Text>
+                  <TouchableOpacity
+                    onPress={() => setUserSearch('')}
+                    style={{ marginLeft: 8 }}
+                  >
+                    <Ionicons name="close-circle" size={20} color="#F97316" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text style={styles.searchInput}>Seleccionar usuario</Text>
+              )}
+            </TouchableOpacity>
+            {showUserDropdown && userSuggestions.length > 0 && (
+              <View style={{
+                backgroundColor: '#fff',
+                borderRadius: 8,
+                padding: 8,
+                elevation: 4,
+                maxHeight: 200
+              }}>
+                <ScrollView>
+                  {userSuggestions.map((user) => (
+                    <TouchableOpacity key={user._id} onPress={() => {
+                      setUserSearch(user.alias);
+                      setShowUserDropdown(false);
+                    }}>
+                      <Text style={{ padding: 8 }}>{user.alias}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
           </View>
 
           <View style={styles.section}>
@@ -183,46 +216,35 @@ const recipes = () => {
             </ScrollView>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Restricción alimentaria</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.chipContainer}>
-                {Object.values(DietaryRestriction).map((restriction) => (
-                  <TouchableOpacity
-                    key={restriction}
-                    style={[
-                      styles.chip,
-                      selectedRestrictions.has(restriction) && styles.chipSelected
-                    ]}
-                    onPress={() => handleToggleRestriction(restriction)}
-                  >
-                    <Text style={[
-                      styles.chipText,
-                      selectedRestrictions.has(restriction) && styles.chipTextSelected
-                    ]}>
-                      {translateDietaryRestriction(restriction)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-          </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ingredientes que debe contener</Text>
-            <TouchableOpacity
-              style={styles.selectButton}
-              onPress={() => setIngredientsModalVisible(true)}
-            >
-              <Text style={styles.selectButtonText}>
-                {selectedIngredients.length > 0 ? selectedIngredients.join(', ') : 'Seleccionar ingredientes'}
-              </Text>
-            </TouchableOpacity>
+            {/* Input + button for adding ingredient */}
+            <View style={{ flexDirection: 'row', marginBottom: 8 }}>
+              <TextInput
+                style={[styles.searchInput, { flex: 1 }]}
+                placeholder="Agregar ingrediente"
+                value={ingredientInput}
+                onChangeText={setIngredientInput}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  if (ingredientInput.trim()) {
+                    setSelectedIngredients([...selectedIngredients, ingredientInput.trim()]);
+                    setIngredientInput('');
+                  }
+                }}
+                style={{ marginLeft: 8, backgroundColor: '#F97316', padding: 12, borderRadius: 12 }}
+              >
+                <Text style={{ color: 'white', fontWeight: 'bold' }}>+</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Chips for added ingredients */}
             {selectedIngredients.length > 0 && (
-              <View style={{ marginTop: 8, flexDirection: 'row', flexWrap: 'wrap' }}>
-                {selectedIngredients.map((ingredient) => (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+                {selectedIngredients.map((ingredient, idx) => (
                   <View
-                    key={ingredient}
+                    key={idx}
                     style={{
                       backgroundColor: '#F97316',
                       borderRadius: 12,
@@ -230,9 +252,16 @@ const recipes = () => {
                       paddingVertical: 6,
                       marginRight: 8,
                       marginBottom: 8,
+                      flexDirection: 'row',
+                      alignItems: 'center'
                     }}
                   >
                     <Text style={{ color: 'white', fontSize: 14 }}>{ingredient}</Text>
+                    <TouchableOpacity onPress={() => {
+                      setSelectedIngredients(selectedIngredients.filter((_, i) => i !== idx));
+                    }}>
+                      <Ionicons name="close" size={16} color="white" style={{ marginLeft: 6 }} />
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
@@ -241,19 +270,32 @@ const recipes = () => {
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ingredientes que no debe contener</Text>
-            <TouchableOpacity
-              style={styles.selectButton}
-              onPress={() => setExcludedIngredientsModalVisible(true)}
-            >
-              <Text style={styles.selectButtonText}>
-                {selectedExcludedIngredients.length > 0 ? selectedExcludedIngredients.join(', ') : 'Seleccionar ingredientes'}
-              </Text>
-            </TouchableOpacity>
+            {/* Input + button for adding excluded ingredient */}
+            <View style={{ flexDirection: 'row', marginBottom: 8 }}>
+              <TextInput
+                style={[styles.searchInput, { flex: 1 }]}
+                placeholder="Agregar ingrediente"
+                value={excludedIngredientInput}
+                onChangeText={setExcludedIngredientInput}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  if (excludedIngredientInput.trim()) {
+                    setSelectedExcludedIngredients([...selectedExcludedIngredients, excludedIngredientInput.trim()]);
+                    setExcludedIngredientInput('');
+                  }
+                }}
+                style={{ marginLeft: 8, backgroundColor: '#F97316', padding: 12, borderRadius: 12 }}
+              >
+                <Text style={{ color: 'white', fontWeight: 'bold' }}>+</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Chips for added excluded ingredients */}
             {selectedExcludedIngredients.length > 0 && (
-              <View style={{ marginTop: 8, flexDirection: 'row', flexWrap: 'wrap' }}>
-                {selectedExcludedIngredients.map((ingredient) => (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+                {selectedExcludedIngredients.map((ingredient, idx) => (
                   <View
-                    key={ingredient}
+                    key={idx}
                     style={{
                       backgroundColor: '#F97316',
                       borderRadius: 12,
@@ -261,9 +303,16 @@ const recipes = () => {
                       paddingVertical: 6,
                       marginRight: 8,
                       marginBottom: 8,
+                      flexDirection: 'row',
+                      alignItems: 'center'
                     }}
                   >
                     <Text style={{ color: 'white', fontSize: 14 }}>{ingredient}</Text>
+                    <TouchableOpacity onPress={() => {
+                      setSelectedExcludedIngredients(selectedExcludedIngredients.filter((_, i) => i !== idx));
+                    }}>
+                      <Ionicons name="close" size={16} color="white" style={{ marginLeft: 6 }} />
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
@@ -277,7 +326,6 @@ const recipes = () => {
               pathname: '/recommendations',
               params: {
                 fromFilter: 'true',
-                restrictions: Array.from(selectedRestrictions),
                 cuisines: Array.from(selectedCuisines),
                 dietTypes: Array.from(selectedDietTypes),
                 ingredients: selectedIngredients,
@@ -300,110 +348,6 @@ const recipes = () => {
           ingredientsRange,
           setIngredientsRange
         )}
-        {/* Modal de selección de ingredientes */}
-        <Modal visible={ingredientsModalVisible} animationType="slide">
-          <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ padding: 16 }}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 12 }}>Buscar Ingrediente</Text>
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Buscar ingrediente..."
-                value={ingredientSearch}
-                onChangeText={(text) => {
-                  setIngredientSearch(text);
-                  setFilteredIngredients(
-                    allIngredients.filter(ing => ing.toLowerCase().includes(text.toLowerCase()))
-                  );
-                }}
-              />
-              <ScrollView style={{ marginTop: 16 }}>
-                {filteredIngredients.map((ingredient) => (
-                  <TouchableOpacity
-                    key={ingredient}
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      paddingVertical: 12,
-                      borderBottomWidth: 1,
-                      borderBottomColor: '#EEE',
-                    }}
-                    onPress={() => {
-                      setSelectedIngredients(prev =>
-                        prev.includes(ingredient)
-                          ? prev.filter(i => i !== ingredient)
-                          : [...prev, ingredient]
-                      );
-                    }}
-                  >
-                    <Text>{ingredient}</Text>
-                    {selectedIngredients.includes(ingredient) && (
-                      <Ionicons name="checkmark" size={20} color="#F97316" />
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-              <TouchableOpacity
-                onPress={() => setIngredientsModalVisible(false)}
-                style={[styles.searchButton, { marginTop: 20 }]}
-              >
-                <Text style={styles.searchButtonText}>Hecho</Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-        </Modal>
-        {/* Modal de selección de ingredientes excluidos */}
-        <Modal visible={excludedIngredientsModalVisible} animationType="slide">
-          <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ padding: 16 }}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 12 }}>Buscar Ingrediente</Text>
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Buscar ingrediente..."
-                value={excludedIngredientSearch}
-                onChangeText={(text) => {
-                  setExcludedIngredientSearch(text);
-                  setFilteredExcludedIngredients(
-                    allIngredients.filter(ing => ing.toLowerCase().includes(text.toLowerCase()))
-                  );
-                }}
-              />
-              <ScrollView style={{ marginTop: 16 }}>
-                {filteredExcludedIngredients.map((ingredient) => (
-                  <TouchableOpacity
-                    key={ingredient}
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      paddingVertical: 12,
-                      borderBottomWidth: 1,
-                      borderBottomColor: '#EEE',
-                    }}
-                    onPress={() => {
-                      setSelectedExcludedIngredients(prev =>
-                        prev.includes(ingredient)
-                          ? prev.filter(i => i !== ingredient)
-                          : [...prev, ingredient]
-                      );
-                    }}
-                  >
-                    <Text>{ingredient}</Text>
-                    {selectedExcludedIngredients.includes(ingredient) && (
-                      <Ionicons name="checkmark" size={20} color="#F97316" />
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-              <TouchableOpacity
-                onPress={() => setExcludedIngredientsModalVisible(false)}
-                style={[styles.searchButton, { marginTop: 20 }]}
-              >
-                <Text style={styles.searchButtonText}>Hecho</Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-        </Modal>
       </View>
     </SafeAreaView>
   );

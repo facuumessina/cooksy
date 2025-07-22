@@ -137,7 +137,7 @@ const ProfileScreen = () => {
 
         if (!userId) throw new Error('No se encontró el ID del usuario');
 
-        const url = `https://cooksy-p77y.onrender.com/users/${userId}`;
+        const url = `http://10.0.2.2:3000/users/${userId}`;
         console.log("Haciendo fetch a:", url);
 
         const response = await fetch(url);
@@ -172,7 +172,7 @@ const ProfileScreen = () => {
 
           if (!userId) throw new Error('No se encontró el ID del usuario');
 
-          const url = `https://cooksy-p77y.onrender.com/users/${userId}`;
+          const url = `http://10.0.2.2:3000/users/${userId}`;
           console.log("Haciendo fetch a:", url);
 
           const response = await fetch(url);

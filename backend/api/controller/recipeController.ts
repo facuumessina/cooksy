@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Receta from '../model/Receta';
 
+
 export async function getLatestRecipes(_req: Request, res: Response) {
   const latest = await Receta.find({ estado: 'aprobada' })
     .sort({ createdAt: -1 })
@@ -106,4 +107,35 @@ export async function getLatestApprovedRecipes(_req: Request, res: Response) {
     .limit(3)
     .populate('autor', 'alias email nombre');
   res.json(latest);
+}
+
+export async function getUsersWithRecipes(req: Request, res: Response) {
+  try {
+    console.log("getUsersWithRecipes triggered");
+    const users = await Receta.aggregate([
+      { $match: { estado: 'aprobada' } },
+      { $group: { _id: '$autor' } },
+      {
+        $lookup: {
+          from: 'usuarios',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'userData'
+        }
+      },
+      { $unwind: '$userData' },
+      {
+        $project: {
+          _id: '$userData._id',
+          alias: '$userData.alias',
+          nombre: '$userData.nombre',
+          email: '$userData.email'
+        }
+      }
+    ]);
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error al obtener usuarios con recetas:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 }
