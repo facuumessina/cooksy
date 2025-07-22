@@ -1,5 +1,6 @@
 
 
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -10,6 +11,12 @@ export default function ForgotPassword() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => router.back()}
+        style={{ position: 'absolute', left: 20, top: 40, zIndex: 10 }}
+      >
+        <Ionicons name="arrow-back" size={24} color="#FF6F00" />
+      </TouchableOpacity>
       <Text style={styles.title}>¿Olvidaste tu contraseña?</Text>
       <Text style={styles.subtitle}>
         Ingrese su email para reestablecer la contraseña
@@ -29,10 +36,6 @@ export default function ForgotPassword() {
         onPress={() => router.push('/forgotPassword/emailSent')}
       >
         <Text style={styles.buttonText}>Reestablecer contraseña</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => router.back()}>
-        <Text style={styles.backText}>Volver</Text>
       </TouchableOpacity>
     </View>
   );

@@ -13,6 +13,7 @@ import { checkScanArea, processProductData } from '@/utils/scannerUtils';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import { CameraType, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
@@ -58,18 +59,30 @@ export default function CreateRecipe() {
   // Ingredient and instruction state/handlers for recipe creation
   const [recipeName, setRecipeName] = useState('');
   const [recipeType, setRecipeType] = useState('');
-  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '' }]);
+  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'g' }]);
   const [instructionsList, setInstructionsList] = useState(['']);
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('isGuestMode').then(val => {
+      setIsGuest(val === 'true');
+    });
+  }, []);
 
   // Handler para crear la receta y enviarla al backend
   const handleCreateRecipe = async () => {
+    if (isGuest) {
+      alert('Funcionalidad solo disponible para usuarios registrados.');
+      return;
+    }
     try {
       const token = await AsyncStorage.getItem('token');
       const userId = await AsyncStorage.getItem('userId');
 
       const ingredientesMapped = ingredientsList.map(item => ({
         nombre: item.name,
-        cantidad: item.amount
+        cantidad: item.amount,
+        unidad: item.unit
       }));
 
       const instruccionesMapped = instructionsList.map((desc, idx) => ({
@@ -108,7 +121,7 @@ export default function CreateRecipe() {
   };
 
   const addIngredientRow = () => {
-    setIngredientsList([...ingredientsList, { name: '', amount: '' }]);
+    setIngredientsList([...ingredientsList, { name: '', amount: '', unit: 'g' }]);
   };
 
   const updateIngredientName = (index, text) => {
@@ -120,6 +133,12 @@ export default function CreateRecipe() {
   const updateIngredientAmount = (index, text) => {
     const updated = [...ingredientsList];
     updated[index].amount = text;
+    setIngredientsList(updated);
+  };
+
+  const updateIngredientUnit = (index, unit) => {
+    const updated = [...ingredientsList];
+    updated[index].unit = unit;
     setIngredientsList(updated);
   };
 
@@ -398,7 +417,18 @@ export default function CreateRecipe() {
     );
   }, [updateQuantity]);
 
-
+  // Define units array
+  const UNITS = [
+    { label: 'gramos (g)', value: 'g', short: 'g' },
+    { label: 'kilogramos (kg)', value: 'kg', short: 'kg' },
+    { label: 'tazas', value: 'taza', short: 'taza' },
+    { label: 'cucharadita (cdta)', value: 'cdta', short: 'cdta' },
+    { label: 'cucharadas soperas (cda)', value: 'cda', short: 'cda' },
+    { label: 'mililitros (ml)', value: 'ml', short: 'ml' },
+    { label: 'centímetros cúbicos (cm3)', value: 'cm3', short: 'cm3' },
+    { label: 'litros (l)', value: 'l', short: 'l' },
+    { label: 'onzas líquidas (oz)', value: 'oz', short: 'oz' },
+  ];
 
 
   return (
@@ -449,12 +479,30 @@ export default function CreateRecipe() {
               value={item.amount}
               onChangeText={(text) => updateIngredientAmount(index, text)}
               placeholder="Cant."
+              keyboardType="numeric"
               style={{
                 width: 70,
                 borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
                 paddingHorizontal: 12, paddingVertical: 8, marginRight: 8
               }}
             />
+            <View style={{ width: 110, marginRight: 8, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, overflow: 'hidden', height: 44, justifyContent: 'center' }}>
+              {/* Show abbreviation as selected value */}
+              <Text style={{ position: 'absolute', left: 12, color: '#333', fontSize: 16, zIndex: 1 }}>
+                {UNITS.find(u => u.value === item.unit)?.short || ''}
+              </Text>
+              <Picker
+                selectedValue={item.unit}
+                onValueChange={(value) => updateIngredientUnit(index, value)}
+                style={{ height: 44, color: 'transparent' }}
+                itemStyle={{ height: 44, color: '#333' }}
+                mode="dropdown"
+              >
+                {UNITS.map(u => (
+                  <Picker.Item key={u.value} label={u.label} value={u.value} />
+                ))}
+              </Picker>
+            </View>
             <TouchableOpacity onPress={() => {
               const updated = [...ingredientsList];
               updated.splice(index, 1);
@@ -510,8 +558,14 @@ export default function CreateRecipe() {
         <TouchableOpacity
           onPress={handleCreateRecipe}
           style={{
-            backgroundColor: '#FF6F00', padding: 16, borderRadius: 18, alignItems: 'center', marginBottom: 40
+            backgroundColor: isGuest ? '#ccc' : '#FF6F00',
+            padding: 16,
+            borderRadius: 18,
+            alignItems: 'center',
+            marginBottom: 40,
+            opacity: isGuest ? 0.6 : 1,
           }}
+          disabled={isGuest}
         >
           <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Enviar para aprobación</Text>
         </TouchableOpacity>
