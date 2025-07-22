@@ -12,21 +12,53 @@ export async function getLatestRecipes(_req: Request, res: Response) {
 }
 
 export async function searchRecipes(req: Request, res: Response) {
-  const { name, type, includeIngredient, excludeIngredient, user, orderBy } = req.query;
-  const filter: any = { estado: 'aprobada' };
-  if (name) filter.nombre = new RegExp(String(name), 'i');
-  if (type) filter.tipo = String(type);
-  if (includeIngredient) filter['ingredientes.nombre'] = new RegExp(String(includeIngredient), 'i');
-  if (excludeIngredient) filter['ingredientes.nombre'] = { $nin: [String(excludeIngredient)] };
-  if (user) filter.autor = String(user);
+  try {
+    const { searchTerm, user, cuisines, ingredients, excludedIngredients } = req.query;
 
-  let q = Receta.find(filter);
-  if (orderBy === 'newest') q = q.sort({ createdAt: -1 });
-  if (orderBy === 'name')    q = q.sort({ nombre: 1 });
-  if (orderBy === 'user')    q = q.sort({ autor: 1 });
+    const filter: any = { estado: 'aprobada' };
 
-  const results = await q.exec();
-  res.json(results);
+    if (searchTerm) {
+      filter.nombre = { $regex: new RegExp(searchTerm as string, 'i') };
+    }
+
+    if (user) {
+      const userDoc = await mongoose.model('Usuario').findOne({ alias: user });
+      if (!userDoc) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      filter.autor = userDoc._id;
+    }
+
+    if (cuisines) {
+      const tipos = Array.isArray(cuisines) ? cuisines : [cuisines];
+      filter.tipo = { $in: tipos };
+    }
+
+    if (ingredients || excludedIngredients) {
+      const ingredientesQuery: any = {};
+
+      if (ingredients) {
+        const incluidos = Array.isArray(ingredients) ? ingredients : [ingredients];
+        ingredientesQuery.$all = incluidos;
+      }
+
+      if (excludedIngredients) {
+        const excluidos = Array.isArray(excludedIngredients) ? excludedIngredients : [excludedIngredients];
+        ingredientesQuery.$nin = excluidos;
+      }
+
+      filter['ingredientes.nombre'] = ingredientesQuery;
+    }
+
+    const recetas = await Receta.find(filter)
+      .populate('autor', 'alias')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(recetas);
+  } catch (error) {
+    console.error('Error al buscar recetas:', error);
+    res.status(500).json({ message: 'Error al buscar recetas' });
+  }
 }
 
 export async function createRecipe(req: Request, res: Response) {

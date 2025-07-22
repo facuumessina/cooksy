@@ -1,7 +1,6 @@
-import { Cuisine, DietType } from '@/types/enums';
+import { Cuisine } from '@/types/enums';
 import { translateCuisine } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -16,11 +15,9 @@ const INGREDIENT_RANGES = [
 const recipes = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCuisines, setSelectedCuisines] = useState<Set<Cuisine>>(new Set());
-  const [selectedDietTypes, setSelectedDietTypes] = useState<Set<DietType>>(new Set());
   const [ingredientsRange, setIngredientsRange] = useState('Cualquiera');
   const [showIngredientsModal, setShowIngredientsModal] = useState(false);
-  const [showDietTypeModal, setShowDietTypeModal] = useState(false);
- 
+
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   // For input field to add ingredient manually
   const [ingredientInput, setIngredientInput] = useState('');
@@ -33,6 +30,8 @@ const recipes = () => {
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  // Estado para recetas filtradas
+  const [filteredRecipes, setFilteredRecipes] = useState<any[]>([]);
 
   const fetchUsersWithRecipes = async () => {
     try {
@@ -51,6 +50,31 @@ const recipes = () => {
   useEffect(() => {
     fetchUsersWithRecipes();
   }, []);
+  // Función para buscar recetas filtradas
+  const handleSearch = async () => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (searchTerm) queryParams.append('searchTerm', searchTerm);
+      if (userSearch) queryParams.append('user', userSearch);
+      if (selectedCuisines.size > 0) {
+        selectedCuisines.forEach((c) => queryParams.append('cuisines', c));
+      }
+      if (selectedIngredients.length > 0) {
+        selectedIngredients.forEach((i) => queryParams.append('ingredients', i));
+      }
+      if (selectedExcludedIngredients.length > 0) {
+        selectedExcludedIngredients.forEach((e) => queryParams.append('excludedIngredients', e));
+      }
+
+      const res = await fetch(`http://10.0.2.2:3000/recipes/search?${queryParams.toString()}`);
+      const data = await res.json();
+      setFilteredRecipes(data);
+      console.log("Recetas filtradas:", data);
+    } catch (error) {
+      console.error("Error al filtrar recetas:", error);
+    }
+  };
 
 
   const handleToggleCuisine = (cuisine: Cuisine) => {
@@ -65,17 +89,6 @@ const recipes = () => {
     });
   };
 
-  const handleToggleDietType = (dietType: DietType) => {
-    setSelectedDietTypes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(dietType)) {
-        newSet.delete(dietType);
-      } else {
-        newSet.add(dietType);
-      }
-      return newSet;
-    });
-  };
 
   const renderModal = (
     visible: boolean,
@@ -322,18 +335,7 @@ const recipes = () => {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            onPress={() => router.push({
-              pathname: '/recommendations',
-              params: {
-                fromFilter: 'true',
-                cuisines: Array.from(selectedCuisines),
-                dietTypes: Array.from(selectedDietTypes),
-                ingredients: selectedIngredients,
-                excludedIngredients: selectedExcludedIngredients,
-                searchTerm,
-                user: userSearch,
-              },
-            })}
+            onPress={handleSearch}
             style={styles.searchButton}
           >
             <Text style={styles.searchButtonText}>Buscar</Text>
@@ -347,6 +349,18 @@ const recipes = () => {
           INGREDIENT_RANGES,
           ingredientsRange,
           setIngredientsRange
+        )}
+        {/* Mostrar resultados filtrados */}
+        {filteredRecipes.length > 0 && (
+          <View style={{ marginTop: 16 }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>Resultados:</Text>
+            {filteredRecipes.map((recipe) => (
+              <View key={recipe._id} style={{ marginBottom: 16 }}>
+                <Text style={{ fontSize: 16 }}>{recipe.name}</Text>
+                <Text style={{ fontSize: 14, color: '#888' }}>{recipe.user.alias}</Text>
+              </View>
+            ))}
+          </View>
         )}
       </View>
     </SafeAreaView>
