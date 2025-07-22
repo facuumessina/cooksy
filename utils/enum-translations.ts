@@ -80,8 +80,10 @@ export const translateCuisine = (cuisine: Cuisine): string => {
     [Cuisine.FASTFOOD]: "Comida rápida",
     [Cuisine.VEGGIE]: "Vegetariana",
     [Cuisine.INDIAN]: "India",
-    [Cuisine.FRENCH]: "Francesa",
-    [Cuisine.INTERNATIONAL]: "Internacional"
+    [Cuisine.INTERNATIONAL]: "Internacional",
+    [Cuisine.BREAKFAST]: "Desayuno",
+    [Cuisine.MERIENDA]: "Merienda"
+
   };
   return translations[cuisine];
 };

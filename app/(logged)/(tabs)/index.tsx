@@ -86,7 +86,7 @@ export default function Home() {
 
     const loadRecommendations = async () => {
         try {
-            const response = await fetch('https://cooksy-p77y.onrender.com/recipes/latest');
+            const response = await fetch('http://cooksy-p77y.onrender.com/recipes/latest');
             if (!response.ok) throw new Error('Error al cargar recetas');
             const data = await response.json();
             setRecommendations(data);
@@ -103,7 +103,7 @@ export default function Home() {
         try {
             const userId = await AsyncStorage.getItem('userId');
             if (!userId) throw new Error('No se encontró el ID del usuario');
-            const url = `https://cooksy-p77y.onrender.com/users/${userId}`;
+            const url = `http://cooksy-p77y.onrender.com/users/${userId}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error('Error al cargar perfil');
             const data = await response.json();
