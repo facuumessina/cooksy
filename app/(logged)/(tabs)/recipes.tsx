@@ -1,5 +1,5 @@
-import { Cuisine, DietaryRestriction, DietType } from '@/types/enums';
-import { translateCuisine, translateDietaryRestriction } from '@/utils/enum-translations';
+import { Cuisine, DietType } from '@/types/enums';
+import { translateCuisine } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -15,7 +15,6 @@ const INGREDIENT_RANGES = [
 
 const recipes = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRestrictions, setSelectedRestrictions] = useState<Set<DietaryRestriction>>(new Set());
   const [selectedCuisines, setSelectedCuisines] = useState<Set<Cuisine>>(new Set());
   const [selectedDietTypes, setSelectedDietTypes] = useState<Set<DietType>>(new Set());
   const [ingredientsRange, setIngredientsRange] = useState('Cualquiera');
@@ -38,7 +37,7 @@ const recipes = () => {
   const fetchUsersWithRecipes = async () => {
     try {
       setLoadingUsers(true);
-      const res = await fetch('http://cooksy-p77y.onrender.com/recipes/userslist');
+      const res = await fetch('http://10.0.2.2:3000/recipes/userslist');
       const data = await res.json();
       console.log('Usuarios traídos:', data);
       setUserSuggestions(data);
@@ -53,17 +52,6 @@ const recipes = () => {
     fetchUsersWithRecipes();
   }, []);
 
-  const handleToggleRestriction = (restriction: DietaryRestriction) => {
-    setSelectedRestrictions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(restriction)) {
-        newSet.delete(restriction);
-      } else {
-        newSet.add(restriction);
-      }
-      return newSet;
-    });
-  };
 
   const handleToggleCuisine = (cuisine: Cuisine) => {
     setSelectedCuisines(prev => {
@@ -167,9 +155,19 @@ const recipes = () => {
               onPress={() => setShowUserDropdown(!showUserDropdown)}
             >
               <Ionicons name="person" size={20} color="#333" />
-              <Text style={styles.searchInput}>
-                {userSearch || 'Seleccionar usuario'}
-              </Text>
+              {userSearch ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                  <Text style={styles.searchInput}>{userSearch}</Text>
+                  <TouchableOpacity
+                    onPress={() => setUserSearch('')}
+                    style={{ marginLeft: 8 }}
+                  >
+                    <Ionicons name="close-circle" size={20} color="#F97316" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text style={styles.searchInput}>Seleccionar usuario</Text>
+              )}
             </TouchableOpacity>
             {showUserDropdown && userSuggestions.length > 0 && (
               <View style={{
@@ -218,30 +216,6 @@ const recipes = () => {
             </ScrollView>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Restricción alimentaria</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.chipContainer}>
-                {Object.values(DietaryRestriction).map((restriction) => (
-                  <TouchableOpacity
-                    key={restriction}
-                    style={[
-                      styles.chip,
-                      selectedRestrictions.has(restriction) && styles.chipSelected
-                    ]}
-                    onPress={() => handleToggleRestriction(restriction)}
-                  >
-                    <Text style={[
-                      styles.chipText,
-                      selectedRestrictions.has(restriction) && styles.chipTextSelected
-                    ]}>
-                      {translateDietaryRestriction(restriction)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-          </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ingredientes que debe contener</Text>
@@ -352,7 +326,6 @@ const recipes = () => {
               pathname: '/recommendations',
               params: {
                 fromFilter: 'true',
-                restrictions: Array.from(selectedRestrictions),
                 cuisines: Array.from(selectedCuisines),
                 dietTypes: Array.from(selectedDietTypes),
                 ingredients: selectedIngredients,

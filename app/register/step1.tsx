@@ -96,7 +96,7 @@ const StepOne = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "http://cooksy-p77y.onrender.com/auth/login",
+        "http://10.0.2.2:3000/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

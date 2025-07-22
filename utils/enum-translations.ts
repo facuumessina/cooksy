@@ -82,7 +82,9 @@ export const translateCuisine = (cuisine: Cuisine): string => {
     [Cuisine.INDIAN]: "India",
     [Cuisine.INTERNATIONAL]: "Internacional",
     [Cuisine.BREAKFAST]: "Desayuno",
-    [Cuisine.MERIENDA]: "Merienda"
+    [Cuisine.MERIENDA]: "Merienda",
+    [Cuisine.PRINCIPAL]: "Plato Principal",
+    [Cuisine.ENTRADA]: "Entrada"
 
   };
   return translations[cuisine];

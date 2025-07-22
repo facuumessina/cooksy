@@ -26,7 +26,7 @@ const RecipeDetailScreen = () => {
 useEffect(() => {
   const fetchRecipe = async () => {
     try {
-      const response = await fetch(`http://cooksy-p77y.onrender.com/recipes/${id}`);
+      const response = await fetch(`http://10.0.2.2:3000/recipes/${id}`);
       if (!response.ok) throw new Error('Error al cargar receta');
       const data = await response.json();
       setRecipe(data);

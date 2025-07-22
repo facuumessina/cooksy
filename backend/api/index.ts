@@ -1,10 +1,12 @@
 // app/api/index.ts
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes';
 import recipeRoutes from './routes/recipeRoutes';
 import userRoutes from './routes/userRoutes';
+dotenv.config();
 
 const app = express();
 

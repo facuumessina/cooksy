@@ -47,6 +47,10 @@ export enum FoodUnit {
 
 // Cocinas del mundo
 export enum Cuisine {
+    BREAKFAST = "DESAYUNO",
+    MERIENDA = "MERIENDA",
+    PRINCIPAL = "PLATO PRINCIPAL",
+    ENTRADA = "ENTRADA",
     ITALIAN = "ITALIANA",
     MEXICAN = "MEXICANA",
     CHINESE = "CHINA",
@@ -58,9 +62,8 @@ export enum Cuisine {
     FASTFOOD = "COMIDA RAPIDA",
     VEGGIE = "VEGETARIANA",
     INDIAN = "INDIA",
-    INTERNATIONAL = "INTERNACIONAL",
-    BREAKFAST = "DESAYUNO",
-    MERIENDA = "MERIENDA"
+    INTERNATIONAL = "INTERNACIONAL"
+    
 }
 
 export enum CulinaryCategory {
