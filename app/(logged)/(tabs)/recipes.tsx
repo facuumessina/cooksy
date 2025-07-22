@@ -29,6 +29,7 @@ const recipes = () => {
   const [excludedIngredientInput, setExcludedIngredientInput] = useState('');
   // Usuario filter state
   const [userSearch, setUserSearch] = useState('');
+  const [userAliasDisplay, setUserAliasDisplay] = useState('');
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -63,12 +64,13 @@ const recipes = () => {
 
 
   const handleToggleCuisine = (cuisine: Cuisine) => {
-    setSelectedCuisines(prev => {
+    setSelectedCuisines((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(cuisine)) {
-        newSet.delete(cuisine);
+        newSet.delete(cuisine); // Si ya está seleccionado, lo deselecciona
       } else {
-        newSet.add(cuisine);
+        newSet.clear();         // Si no está, elimina los anteriores...
+        newSet.add(cuisine);    // ...y agrega el nuevo
       }
       return newSet;
     });
@@ -154,11 +156,14 @@ const recipes = () => {
               onPress={() => setShowUserDropdown(!showUserDropdown)}
             >
               <Ionicons name="person" size={20} color="#333" />
-              {userSearch ? (
+              {userAliasDisplay ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                  <Text style={styles.searchInput}>{userSearch}</Text>
+                  <Text style={styles.searchInput}>{userAliasDisplay}</Text>
                   <TouchableOpacity
-                    onPress={() => setUserSearch('')}
+                    onPress={() => {
+                      setUserSearch('');
+                      setUserAliasDisplay('');
+                    }}
                     style={{ marginLeft: 8 }}
                   >
                     <Ionicons name="close-circle" size={20} color="#F97316" />
@@ -179,7 +184,8 @@ const recipes = () => {
                 <ScrollView>
                   {userSuggestions.map((user) => (
                     <TouchableOpacity key={user._id} onPress={() => {
-                      setUserSearch(user.alias);
+                      setUserSearch(user._id);
+                      setUserAliasDisplay(user.alias);
                       setShowUserDropdown(false);
                     }}>
                       <Text style={{ padding: 8 }}>{user.alias}</Text>

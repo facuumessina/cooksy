@@ -13,7 +13,7 @@ export async function getLatestRecipes(_req: Request, res: Response) {
 
 export async function searchRecipes(req: Request, res: Response) {
   try {
-    const { searchTerm, user, cuisines, ingredients, excludedIngredients } = req.query;
+    const { searchTerm, userSearch, cuisines, ingredients, excludedIngredients } = req.query;
 
     const filter: any = { estado: 'aprobada' };
 
@@ -21,12 +21,16 @@ export async function searchRecipes(req: Request, res: Response) {
       filter.nombre = { $regex: new RegExp(searchTerm as string, 'i') };
     }
 
-    if (user) {
-      const userDoc = await mongoose.model('Usuario').findOne({ alias: user });
-      if (!userDoc) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+    if (userSearch) {
+      let userId = userSearch;
+      if (!mongoose.Types.ObjectId.isValid(userSearch as string)) {
+        const userDoc = await mongoose.model('Usuario').findOne({ alias: userSearch });
+        if (!userDoc) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        userId = userDoc._id;
       }
-      filter.autor = userDoc._id;
+      filter.autor = userId;
     }
 
     if (cuisines) {
