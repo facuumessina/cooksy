@@ -17,7 +17,7 @@ import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import { CameraType, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -59,7 +59,7 @@ export default function CreateRecipe() {
   // Ingredient and instruction state/handlers for recipe creation
   const [recipeName, setRecipeName] = useState('');
   const [recipeType, setRecipeType] = useState('');
-  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'g' }]);
+  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'u' }]);
   const [instructionsList, setInstructionsList] = useState(['']);
   const [isGuest, setIsGuest] = useState(false);
 
@@ -418,6 +418,7 @@ export default function CreateRecipe() {
 
   // Define units array
   const UNITS = [
+    { label: 'unidades (u)', value: 'u', short: 'u' },
     { label: 'gramos (g)', value: 'g', short: 'g' },
     { label: 'kilogramos (kg)', value: 'kg', short: 'kg' },
     { label: 'tazas', value: 'taza', short: 'taza' },
