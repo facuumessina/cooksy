@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SearchResultsScreen = () => {
   const router = useRouter();
@@ -69,7 +69,11 @@ const SearchResultsScreen = () => {
               onPress={() => router.push(`/recommendations/${recipe._id}`)}
               style={styles.foodItem}
             >
-              <View style={[styles.foodImage, styles.imagePlaceholder]} />
+              <Image
+                source={{ uri: recipe.imagen }}
+                style={styles.foodImage}
+                resizeMode="cover"
+              />
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginTop: 4 }}>
                 <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{recipe.nombre}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>

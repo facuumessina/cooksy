@@ -248,8 +248,9 @@ export default function Home() {
                                     style={styles.foodItem}
                                 >
                                     <Image
-                                        source={{ uri: recipe.multimedia?.[0] }}
+                                        source={{ uri: recipe.imagen || recipe.multimedia?.[0] }}
                                         style={styles.foodImage}
+                                        resizeMode="cover"
                                     />
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginTop: 4 }}>
                                         <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{recipe.nombre}</Text>

@@ -16,7 +16,7 @@ export interface IReceta extends Document {
   tipo: string;
   ingredientes: Ingrediente[];
   instrucciones: Paso[];
-  multimedia: string[];
+  imagen: string;
   porciones: number;
   autor: mongoose.Types.ObjectId;
   estado: 'pendiente' | 'aprobada';
@@ -49,7 +49,7 @@ const RecetaSchema = new Schema<IReceta>(
     tipo: { type: String, required: true },
     ingredientes: { type: [IngredienteSchema], required: true },
     instrucciones: { type: [PasoSchema], required: true },
-    multimedia: { type: [String], default: [] },
+    imagen: { type: String, required: true },
     porciones: { type: Number, required: true },
     autor: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
     estado: { type: String, enum: ['pendiente', 'aprobada'], default: 'pendiente' },

@@ -4,7 +4,7 @@ import { Ingredient, Recipe } from '@/types/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Dimensions, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
 const width = Dimensions.get('window').width;
@@ -149,9 +149,10 @@ const RecipeDetailScreen = () => {
             color="#f00"
           />
         </TouchableOpacity>
-        <View style={[styles.recipeImage, { backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center' }]}>
-          <Ionicons name="fast-food-outline" size={64} color="#999" />
-        </View>
+        <Image
+          source={{ uri: recipe.imagen }}
+          style={styles.recipeImage}
+        />
 
         <View style={styles.contentContainer}>
 

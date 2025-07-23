@@ -139,13 +139,17 @@ export default function CreateRecipe() {
       }));
 
       // --- Subir imagen a Cloudinary antes de armar el objeto receta ---
-      const selectedImage = imagen;
-      const imageUrl = selectedImage ? await uploadImageToCloudinary(selectedImage) : '';
+      // Use imageUrl from state if available, otherwise upload from imagen
+      let imageUrlToSend = imageUrl;
+      if (!imageUrlToSend && imagen) {
+        imageUrlToSend = await uploadImageToCloudinary(imagen);
+        setImageUrl(imageUrlToSend);
+      }
 
       const instruccionesMapped = instructionsList.map((desc, idx) => ({
         paso: idx + 1,
         descripcion: desc,
-        multimedia: imageUrl ? [imageUrl] : [],
+        // If you want to send the image per step, you can adapt this as needed
       }));
 
       const receta = {
@@ -155,7 +159,8 @@ export default function CreateRecipe() {
         instrucciones: instruccionesMapped,
         porciones,
         autor: userId,
-        multimedia: imageUrl ? [imageUrl] : [],
+        // Change from multimedia: [imageUrl], to imagen: imageUrl
+        imagen: imageUrlToSend,
       };
 
       // Log de los datos que se enviarán al backend
@@ -915,36 +920,52 @@ const styles = StyleSheet.create({
 });
 
 
+// Cloudinary config
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dsn0bdvyi/image/upload';
+const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
+const CLOUDINARY_API_KEY = '176694265586641';
+
 // Función para subir imágenes a Cloudinary
-const uploadImageToCloudinary = async (image) => {
-  if (!image) return '';
+const uploadImageToCloudinary = async (selectedImage) => {
+  if (!selectedImage) return null;
 
-  // Confirmar que image es una URI de archivo local tipo "file://..."
+  // Debugging logs as requested
+  console.log('📤 Entrando en submitRecipe...');
+  console.log('📸 Subiendo imagen a Cloudinary...');
+  console.log('🔍 Validando credenciales Cloudinary:');
+  console.log('Cloud Name:', CLOUDINARY_URL);
+  console.log('API Key:', CLOUDINARY_API_KEY);
+
+  const formData = new FormData();
+  formData.append('file', {
+    uri: selectedImage,
+    type: 'image/jpeg',
+    name: 'receta.jpg',
+  } as any);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  console.log('📦 formData para Cloudinary:', formData);
+
   try {
-    const formData = new FormData();
-    formData.append('file', {
-      uri: image,
-      type: 'image/jpeg',
-      name: 'receta.jpg',
+    const response = await fetch(CLOUDINARY_URL, {
+      method: 'POST',
+      body: formData,
     });
-    formData.append('upload_preset', 'unsigned_preset');
 
+    const text = await response.text();
+    let responseJson;
     try {
-      console.log("📸 Subiendo imagen a Cloudinary...");
-      const response = await fetch('https://api.cloudinary.com/v1_1/driu8oq5s/image/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-      console.log('✅ Imagen subida correctamente:', data.secure_url);
-      return data.secure_url;
-    } catch (error) {
-      console.error('❌ Error al subir la imagen a Cloudinary:', error);
-      return '';
+      responseJson = JSON.parse(text);
+    } catch (e) {
+      responseJson = text;
     }
+    const imageUrl = responseJson.secure_url;
+    console.log('📄 Respuesta cruda de Cloudinary:', responseJson);
+    console.log('✅ Imagen subida correctamente:', imageUrl);
+
+    return imageUrl;
   } catch (error) {
-    console.error('❌ Error al preparar la imagen para Cloudinary:', error);
-    return '';
+    console.error('❌ Error al subir la imagen a Cloudinary:', error);
+    return null;
   }
 };

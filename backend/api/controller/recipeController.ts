@@ -81,7 +81,17 @@ export async function createRecipe(req: Request, res: Response) {
     if (req.body.porciones == null || isNaN(req.body.porciones)) {
       return res.status(400).json({ message: 'Falta el campo porciones en la receta' });
     }
-    const receta = new Receta({ ...req.body, estado: 'aprobada' });
+    const { nombre, tipo, ingredientes, instrucciones, autor, porciones, imagen } = req.body;
+    const receta = new Receta({
+      nombre,
+      tipo,
+      ingredientes,
+      instrucciones,
+      autor,
+      porciones,
+      imagen,
+      estado: 'aprobada'
+    });
     await receta.save();
     // Agregar la receta a myRecipes del usuario
     const Usuario = mongoose.model('Usuario');
@@ -234,7 +244,7 @@ export async function getLatestApprovedRecipes(_req: Request, res: Response) {
         tipo: 1,
         ingredientes: 1,
         instrucciones: 1,
-        multimedia: 1,
+        imagen: 1,
         estado: 1,
         createdAt: 1,
         averageRating: 1,
