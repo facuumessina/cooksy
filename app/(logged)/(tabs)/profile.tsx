@@ -113,8 +113,23 @@ const FavRecipesInfoItem = () => {
 };
 
 const MyRecipesInfoItem = () => {
-  const data = useData();
-  const myRecipes = data?.myRecipes ?? [];
+  const { user } = useData();
+  const [myRecipes, setMyRecipes] = useState([]);
+
+  useEffect(() => {
+    const fetchMyRecipes = async () => {
+      try {
+        const response = await fetch(`http://10.0.2.2:3000/users/${user?._id}/my-recipes`);
+        const data = await response.json();
+        setMyRecipes(data);
+        console.log("📒 Recetas propias:", data);
+      } catch (error) {
+        console.error("❌ Error al traer mis recetas:", error);
+      }
+    };
+
+    if (user?._id) fetchMyRecipes();
+  }, [user]);
 
   if (!myRecipes || myRecipes.length === 0) {
     return (
@@ -127,23 +142,28 @@ const MyRecipesInfoItem = () => {
   return (
     <View>
       {Array.isArray(myRecipes) && myRecipes.map((recipe, index) => (
-        <View key={index} style={styles.recipeContainer}>
-          <Image
-            source={{ uri: recipe.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image}` : '' }}
-            resizeMode="contain"
-            style={styles.recipeImage}
-          />
+        <TouchableOpacity
+          key={index}
+          style={styles.recipeContainer}
+          onPress={() => router.push({
+            pathname: '/recommendations/[id]',
+            params: { id: recipe._id?.$oid || recipe._id || recipe.id, fromSearch: 'true' }
+          })}
+        >
+          {recipe.image && (
+            <Image
+              source={{ uri: `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image?.filename || recipe.image}` }}
+              resizeMode="contain"
+              style={styles.recipeImage}
+            />
+          )}
           <View style={styles.recipeContainerInfo}>
-            <Text style={styles.recipeName}>{recipe.name}</Text>
-            <TouchableOpacity onPress={() => router.push(
-              {
-                pathname: '/recommendations/[id]',
-                params: { id: recipe.id, fromSearch: 'true' }
-              })}>
-              <Text style={styles.moreRecipeInfo}>Ver más</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="restaurant" size={16} color="#FB8C00" style={{ marginRight: 6 }} />
+              <Text style={styles.recipeName}>{recipe.name || recipe.nombre}</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </View>
   );

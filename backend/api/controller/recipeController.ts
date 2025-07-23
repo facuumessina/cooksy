@@ -74,8 +74,17 @@ export async function searchRecipes(req: Request, res: Response) {
 
 export async function createRecipe(req: Request, res: Response) {
   try {
+    // Asegurarse de que el campo autor esté presente
+    if (!req.body.autor) {
+      return res.status(400).json({ message: 'Falta el campo autor en la receta' });
+    }
     const receta = new Receta({ ...req.body, estado: 'aprobada' });
     await receta.save();
+    // Agregar la receta a myRecipes del usuario
+    const Usuario = mongoose.model('Usuario');
+    await Usuario.findByIdAndUpdate(receta.autor, {
+      $push: { myRecipes: receta._id }
+    });
     res.status(201).json(receta);
   } catch (e: any) {
     if (e.code === 11000) return res.status(409).json({ message: 'Receta duplicada' });

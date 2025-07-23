@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
     addSavedRecipe,
     deleteSavedRecipe,
+    getMyRecipes,
     getProfile,
     getProfileById,
     getSavedRecipes
@@ -15,5 +16,7 @@ router.post('/:id/saved-recipes', addSavedRecipe);
 router.delete('/:id/saved-recipes/:recipeId', deleteSavedRecipe);
 router.get('/:id/profile', getProfile);
 router.get('/:id', getProfileById);
+
+router.get('/:id/my-recipes', getMyRecipes);
 
 export default router;

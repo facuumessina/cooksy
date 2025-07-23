@@ -42,14 +42,22 @@ export const deleteSavedRecipe = async (req: Request, res: Response) => {
 
 export const getProfile = async (req: Request, res: Response) => {
   const userId = req.userId; // obtenido del middleware auth
-  const user = await Usuario.findById(userId).select('alias email nombre apellido fechaNacimiento savedRecipes');
+  const user = await Usuario.findById(userId).select('alias email nombre apellido fechaNacimiento savedRecipes myRecipes');
   if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
   res.json(user);
 };
 
 export const getProfileById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const user = await Usuario.findById(id).select('alias email nombre apellido fechaNacimiento savedRecipes');
+  const user = await Usuario.findById(id)
+    .select('alias email nombre apellido fechaNacimiento savedRecipes myRecipes')
+    .populate('myRecipes'); // para traer los datos completos de las recetas propias
   if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
   res.json(user);
+};
+export const getMyRecipes = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = await Usuario.findById(id).populate('myRecipes');
+  if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+  res.json(user.myRecipes);
 };
