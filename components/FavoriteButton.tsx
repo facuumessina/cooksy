@@ -13,12 +13,29 @@ interface FavoriteButtonProps {
 
 const FavoriteButton = ({ recipe, size = 24, style }: FavoriteButtonProps) => {
     const { favouriteRecipes, toggleFavourite } = useData();
-    const isFavourite = favouriteRecipes.some(fav => fav.id === recipe.id);
+    const isFavourite = favouriteRecipes.includes(recipe._id);
+    console.log('📌 recipe._id (verificación):', recipe._id);
+    console.log('❤️ Renderizando botón favorito para receta con ID:', recipe._id);
+    console.log('📌 favouriteRecipes:', favouriteRecipes);
 
     return (
         <TouchableOpacity
             style={[styles.favouriteButton, style]}
-            onPress={() => toggleFavourite(recipe)}
+            onPress={() => {
+                if (!recipe._id) {
+                    console.warn('⚠️ No se pudo guardar la receta como favorita: _id no definido');
+                    return;
+                }
+
+                console.log('💾 toggleFavourite ejecutado con ID:', recipe._id);
+                toggleFavourite(prev => {
+                    if (prev.includes(recipe._id)) {
+                        return prev.filter(id => id !== recipe._id);
+                    } else {
+                        return [...prev, recipe._id];
+                    }
+                });
+            }}
         >
             <Ionicons
                 name={isFavourite ? "heart" : "heart-outline"}

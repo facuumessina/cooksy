@@ -2,11 +2,6 @@ import { envConfig } from "@/configs/envConfig";
 import { STORAGE_KEYS } from "@/service/storage";
 import { ActivityLevel } from "@/types/enums";
 import { User } from "@/types/types";
-import {
-    translateCuisine,
-    translateDietaryRestriction,
-    translateFood
-} from "@/utils/enum-translations";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -14,14 +9,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    Alert,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useData } from "../../../context/DataProvider";
 
@@ -52,7 +47,32 @@ const InfoItem = ({ label, value }: any) => (
 );
 
 const FavRecipesInfoItem = () => {
-  const { favouriteRecipes } = useData();
+  const { user } = useData();
+  const favouriteRecipes = user?.savedRecipes ?? [];
+  console.log("🧡 Recetas favoritas (user.savedRecipes):", favouriteRecipes);
+
+  const [detailedFavorites, setDetailedFavorites] = useState([]);
+
+  useEffect(() => {
+    const fetchFavoritesDetails = async () => {
+      try {
+        const promises = favouriteRecipes.map((id: string) =>
+          fetch(`http://10.0.2.2:3000/recipes/${id}`).then(res => res.json())
+        );
+        const results = await Promise.all(promises);
+        setDetailedFavorites(results);
+        console.log("🔍 Recetas favoritas detalladas:", results);
+      } catch (error) {
+        console.error("❌ Error al traer detalles de recetas favoritas:", error);
+      }
+    };
+
+    if (favouriteRecipes.length > 0 && typeof favouriteRecipes[0] === 'string') {
+      fetchFavoritesDetails();
+    } else {
+      setDetailedFavorites(favouriteRecipes);
+    }
+  }, [favouriteRecipes]);
 
   if (!favouriteRecipes || favouriteRecipes.length === 0) {
     return (
@@ -64,24 +84,29 @@ const FavRecipesInfoItem = () => {
 
   return (
     <View>
-      {favouriteRecipes.map((fav, index) => (
-        <View key={index} style={styles.recipeContainer}>
-          <Image
-            source={{ uri: fav.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${fav.image}` : '' }}
-            resizeMode="contain"
-            style={styles.recipeImage}
-          />
+      {Array.isArray(detailedFavorites) && detailedFavorites.map((fav: any, index: number) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.recipeContainer}
+          onPress={() => router.push({
+            pathname: '/recommendations/[id]',
+            params: { id: fav._id?.$oid || fav._id || fav.id, fromSearch: 'true' }
+          })}
+        >
+          {fav.image && (
+            <Image
+              source={{ uri: `${envConfig.IMAGE_SERVER_URL}/recipes/${fav.image?.filename || fav.image}` }}
+              resizeMode="contain"
+              style={styles.recipeImage}
+            />
+          )}
           <View style={styles.recipeContainerInfo}>
-            <Text style={styles.recipeName}>{fav.name}</Text>
-            <TouchableOpacity onPress={() => router.push(
-              {
-                pathname: '/recommendations/[id]',
-                params: { id: fav.id, fromSearch: 'true' }
-              })}>
-              <Text style={styles.moreRecipeInfo}>Ver más</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="restaurant" size={16} color="#FB8C00" style={{ marginRight: 6 }} />
+              <Text style={styles.recipeName}>{fav.name || fav.nombre}</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -301,27 +326,6 @@ const ProfileScreen = () => {
               <MyRecipesInfoItem />
             </ProfileSection>
 
-            {/* Preferences Section */}
-            <ProfileSection title="Preferencias" icon="options-outline">
-              <InfoItem
-                label="Restricciones Dietéticas"
-                value={user?.preferences?.dietaryRestrictions
-                  ?.map((d) => translateDietaryRestriction(d))
-                  .join(", ")}
-              />
-              <InfoItem
-                label="Categorías Preferidas"
-                value={user?.preferences?.preferredCategories
-                  ?.map((pc) => translateFood(pc))
-                  .join(", ")}
-              />
-              <InfoItem
-                label="Cocinas Preferidas"
-                value={user?.preferences?.preferredCuisines
-                  ?.map((c) => translateCuisine(c))
-                  .join(", ")}
-              />
-            </ProfileSection>
 
             <TouchableOpacity style={styles.logoutButton} onPress={() => router.push('/forgotPassword' as never)}>
               <LinearGradient

@@ -305,3 +305,32 @@ export async function deleteComment(req: Request, res: Response) {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
+
+export async function toggleFavoriteRecipe(req: Request, res: Response) {
+  const { userId, recipeId } = req.body;
+
+  if (!userId || !recipeId) {
+    return res.status(400).json({ message: 'Faltan datos requeridos' });
+  }
+
+  try {
+    const Usuario = mongoose.model('Usuario');
+    const user = await Usuario.findById(userId);
+
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    const index = user.favoritos.indexOf(recipeId);
+    if (index > -1) {
+      user.favoritos.splice(index, 1); // eliminar
+    } else {
+      user.favoritos.push(recipeId); // agregar
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: 'Favoritos actualizados', favoritos: user.favoritos });
+  } catch (error) {
+    console.error('Error al actualizar favoritos:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+}

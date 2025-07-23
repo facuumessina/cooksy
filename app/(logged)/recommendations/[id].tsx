@@ -1,4 +1,3 @@
-import FavoriteButton from '@/components/FavoriteButton';
 import Toast from '@/components/Toast';
 import { useData } from '@/context/DataProvider';
 import { Ingredient, Recipe } from '@/types/types';
@@ -22,29 +21,39 @@ const RecipeDetailScreen = () => {
   const [toastVisible, setToastVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
-useEffect(() => {
-  const fetchRecipe = async () => {
-    try {
-      const response = await fetch(`http://10.0.2.2:3000/recipes/${id}`);
-      if (!response.ok) throw new Error('Error al cargar receta');
-      const data = await response.json();
-      setRecipe(data);
-      if (data) {
-        const missing = data.ingredientes.filter((ingredient: Ingredient) => {
-          const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
-          const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
-          return !isInCurrentRecipe && !isInUserIngredients;
-        });
-        setMissingIngredients(missing || []);
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await fetch(`http://10.0.2.2:3000/recipes/${id}`);
+        if (!response.ok) throw new Error('Error al cargar receta');
+        const data = await response.json();
+        setRecipe(data);
+        console.log("👤 Usuario al cargar receta:", user);
+        console.log("📌 Recetas guardadas (IDs):", user?.savedRecipes?.map((id) => String(id)));
+        console.log("📄 ID de receta actual:", String(data._id));
+        // Set missing ingredients as before
+        if (data) {
+          const missing = data.ingredientes.filter((ingredient: Ingredient) => {
+            const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
+            const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
+            return !isInCurrentRecipe && !isInUserIngredients;
+          });
+          setMissingIngredients(missing || []);
+        }
+        // Set favorite status after recipe is loaded and user is available
+        const savedIds = user?.savedRecipes?.map((id) => String(id)) || [];
+        console.log("🔍 ¿Está marcada como favorita?", savedIds.includes(String(data._id)));
+        setIsFavorite(savedIds.includes(String(data._id)));
+      } catch (err) {
+        console.error("Error al traer receta:", err);
       }
-    } catch (err) {
-      console.error("Error al traer receta:", err);
-    }
-  };
+    };
 
-  fetchRecipe();
-}, [id]);
+    fetchRecipe();
+    // Only rerun if id, user, or currentRecipeIngredients change
+  }, [id, user, currentRecipeIngredients]);
 
   const isIngredientMissing = (ingredient: Ingredient): boolean => {
     const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
@@ -66,9 +75,9 @@ useEffect(() => {
     );
   }
 
-  
 
- 
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,8 +88,65 @@ useEffect(() => {
         >
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        <FavoriteButton recipe={recipe} style={styles.favouriteButton} />
-        <View style={[styles.recipeImage, {backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center'}]}>
+        <TouchableOpacity
+          onPress={async () => {
+            if (!recipe || !user?._id) {
+              console.warn('Faltan datos para actualizar favoritos');
+              return;
+            }
+
+            // Log before fetch
+            console.log("🔘 Favorite button pressed. Recipe ID:", recipe._id, "User ID:", user?._id, "Current isFavorite:", isFavorite);
+
+            const endpoint = isFavorite
+              ? `http://10.0.2.2:3000/users/${user._id}/saved-recipes/${recipe._id}`
+              : `http://10.0.2.2:3000/users/${user._id}/saved-recipes`;
+
+            const options: RequestInit = isFavorite
+              ? {
+                  method: 'DELETE',
+                  headers: { 'Content-Type': 'application/json' },
+                }
+              : {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ recipeId: recipe._id }),
+                };
+
+            try {
+              const response = await fetch(endpoint, options);
+
+              // Log after response
+              console.log("📡 Respuesta del servidor (status):", response.status);
+              const responseBody = await response.json().catch(() => null);
+              console.log("📄 Respuesta del servidor (body):", responseBody);
+
+              if (!response.ok) {
+                // Log the response body for errors
+                console.log(responseBody);
+                throw new Error('Error al actualizar favoritos');
+              }
+
+              setIsFavorite(prev => !prev);
+              if (isFavorite) {
+                // Eliminar de savedRecipes localmente si ya estaba marcado
+                const updatedUser = { ...user, savedRecipes: user.savedRecipes.filter(id => id !== recipe._id) };
+                console.log("🗑️ Receta eliminada localmente de favoritos:", updatedUser.savedRecipes);
+              }
+            } catch (error) {
+              console.error("❌ Error al actualizar favoritos:", error);
+              console.log("❗ Error capturado en el fetch de favoritos:", error);
+            }
+          }}
+          style={styles.favouriteButton}
+        >
+          <Ionicons
+            name={isFavorite ? "heart" : "heart-outline"}
+            size={24}
+            color="#f00"
+          />
+        </TouchableOpacity>
+        <View style={[styles.recipeImage, { backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center' }]}>
           <Ionicons name="fast-food-outline" size={64} color="#999" />
         </View>
 
@@ -118,7 +184,7 @@ useEffect(() => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Valorar</Text>
             <View style={{ flexDirection: 'row', marginVertical: 8 }}>
-              {[1,2,3,4,5].map((star) => (
+              {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity
                   key={star}
                   onPress={async () => {
@@ -267,10 +333,10 @@ useEffect(() => {
             )}
           </View>
         </View>
-        </ScrollView>
+      </ScrollView>
       <Toast
         visible={toastVisible}
-        message="Ingredientes agregados a la lista de compras"
+        message="Valoración realizada correctamente"
         type="success"
         onHide={() => setToastVisible(false)}
       />

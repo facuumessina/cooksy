@@ -12,6 +12,7 @@ import {
     getRecipeById,
     getUsersWithRecipes,
     searchRecipes,
+    toggleFavoriteRecipe,
     updateRecipe
 } from '../controller/recipeController';
 
@@ -33,5 +34,7 @@ router.post('/:id/comments', addComment);
 router.delete('/:id/comments/:commentId', deleteComment);
 
 router.post('/:id/adjust',   adjustRecipe);
+
+router.post('/:id/favorite', toggleFavoriteRecipe);
 
 export default router;
