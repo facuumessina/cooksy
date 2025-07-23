@@ -251,7 +251,11 @@ export default function Home() {
                                         <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{recipe.nombre}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <Ionicons name="restaurant-outline" size={16} color="#666" style={{ marginRight: 4 }} />
-                                            <Text style={{ fontSize: 14, color: '#666' }}>{recipe.ingredientes?.length || 0}</Text>
+                                            <Text style={{ fontSize: 14, color: '#666', marginRight: 8 }}>{recipe.ingredientes?.length || 0}</Text>
+                                            <Ionicons name="star" size={16} color="#FBBF24" style={{ marginRight: 4 }} />
+                                            {recipe.averageRating ? (
+                                              <Text style={{ fontSize: 14, color: '#666' }}>{recipe.averageRating.toFixed(1)}</Text>
+                                            ) : null}
                                         </View>
                                     </View>
                                 </TouchableOpacity>

@@ -110,11 +110,20 @@ export async function deleteRecipe(req: Request, res: Response) {
 export async function addRating(req: Request, res: Response) {
   const receta = await Receta.findById(req.params.id);
   if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
-  receta.ratings.push({
-    userId: req.body.userId,
-    rating: req.body.rating,
-    comment: req.body.comment,
-  });
+
+  const { userId, rating } = req.body;
+  if (!userId || rating == null) {
+    return res.status(400).json({ message: 'Faltan datos para valorar' });
+  }
+
+  // Reemplazar si ya existe valoración de ese usuario
+  const existing = receta.ratings.find(r => r.userId.toString() === userId);
+  if (existing) {
+    existing.rating = rating;
+  } else {
+    receta.ratings.push({ userId, rating });
+  }
+
   await receta.save();
   res.status(201).json({ message: 'Valoración registrada' });
 }
@@ -145,10 +154,50 @@ export async function adjustRecipe(req: Request, res: Response) {
   res.json({ porciones: porciones || 1, ingredientes: ajustados });
 }
 export async function getLatestApprovedRecipes(_req: Request, res: Response) {
-  const latest = await Receta.find({ estado: 'aprobada' })
-    .sort({ createdAt: -1 })
-    .limit(3)
-    .populate('autor', 'alias email nombre');
+  const latest = await Receta.aggregate([
+    { $match: { estado: 'aprobada' } },
+    { $sort: { createdAt: -1 } },
+    { $limit: 3 },
+    {
+      $addFields: {
+        averageRating: {
+          $cond: {
+            if: { $gt: [{ $size: "$ratings" }, 0] },
+            then: { $avg: "$ratings.rating" },
+            else: null
+          }
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: "usuarios",
+        localField: "autor",
+        foreignField: "_id",
+        as: "autor"
+      }
+    },
+    { $unwind: "$autor" },
+    {
+      $project: {
+        _id: 1,
+        nombre: 1,
+        tipo: 1,
+        ingredientes: 1,
+        instrucciones: 1,
+        multimedia: 1,
+        estado: 1,
+        createdAt: 1,
+        averageRating: 1,
+        autor: {
+          _id: "$autor._id",
+          alias: "$autor.alias",
+          email: "$autor.email",
+          nombre: "$autor.nombre"
+        }
+      }
+    }
+  ]);
   res.json(latest);
 }
 

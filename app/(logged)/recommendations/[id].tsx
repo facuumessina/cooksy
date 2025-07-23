@@ -31,7 +31,7 @@ useEffect(() => {
       const data = await response.json();
       setRecipe(data);
       if (data) {
-        const missing = data.ingredients.filter((ingredient: Ingredient) => {
+        const missing = data.ingredientes.filter((ingredient: Ingredient) => {
           const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
           const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
           return !isInCurrentRecipe && !isInUserIngredients;
@@ -119,7 +119,36 @@ useEffect(() => {
             <Text style={styles.sectionTitle}>Valorar</Text>
             <View style={{ flexDirection: 'row', marginVertical: 8 }}>
               {[1,2,3,4,5].map((star) => (
-                <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                <TouchableOpacity
+                  key={star}
+                  onPress={async () => {
+                    setRating(star);
+                    console.log('Enviando valoración:', {
+                      userId: user?._id,
+                      rating: star,
+                    });
+                    try {
+                      const response = await fetch(`http://10.0.2.2:3000/recipes/${id}/rating`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          userId: user?._id,
+                          rating: star,
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Error al enviar valoración');
+                      }
+
+                      setToastVisible(true);
+                    } catch (error) {
+                      console.error('Error al enviar valoración:', error);
+                    }
+                  }}
+                >
                   <Ionicons
                     name={star <= rating ? "star" : "star-outline"}
                     size={32}
@@ -154,11 +183,7 @@ useEffect(() => {
                 onChangeText={setComment}
                 multiline
               />
-              <TouchableOpacity onPress={() => {
-                console.log(`Comentario: ${comment}, Rating: ${rating}`);
-                setComment('');
-                setRating(0);
-              }}>
+              <TouchableOpacity>
                 <Ionicons name="send" size={24} color="#FFA500" />
               </TouchableOpacity>
             </View>
