@@ -183,10 +183,88 @@ useEffect(() => {
                 onChangeText={setComment}
                 multiline
               />
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => {
+                  if (comment.trim()) {
+                    console.log('Enviando comentario:', {
+                      userId: user?._id,
+                      alias: user?.alias,
+                      comment: comment.trim(),
+                    });
+                    try {
+                      const response = await fetch(`http://10.0.2.2:3000/recipes/${id}/comments`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          userId: user?._id,
+                          alias: user?.alias,
+                          comment: comment.trim(),
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Error al enviar comentario');
+                      }
+
+                      const updatedRecipe = await response.json();
+                      setRecipe(updatedRecipe);
+                      setComment('');
+                    } catch (error) {
+                      console.error('Error al enviar comentario:', error);
+                    }
+                  }
+                }}
+              >
                 <Ionicons name="send" size={24} color="#FFA500" />
               </TouchableOpacity>
             </View>
+            {recipe.comments && recipe.comments.length > 0 && (
+              <View style={{ marginTop: 16 }}>
+                {recipe.comments.map((c, index) => (
+                  <View key={index} style={{ marginBottom: 8 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Text style={{ fontWeight: 'bold', color: '#333' }}>{c.alias}</Text>
+                      {c.userId === user?._id && (
+                        <TouchableOpacity
+                          onPress={async () => {
+                            console.log('Intentando eliminar comentario:', {
+                              recipeId: id,
+                              commentId: c._id,
+                              userId: user?._id,
+                            });
+                            try {
+                              const response = await fetch(`http://10.0.2.2:3000/recipes/${id}/comments/${c._id}?userId=${user?._id}`, {
+                                method: 'DELETE',
+                              });
+
+                              if (!response.ok) {
+                                throw new Error('Error al eliminar comentario');
+                              }
+
+                              // Eliminar el comentario del estado sin esperar re-fetch completo
+                              setRecipe(prev => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  comments: prev.comments.filter(comment => comment._id !== c._id),
+                                };
+                              });
+                            } catch (error) {
+                              console.error('Error al eliminar comentario:', error);
+                            }
+                          }}
+                        >
+                          <Ionicons name="trash" size={16} color="red" />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <Text style={{ color: '#555' }}>{c.comment}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         </View>
         </ScrollView>

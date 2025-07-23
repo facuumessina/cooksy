@@ -128,11 +128,40 @@ export async function addRating(req: Request, res: Response) {
   res.status(201).json({ message: 'Valoración registrada' });
 }
 
+export async function addComment(req: Request, res: Response) {
+  try {
+    const receta = await Receta.findById(req.params.id);
+    if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
+
+    const { userId, alias, comment } = req.body;
+    if (!userId || !alias || !comment) {
+      return res.status(400).json({ message: 'Faltan datos para comentar' });
+    }
+
+    receta.comments = receta.comments || [];
+    receta.comments.push({ userId, alias, comment, createdAt: new Date() });
+
+    await receta.save();
+    // Obtener receta actualizada para enviar con comentarios incluidos
+    const updated = await Receta.findById(req.params.id).populate('autor', 'alias email nombre');
+    res.status(201).json(updated);
+  } catch (error) {
+    console.error('Error al agregar comentario:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+}
+
 export async function getComments(req: Request, res: Response) {
-  const receta = await Receta.findById(req.params.id);
-  if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
-  const comments = receta.ratings.filter(r => !!r.comment);
-  res.json(comments);
+  try {
+    const receta = await Receta.findById(req.params.id);
+    if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
+
+    const comentarios = receta.comments || [];
+    res.json(comentarios);
+  } catch (error) {
+    console.error('Error al obtener comentarios:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 }
 
 export async function adjustRecipe(req: Request, res: Response) {
@@ -143,8 +172,8 @@ export async function adjustRecipe(req: Request, res: Response) {
   const factor = porciones
     ? porciones
     : cantidadIngrediente
-    ? cantidadIngrediente.cantidad / 1
-    : 1;
+      ? cantidadIngrediente.cantidad / 1
+      : 1;
 
   const ajustados = receta.ingredientes.map(i => ({
     nombre: i.nombre,
@@ -229,5 +258,50 @@ export async function getUsersWithRecipes(req: Request, res: Response) {
   } catch (error) {
     console.error('Error al obtener usuarios con recetas:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+export async function deleteComment(req: Request, res: Response) {
+  try {
+    const { id, commentId } = req.params;
+    const userId = req.query.userId as string;
+
+    console.log('Intentando eliminar comentario');
+    console.log('ID de receta:', id);
+    console.log('ID de comentario:', commentId);
+    console.log('ID de usuario:', userId);
+
+    const receta = await Receta.findById(id);
+    if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
+
+    const comment = receta.comments.find(
+      (c: any) => c._id?.toString() === commentId && c.userId?.toString() === userId
+    );
+
+    if (!comment) {
+      return res.status(403).json({ message: 'No autorizado para eliminar este comentario' });
+    }
+
+    console.log('Comentarios actuales en la receta:', receta.comments);
+
+    const result = await Receta.updateOne(
+      { _id: id },
+      {
+        $pull: {
+          comments: {
+            _id: new mongoose.Types.ObjectId(commentId),
+          }
+        }
+      }
+    );
+    console.log('Resultado del updateOne:', result);
+
+    if (result.modifiedCount === 0) {
+      console.warn('No se eliminó ningún comentario');
+    }
+
+    res.status(200).json({ message: 'Comentario eliminado' });
+  } catch (error) {
+    console.error('Error al eliminar comentario:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
