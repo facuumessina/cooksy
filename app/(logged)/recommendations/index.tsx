@@ -9,11 +9,12 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const RecommendationScreen = () => {
-  const { currentRecommendations, recipes } = useData();
+  const { currentRecommendations } = useData();
   const router = useRouter();
   const params = useLocalSearchParams();
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [apiRecipes, setApiRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
     if (params.fromFilter === 'true') {
@@ -34,7 +35,7 @@ const RecommendationScreen = () => {
 
       const userFilter = params.user ? params.user.toLowerCase() : '';
 
-      let filtered = [...recipes];
+      let filtered = [...currentRecommendations];
 
       if (restrictions.length > 0) {
         filtered = filtered.filter(recipe =>
@@ -77,14 +78,41 @@ const RecommendationScreen = () => {
       }
 
       setFilteredRecipes(filtered);
+    } else {
+      const fetchAllRecipes = async () => {
+        try {
+          const response = await fetch(`http://10.0.2.2:3000/recetas/search`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              cuisines: [],
+              dietTypes: [],
+              mustIncludeIngredients: [],
+              excludedIngredients: [],
+              restrictions: [],
+              user: '',
+            }),
+          });
+          const text = await response.text();
+          console.log('🔴 Response text:', text);
+          const data = JSON.parse(text);
+          setApiRecipes(data);
+        } catch (error) {
+          console.error('Error al cargar todas las recetas:', error);
+        }
+      };
+
+      fetchAllRecipes();
     }
   }, []);
 
   // Filtrar por término de búsqueda
   const getDisplayedRecipes = () => {
-    const baseRecipes = params.fromFilter === 'true' ?
-      filteredRecipes :
-      (currentRecommendations.length > 0 ? currentRecommendations : []);
+    const baseRecipes = params.fromFilter === 'true'
+      ? filteredRecipes
+      : apiRecipes;
 
     if (!searchTerm) return baseRecipes;
 
@@ -181,6 +209,25 @@ const RecommendationScreen = () => {
         <Text style={styles.title}>
           {params.fromFilter === 'true' ? 'Resultados' : 'Recetas Recomendadas'}
         </Text>
+        {params.fromFilter === 'true' && (
+          <TouchableOpacity
+            onPress={() => router.push({
+              pathname: '/(logged)/recommendations/index',
+              params: {
+                fromFilter: 'true',
+                searchTerm: '',
+                user: '',
+                cuisines: [],
+                dietTypes: [],
+                mustIncludeIngredients: [],
+                excludedIngredients: [],
+              },
+            })}
+            style={{ paddingHorizontal: 10, paddingVertical: 6 }}
+          >
+            <Text style={{ color: '#FF6F00', fontWeight: '600' }}>Ver todo</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {params.fromFilter === 'true' && (

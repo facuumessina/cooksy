@@ -85,6 +85,16 @@ const GuestBanner = ({ onRegister }) => (
 export default function Home() {
     const insets = useSafeAreaInsets();
     const navigation = useRouter();
+    // Navigate to search screen with empty filters
+    const handleSeeAll = () => {
+      navigation.navigate('/(logged)/recipes/searchRecipes', {
+        searchTerm: '',
+        userSearch: '',
+        selectedCuisines: [],
+        selectedIngredients: [],
+        selectedExcludedIngredients: [],
+      });
+    };
     const { user, setCurrentRecommendations, updateUser } = useData();
     const [recommendations, setRecommendations] = useState<Recipe[]>([]);
     const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
@@ -223,7 +233,7 @@ export default function Home() {
                 <View style={styles.recommendedSection}>
                     <View style={styles.recommendedHeader}>
                         <Text style={styles.recommendedTitle}>Recomendado para ti</Text>
-                        <TouchableOpacity onPress={() => router.navigate('/(logged)/recommendations')}>
+                        <TouchableOpacity onPress={handleSeeAll}>
                             <Text style={styles.seeAllText}>Ver Todo</Text>
                         </TouchableOpacity>
                     </View>
