@@ -9,6 +9,7 @@ export interface IUsuario extends Document {
   recoveryCode?: string;
   recoveryCodeExpiresAt?: Date;
   savedRecipes: mongoose.Types.ObjectId[];
+  myRecipes: mongoose.Types.ObjectId[];
 }
 
 const UsuarioSchema = new Schema<IUsuario>(
@@ -19,7 +20,8 @@ const UsuarioSchema = new Schema<IUsuario>(
     password:     { type: String },
     recoveryCode: { type: String },
     recoveryCodeExpiresAt: { type: Date },
-    savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'Receta' }]
+    savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'Receta' }],
+    myRecipes:    [{ type: Schema.Types.ObjectId, ref: 'Receta' }]
   },
   { timestamps: true }
 );
