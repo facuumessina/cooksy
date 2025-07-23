@@ -17,7 +17,7 @@ import { Picker } from '@react-native-picker/picker';
 import { CameraType, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -58,7 +58,7 @@ export default function CreateRecipe() {
   // Ingredient and instruction state/handlers for recipe creation
   const [recipeName, setRecipeName] = useState('');
   const [recipeType, setRecipeType] = useState('');
-  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'g' }]);
+  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'u' }]);
   const [instructionsList, setInstructionsList] = useState(['']);
   const [isGuest, setIsGuest] = useState(false);
   const [image, setImage] = useState<string | null>(null);
@@ -78,27 +78,34 @@ export default function CreateRecipe() {
     try {
       const token = await AsyncStorage.getItem('token');
       const userId = await AsyncStorage.getItem('userId');
-      const formData = new FormData();
-      formData.append('nombre', recipeName);
-      formData.append('tipo', recipeType);
-      formData.append('ingredientes', JSON.stringify(ingredientsList));
-      formData.append('instrucciones', JSON.stringify(instructionsList));
-      formData.append('autor', userId);
-      if (image) {
-        const filename = image.split('/').pop();
-        const match = /\.(\w+)$/.exec(filename);
-        const type = match ? `image/${match[1]}` : `image`;
-        formData.append('imagen', {
-          uri: image,
-          name: filename,
-          type,
-        });
-      }
-      const response = await fetch('https://TU_BACKEND_URL/api/recetas/crear-receta', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
+
+      const ingredientesMapped = ingredientsList.map(item => ({
+        nombre: item.name,
+        cantidad: `${item.amount} ${item.unit}`
+      }));
+
+      const instruccionesMapped = instructionsList.map((desc, idx) => ({
+        paso: idx + 1,
+        descripcion: desc,
+        multimedia: []
+      }));
+
+      console.log('Payload que se enviará:', {
+        nombre: recipeName,
+        tipo: recipeType,
+        ingredientes: ingredientesMapped,
+        instrucciones: instruccionesMapped,
+        autor: userId
+      });
+
+      await axios.post(
+        'http://10.0.2.2:3000/recipes',
+        {
+          nombre: recipeName,
+          tipo: recipeType,
+          ingredientes: ingredientesMapped,
+          instrucciones: instruccionesMapped,
+          autor: userId
         },
         body: formData,
       });
@@ -410,6 +417,7 @@ export default function CreateRecipe() {
 
   // Define units array
   const UNITS = [
+    { label: 'unidades (u)', value: 'u', short: 'u' },
     { label: 'gramos (g)', value: 'g', short: 'g' },
     { label: 'kilogramos (kg)', value: 'kg', short: 'kg' },
     { label: 'tazas', value: 'taza', short: 'taza' },
@@ -453,15 +461,37 @@ export default function CreateRecipe() {
         />
 
         <Text style={{ fontSize: 16, marginBottom: 4 }}>Tipo de receta</Text>
-        <TextInput
-          value={recipeType}
-          onChangeText={setRecipeType}
-          style={{
-            borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-            paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16
-          }}
-          placeholder="Selecciona el tipo de receta"
-        />
+        <View style={{
+          borderWidth: 1,
+          borderColor: '#ccc',
+          borderRadius: 8,
+          marginBottom: 16,
+          overflow: 'hidden'
+        }}>
+          <Picker
+            selectedValue={recipeType}
+            onValueChange={(value) => setRecipeType(value)}
+            mode="dropdown"
+            style={{ height: 50 }}
+          >
+            <Picker.Item label="Selecciona un tipo" value="" />
+            <Picker.Item label="DESAYUNO" value="DESAYUNO" />
+            <Picker.Item label="MERIENDA" value="MERIENDA" />
+            <Picker.Item label="PLATO PRINCIPAL" value="PLATO PRINCIPAL" />
+            <Picker.Item label="ENTRADA" value="ENTRADA" />
+            <Picker.Item label="ITALIANA" value="ITALIANA" />
+            <Picker.Item label="MEXICANA" value="MEXICANA" />
+            <Picker.Item label="JAPONESA" value="JAPONESA" />
+            <Picker.Item label="MEDITERRANEA" value="MEDITERRANEA" />
+            <Picker.Item label="AMERICANA" value="AMERICANA" />
+            <Picker.Item label="LATINA" value="LATINA" />
+            <Picker.Item label="PANADERIA" value="PANADERIA" />
+            <Picker.Item label="COMIDA RAPIDA" value="COMIDA RAPIDA" />
+            <Picker.Item label="VEGETARIANA" value="VEGETARIANA" />
+            <Picker.Item label="INDIA" value="INDIA" />
+            <Picker.Item label="INTERNACIONAL" value="INTERNACIONAL" />
+          </Picker>
+        </View>
 
         {/* Ingredientes */}
         <Text style={{ fontSize: 18, marginBottom: 8 }}>Ingredientes</Text>

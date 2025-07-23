@@ -2,11 +2,6 @@ import { envConfig } from "@/configs/envConfig";
 import { STORAGE_KEYS } from "@/service/storage";
 import { ActivityLevel } from "@/types/enums";
 import { User } from "@/types/types";
-import {
-    translateCuisine,
-    translateDietaryRestriction,
-    translateFood
-} from "@/utils/enum-translations";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -14,14 +9,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    Alert,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useData } from "../../../context/DataProvider";
 
@@ -52,7 +47,38 @@ const InfoItem = ({ label, value }: any) => (
 );
 
 const FavRecipesInfoItem = () => {
-  const { favouriteRecipes } = useData();
+  const { user } = useData();
+  const favouriteRecipes = user?.savedRecipes ?? [];
+  console.log("🧡 Recetas favoritas (user.savedRecipes):", favouriteRecipes);
+
+  const [detailedFavorites, setDetailedFavorites] = useState([]);
+
+  useEffect(() => {
+    const fetchFavoritesDetails = async () => {
+      try {
+        const promises = favouriteRecipes.map((id: string) =>
+          fetch(`http://10.0.2.2:3000/recipes/${id}`).then((res) => res.json())
+        );
+        const results = await Promise.all(promises);
+        setDetailedFavorites(results);
+        console.log("🔍 Recetas favoritas detalladas:", results);
+      } catch (error) {
+        console.error(
+          "❌ Error al traer detalles de recetas favoritas:",
+          error
+        );
+      }
+    };
+
+    if (
+      favouriteRecipes.length > 0 &&
+      typeof favouriteRecipes[0] === "string"
+    ) {
+      fetchFavoritesDetails();
+    } else {
+      setDetailedFavorites(favouriteRecipes);
+    }
+  }, [favouriteRecipes]);
 
   if (!favouriteRecipes || favouriteRecipes.length === 0) {
     return (
@@ -64,32 +90,90 @@ const FavRecipesInfoItem = () => {
 
   return (
     <View>
-      {favouriteRecipes.map((fav, index) => (
-        <View key={index} style={styles.recipeContainer}>
-          <Image
-            source={{ uri: fav.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${fav.image}` : '' }}
-            resizeMode="contain"
-            style={styles.recipeImage}
-          />
-          <View style={styles.recipeContainerInfo}>
-            <Text style={styles.recipeName}>{fav.name}</Text>
-            <TouchableOpacity onPress={() => router.push(
-              {
-                pathname: '/recommendations/[id]',
-                params: { id: fav.id, fromSearch: 'true' }
-              })}>
-              <Text style={styles.moreRecipeInfo}>Ver más</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ))}
+      {Array.isArray(detailedFavorites) &&
+        detailedFavorites.map((fav: any, index: number) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.recipeContainer}
+            onPress={() =>
+              router.push({
+                pathname: "/recommendations/[id]",
+                params: {
+                  id: fav._id?.$oid || fav._id || fav.id,
+                  fromSearch: "true",
+                },
+              })
+            }
+          >
+            {fav.image && (
+              <Image
+                source={{
+                  uri: `${envConfig.IMAGE_SERVER_URL}/recipes/${fav.image?.filename || fav.image}`,
+                }}
+                resizeMode="contain"
+                style={styles.recipeImage}
+              />
+            )}
+            <View style={styles.recipeContainerInfo}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Ionicons
+                  name="restaurant"
+                  size={16}
+                  color="#FB8C00"
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={styles.recipeName}>{fav.name || fav.nombre}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 };
 
 const MyRecipesInfoItem = () => {
-  const data = useData();
-  const myRecipes = data?.myRecipes ?? [];
+  const { user } = useData();
+  const [myRecipes, setMyRecipes] = useState([]);
+
+  useEffect(() => {
+    const fetchMyRecipes = async () => {
+      try {
+        const response = await fetch(
+          `http://10.0.2.2:3000/users/${user?._id}/my-recipes`
+        );
+        const data = await response.json();
+        setMyRecipes(data);
+        console.log("📒 Recetas propias:", data);
+      } catch (error) {
+        console.error("❌ Error al traer mis recetas:", error);
+      }
+    };
+
+    if (user?._id) fetchMyRecipes();
+  }, [user]);
+
+  // Manejar borrado de receta
+  const handleDelete = async (id: string) => {
+    Alert.alert(
+      'Eliminar receta',
+      '¿Estás seguro de que querés eliminar esta receta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await fetch(`http://10.0.2.2:3000/recipes/${id}`, { method: 'DELETE' });
+              setMyRecipes(prev => prev.filter((r: any) => r._id !== id));
+            } catch (err) {
+              console.error('❌ Error al eliminar receta:', err);
+            }
+          }
+        }
+      ]
+    );
+  };
 
   if (!myRecipes || myRecipes.length === 0) {
     return (
@@ -102,20 +186,41 @@ const MyRecipesInfoItem = () => {
   return (
     <View>
       {Array.isArray(myRecipes) && myRecipes.map((recipe, index) => (
-        <View key={index} style={styles.recipeContainer}>
-          <Image
-            source={{ uri: recipe.image ? `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image}` : '' }}
-            resizeMode="contain"
-            style={styles.recipeImage}
-          />
-          <View style={styles.recipeContainerInfo}>
-            <Text style={styles.recipeName}>{recipe.name}</Text>
-            <TouchableOpacity onPress={() => router.push(
-              {
-                pathname: '/recommendations/[id]',
-                params: { id: recipe.id, fromSearch: 'true' }
-              })}>
-              <Text style={styles.moreRecipeInfo}>Ver más</Text>
+        <View
+          key={index}
+          style={[styles.recipeContainer, { justifyContent: 'space-between' }]}
+        >
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+            onPress={() => router.push({
+              pathname: '/recommendations/[id]',
+              params: { id: recipe._id?.$oid || recipe._id || recipe.id, fromSearch: 'true' }
+            })}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {recipe.image && (
+                <Image
+                  source={{ uri: `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image?.filename || recipe.image}` }}
+                  resizeMode="contain"
+                  style={styles.recipeImage}
+                />
+              )}
+              <Ionicons name="restaurant" size={16} color="#FB8C00" style={{ marginRight: 6 }} />
+              <Text style={styles.recipeName}>{recipe.name || recipe.nombre}</Text>
+            </View>
+          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => router.push({ pathname: '/recipes/editRecipe', params: { id: recipe._id } })}
+              style={{ marginHorizontal: 6 }}
+            >
+              <Ionicons name="create-outline" size={20} color="#FB8C00" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleDelete(recipe._id)}
+              style={{ marginHorizontal: 6 }}
+            >
+              <Ionicons name="close-outline" size={24} color="#FB8C00" />
             </TouchableOpacity>
           </View>
         </View>
@@ -132,10 +237,13 @@ const ProfileScreen = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userId = await AsyncStorage.getItem('userId');
+        const userId = await AsyncStorage.getItem("userId");
         console.log("USER ID desde AsyncStorage:", userId);
 
-        if (!userId) throw new Error('No se encontró el ID del usuario');
+        const userEmail = user?.email ?? "";
+        await AsyncStorage.setItem("loginEmail", userEmail);
+
+        if (!userId) throw new Error("No se encontró el ID del usuario");
 
         const url = `http://10.0.2.2:3000/users/${userId}`;
         console.log("Haciendo fetch a:", url);
@@ -143,7 +251,7 @@ const ProfileScreen = () => {
         const response = await fetch(url);
         console.log("STATUS DEL RESPONSE:", response.status);
 
-        if (!response.ok) throw new Error('Error al cargar perfil');
+        if (!response.ok) throw new Error("Error al cargar perfil");
 
         const data = await response.json();
         console.log("DATA DEL PERFIL:", data);
@@ -157,8 +265,8 @@ const ProfileScreen = () => {
   }, []);
 
   useEffect(() => {
-    AsyncStorage.getItem('isGuestMode').then(val => {
-      setIsGuest(val === 'true');
+    AsyncStorage.getItem("isGuestMode").then((val) => {
+      setIsGuest(val === "true");
     });
   }, []);
 
@@ -167,10 +275,10 @@ const ProfileScreen = () => {
     React.useCallback(() => {
       const fetchProfile = async () => {
         try {
-          const userId = await AsyncStorage.getItem('userId');
+          const userId = await AsyncStorage.getItem("userId");
           console.log("USER ID desde AsyncStorage:", userId);
 
-          if (!userId) throw new Error('No se encontró el ID del usuario');
+          if (!userId) throw new Error("No se encontró el ID del usuario");
 
           const url = `http://10.0.2.2:3000/users/${userId}`;
           console.log("Haciendo fetch a:", url);
@@ -178,7 +286,7 @@ const ProfileScreen = () => {
           const response = await fetch(url);
           console.log("STATUS DEL RESPONSE:", response.status);
 
-          if (!response.ok) throw new Error('Error al cargar perfil');
+          if (!response.ok) throw new Error("Error al cargar perfil");
 
           const data = await response.json();
           console.log("DATA DEL PERFIL:", data);
@@ -199,7 +307,7 @@ const ProfileScreen = () => {
         ...user!,
         Onboarding: {
           completed: false,
-          step: 1
+          step: 1,
         },
         measurements: {
           activityLevel: ActivityLevel.MODERATELY_ACTIVE,
@@ -207,14 +315,14 @@ const ProfileScreen = () => {
           bmr: 0,
           dailyCalories: 0,
           height: 0,
-          weight: 0
+          weight: 0,
         },
         preferences: {
           dietaryRestrictions: [],
           goals: [],
           preferredCategories: [],
-          preferredCuisines: []
-        }
+          preferredCuisines: [],
+        },
       };
 
       // Actualizar el usuario en el Provider y AsyncStorage
@@ -226,13 +334,14 @@ const ProfileScreen = () => {
         STORAGE_KEYS.FAVORITE_RECIPES,
         STORAGE_KEYS.RECOMMENDATIONS,
         STORAGE_KEYS.INGREDIENTS,
-        STORAGE_KEYS.RECIPES
+        STORAGE_KEYS.RECIPES,
+        "loginEmail"
       ]);
 
       // Redirigir a la pantalla de autenticación paso 1
       router.replace("/register/step1");
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
       Alert.alert(
         "Error",
         "Hubo un problema al cerrar sesión. Por favor intenta de nuevo."
@@ -243,15 +352,32 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       {isGuest ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 18, color: '#FB8C00', textAlign: 'center', fontWeight: 'bold', marginBottom: 24 }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              color: "#FB8C00",
+              textAlign: "center",
+              fontWeight: "bold",
+              marginBottom: 24,
+            }}
+          >
             Funcionalidad no disponible en modo invitado.
           </Text>
           <TouchableOpacity
-            style={{ backgroundColor: '#FB8C00', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 25 }}
-            onPress={() => router.push('/register/step2')}
+            style={{
+              backgroundColor: "#FB8C00",
+              paddingVertical: 12,
+              paddingHorizontal: 32,
+              borderRadius: 25,
+            }}
+            onPress={() => router.push("/register/step2")}
           >
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Registrarme</Text>
+            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>
+              Registrarme
+            </Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -267,12 +393,19 @@ const ProfileScreen = () => {
           >
             {/* Edit pencil icon, top right */}
             <TouchableOpacity
-              style={{ position: 'absolute', top: 60, right: 20, opacity: isGuest ? 0.5 : 1 }}
+              style={{
+                position: "absolute",
+                top: 60,
+                right: 20,
+                opacity: isGuest ? 0.5 : 1,
+              }}
               onPress={() => {
                 if (isGuest) {
-                  alert('Funcionalidad solo disponible para usuarios registrados.');
+                  alert(
+                    "Funcionalidad solo disponible para usuarios registrados."
+                  );
                 } else {
-                  console.log('Editar perfil');
+                  console.log("Editar perfil");
                 }
               }}
               disabled={isGuest}
@@ -280,7 +413,11 @@ const ProfileScreen = () => {
               <Ionicons name="create-outline" size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <View style={styles.headerContent}>
-              <Ionicons name="person-circle-outline" size={120} color="#FFFFFF" />
+              <Ionicons
+                name="person-circle-outline"
+                size={120}
+                color="#FFFFFF"
+              />
               <Text style={styles.nameText}>
                 {user?.alias || "Nombre no disponible"}
               </Text>
@@ -291,7 +428,6 @@ const ProfileScreen = () => {
           </LinearGradient>
 
           <View style={styles.contentContainer}>
-
             <View style={{ marginTop: 20 }}>
               <ProfileSection title="Recetas favoritas" icon="heart-outline">
                 <FavRecipesInfoItem />
@@ -301,29 +437,10 @@ const ProfileScreen = () => {
               <MyRecipesInfoItem />
             </ProfileSection>
 
-            {/* Preferences Section */}
-            <ProfileSection title="Preferencias" icon="options-outline">
-              <InfoItem
-                label="Restricciones Dietéticas"
-                value={user?.preferences?.dietaryRestrictions
-                  ?.map((d) => translateDietaryRestriction(d))
-                  .join(", ")}
-              />
-              <InfoItem
-                label="Categorías Preferidas"
-                value={user?.preferences?.preferredCategories
-                  ?.map((pc) => translateFood(pc))
-                  .join(", ")}
-              />
-              <InfoItem
-                label="Cocinas Preferidas"
-                value={user?.preferences?.preferredCuisines
-                  ?.map((c) => translateCuisine(c))
-                  .join(", ")}
-              />
-            </ProfileSection>
-
-            <TouchableOpacity style={styles.logoutButton} onPress={() => router.push('/forgotPassword' as never)}>
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={() => router.push("/forgotPassword" as never)}
+            >
               <LinearGradient
                 colors={["#FFA500", "#FF8C00"]}
                 start={{ x: 0, y: 0 }}
@@ -336,13 +453,14 @@ const ProfileScreen = () => {
                   color="#FFFFFF"
                   style={styles.logoutIcon}
                 />
-                <Text style={styles.logoutText}>
-                  Cambiar contraseña
-                </Text>
+                <Text style={styles.logoutText}>Cambiar contraseña</Text>
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={handleLogout}
+            >
               <LinearGradient
                 colors={["#FF4B4B", "#FF3636"]}
                 start={{ x: 0, y: 0 }}
@@ -487,7 +605,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   recipeContainerInfo: {
-    flexDirection: "column"
+    flexDirection: "column",
   },
   recipeImage: {
     width: 40,

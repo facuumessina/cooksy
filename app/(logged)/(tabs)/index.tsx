@@ -1,4 +1,3 @@
-import SearchBar from '@/components/Search';
 import { useData } from '@/context/DataProvider';
 import { Cuisine, DietaryRestriction } from '@/types/enums';
 import { Recipe } from '@/types/types';
@@ -97,6 +96,7 @@ export default function Home() {
         cuisines: new Set()
     });
     const [isGuest, setIsGuest] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const loadRecommendations = async () => {
         try {
@@ -156,8 +156,14 @@ export default function Home() {
                 Array.from(activeFilters.cuisines).some(c => recipe.cuisine === c)
             );
         }
+        // Filtrado por nombre (buscador)
+        if (searchQuery.trim()) {
+            filtered = filtered.filter(recipe =>
+                recipe.nombre.toLowerCase().includes(searchQuery.trim().toLowerCase())
+            );
+        }
         setFilteredRecipes(filtered);
-    }, [activeFilters, recommendations]);
+    }, [activeFilters, recommendations, searchQuery]);
 
     useEffect(() => {
         AsyncStorage.getItem('isGuestMode').then(val => {
@@ -206,22 +212,12 @@ export default function Home() {
                     )}
                 </View>
 
-                <SearchBar />
-
-                <View style={styles.filterSection}>
-                    <TouchableOpacity style={styles.filterButton} onPress={() => setShowFilterModal(true)}>
-                        <Ionicons name="filter" size={24} color="#F97316" />
-                    </TouchableOpacity>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
-                        {QUICK_FILTERS.restrictions.map((restriction) => (
-                            <FilterTag
-                                key={restriction}
-                                title={translateDietaryRestriction(restriction)}
-                                active={activeFilters.restrictions.has(restriction)}
-                                onPress={() => toggleFilter('restrictions', restriction)}
-                            />
-                        ))}
-                    </ScrollView>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                  <Ionicons name="sparkles" size={18} color="#F97316" style={{ marginRight: 6 }} />
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#F97316', textAlign: 'center' }}>
+                    Inspirate con nuevas recetas cada día
+                  </Text>
+                  <Ionicons name="sparkles" size={18} color="#F97316" style={{ marginLeft: 6 }} />
                 </View>
 
                 <View style={styles.recommendedSection}>
@@ -251,7 +247,11 @@ export default function Home() {
                                         <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{recipe.nombre}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <Ionicons name="restaurant-outline" size={16} color="#666" style={{ marginRight: 4 }} />
-                                            <Text style={{ fontSize: 14, color: '#666' }}>{recipe.ingredientes?.length || 0}</Text>
+                                            <Text style={{ fontSize: 14, color: '#666', marginRight: 8 }}>{recipe.ingredientes?.length || 0}</Text>
+                                            <Ionicons name="star" size={16} color="#FBBF24" style={{ marginRight: 4 }} />
+                                            {recipe.averageRating ? (
+                                              <Text style={{ fontSize: 14, color: '#666' }}>{recipe.averageRating.toFixed(1)}</Text>
+                                            ) : null}
                                         </View>
                                     </View>
                                 </TouchableOpacity>

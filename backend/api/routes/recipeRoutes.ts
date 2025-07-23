@@ -1,15 +1,18 @@
 // app/api/routes/recipeRoutes.ts
 import { Router } from 'express';
 import {
+    addComment,
     addRating,
     adjustRecipe,
     createRecipe,
+    deleteComment,
     deleteRecipe,
     getComments,
     getLatestApprovedRecipes,
     getRecipeById,
     getUsersWithRecipes,
     searchRecipes,
+    toggleFavoriteRecipe,
     updateRecipe
 } from '../controller/recipeController';
 
@@ -27,7 +30,11 @@ router.delete('/:id',  deleteRecipe);
 
 router.post('/:id/rating',   addRating);
 router.get('/:id/comments',  getComments);
+router.post('/:id/comments', addComment);
+router.delete('/:id/comments/:commentId', deleteComment);
 
 router.post('/:id/adjust',   adjustRecipe);
+
+router.post('/:id/favorite', toggleFavoriteRecipe);
 
 export default router;

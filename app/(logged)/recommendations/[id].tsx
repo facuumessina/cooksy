@@ -1,4 +1,3 @@
-import FavoriteButton from '@/components/FavoriteButton';
 import Toast from '@/components/Toast';
 import { useData } from '@/context/DataProvider';
 import { Ingredient, Recipe } from '@/types/types';
@@ -22,29 +21,39 @@ const RecipeDetailScreen = () => {
   const [toastVisible, setToastVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
-useEffect(() => {
-  const fetchRecipe = async () => {
-    try {
-      const response = await fetch(`http://10.0.2.2:3000/recipes/${id}`);
-      if (!response.ok) throw new Error('Error al cargar receta');
-      const data = await response.json();
-      setRecipe(data);
-      if (data) {
-        const missing = data.ingredients.filter((ingredient: Ingredient) => {
-          const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
-          const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
-          return !isInCurrentRecipe && !isInUserIngredients;
-        });
-        setMissingIngredients(missing || []);
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await fetch(`http://10.0.2.2:3000/recipes/${id}`);
+        if (!response.ok) throw new Error('Error al cargar receta');
+        const data = await response.json();
+        setRecipe(data);
+        console.log("👤 Usuario al cargar receta:", user);
+        console.log("📌 Recetas guardadas (IDs):", user?.savedRecipes?.map((id) => String(id)));
+        console.log("📄 ID de receta actual:", String(data._id));
+        // Set missing ingredients as before
+        if (data) {
+          const missing = data.ingredientes.filter((ingredient: Ingredient) => {
+            const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
+            const isInUserIngredients = user?.ingredients?.some(i => i.id === ingredient.id);
+            return !isInCurrentRecipe && !isInUserIngredients;
+          });
+          setMissingIngredients(missing || []);
+        }
+        // Set favorite status after recipe is loaded and user is available
+        const savedIds = user?.savedRecipes?.map((id) => String(id)) || [];
+        console.log("🔍 ¿Está marcada como favorita?", savedIds.includes(String(data._id)));
+        setIsFavorite(savedIds.includes(String(data._id)));
+      } catch (err) {
+        console.error("Error al traer receta:", err);
       }
-    } catch (err) {
-      console.error("Error al traer receta:", err);
-    }
-  };
+    };
 
-  fetchRecipe();
-}, [id]);
+    fetchRecipe();
+    // Only rerun if id, user, or currentRecipeIngredients change
+  }, [id, user, currentRecipeIngredients]);
 
   const isIngredientMissing = (ingredient: Ingredient): boolean => {
     const isInCurrentRecipe = currentRecipeIngredients.some(i => i.id === ingredient.id);
@@ -66,9 +75,9 @@ useEffect(() => {
     );
   }
 
-  
 
- 
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,8 +88,65 @@ useEffect(() => {
         >
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        <FavoriteButton recipe={recipe} style={styles.favouriteButton} />
-        <View style={[styles.recipeImage, {backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center'}]}>
+        <TouchableOpacity
+          onPress={async () => {
+            if (!recipe || !user?._id) {
+              console.warn('Faltan datos para actualizar favoritos');
+              return;
+            }
+
+            // Log before fetch
+            console.log("🔘 Favorite button pressed. Recipe ID:", recipe._id, "User ID:", user?._id, "Current isFavorite:", isFavorite);
+
+            const endpoint = isFavorite
+              ? `http://10.0.2.2:3000/users/${user._id}/saved-recipes/${recipe._id}`
+              : `http://10.0.2.2:3000/users/${user._id}/saved-recipes`;
+
+            const options: RequestInit = isFavorite
+              ? {
+                  method: 'DELETE',
+                  headers: { 'Content-Type': 'application/json' },
+                }
+              : {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ recipeId: recipe._id }),
+                };
+
+            try {
+              const response = await fetch(endpoint, options);
+
+              // Log after response
+              console.log("📡 Respuesta del servidor (status):", response.status);
+              const responseBody = await response.json().catch(() => null);
+              console.log("📄 Respuesta del servidor (body):", responseBody);
+
+              if (!response.ok) {
+                // Log the response body for errors
+                console.log(responseBody);
+                throw new Error('Error al actualizar favoritos');
+              }
+
+              setIsFavorite(prev => !prev);
+              if (isFavorite) {
+                // Eliminar de savedRecipes localmente si ya estaba marcado
+                const updatedUser = { ...user, savedRecipes: user.savedRecipes.filter(id => id !== recipe._id) };
+                console.log("🗑️ Receta eliminada localmente de favoritos:", updatedUser.savedRecipes);
+              }
+            } catch (error) {
+              console.error("❌ Error al actualizar favoritos:", error);
+              console.log("❗ Error capturado en el fetch de favoritos:", error);
+            }
+          }}
+          style={styles.favouriteButton}
+        >
+          <Ionicons
+            name={isFavorite ? "heart" : "heart-outline"}
+            size={24}
+            color="#f00"
+          />
+        </TouchableOpacity>
+        <View style={[styles.recipeImage, { backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center' }]}>
           <Ionicons name="fast-food-outline" size={64} color="#999" />
         </View>
 
@@ -118,8 +184,37 @@ useEffect(() => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Valorar</Text>
             <View style={{ flexDirection: 'row', marginVertical: 8 }}>
-              {[1,2,3,4,5].map((star) => (
-                <TouchableOpacity key={star} onPress={() => setRating(star)}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity
+                  key={star}
+                  onPress={async () => {
+                    setRating(star);
+                    console.log('Enviando valoración:', {
+                      userId: user?._id,
+                      rating: star,
+                    });
+                    try {
+                      const response = await fetch(`http://10.0.2.2:3000/recipes/${id}/rating`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          userId: user?._id,
+                          rating: star,
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Error al enviar valoración');
+                      }
+
+                      setToastVisible(true);
+                    } catch (error) {
+                      console.error('Error al enviar valoración:', error);
+                    }
+                  }}
+                >
                   <Ionicons
                     name={star <= rating ? "star" : "star-outline"}
                     size={32}
@@ -154,20 +249,94 @@ useEffect(() => {
                 onChangeText={setComment}
                 multiline
               />
-              <TouchableOpacity onPress={() => {
-                console.log(`Comentario: ${comment}, Rating: ${rating}`);
-                setComment('');
-                setRating(0);
-              }}>
+              <TouchableOpacity
+                onPress={async () => {
+                  if (comment.trim()) {
+                    console.log('Enviando comentario:', {
+                      userId: user?._id,
+                      alias: user?.alias,
+                      comment: comment.trim(),
+                    });
+                    try {
+                      const response = await fetch(`http://10.0.2.2:3000/recipes/${id}/comments`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          userId: user?._id,
+                          alias: user?.alias,
+                          comment: comment.trim(),
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Error al enviar comentario');
+                      }
+
+                      const updatedRecipe = await response.json();
+                      setRecipe(updatedRecipe);
+                      setComment('');
+                    } catch (error) {
+                      console.error('Error al enviar comentario:', error);
+                    }
+                  }
+                }}
+              >
                 <Ionicons name="send" size={24} color="#FFA500" />
               </TouchableOpacity>
             </View>
+            {recipe.comments && recipe.comments.length > 0 && (
+              <View style={{ marginTop: 16 }}>
+                {recipe.comments.map((c, index) => (
+                  <View key={index} style={{ marginBottom: 8 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Text style={{ fontWeight: 'bold', color: '#333' }}>{c.alias}</Text>
+                      {c.userId === user?._id && (
+                        <TouchableOpacity
+                          onPress={async () => {
+                            console.log('Intentando eliminar comentario:', {
+                              recipeId: id,
+                              commentId: c._id,
+                              userId: user?._id,
+                            });
+                            try {
+                              const response = await fetch(`http://10.0.2.2:3000/recipes/${id}/comments/${c._id}?userId=${user?._id}`, {
+                                method: 'DELETE',
+                              });
+
+                              if (!response.ok) {
+                                throw new Error('Error al eliminar comentario');
+                              }
+
+                              // Eliminar el comentario del estado sin esperar re-fetch completo
+                              setRecipe(prev => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  comments: prev.comments.filter(comment => comment._id !== c._id),
+                                };
+                              });
+                            } catch (error) {
+                              console.error('Error al eliminar comentario:', error);
+                            }
+                          }}
+                        >
+                          <Ionicons name="trash" size={16} color="red" />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <Text style={{ color: '#555' }}>{c.comment}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         </View>
-        </ScrollView>
+      </ScrollView>
       <Toast
         visible={toastVisible}
-        message="Ingredientes agregados a la lista de compras"
+        message="Valoración realizada correctamente"
         type="success"
         onHide={() => setToastVisible(false)}
       />

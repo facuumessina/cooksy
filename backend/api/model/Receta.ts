@@ -24,6 +24,11 @@ export interface IReceta extends Document {
     rating: number;
     comment?: string;
   }[];
+  comments: {
+    userId: mongoose.Types.ObjectId;
+    alias: string;
+    comment: string;
+  }[];
 }
 
 const IngredienteSchema = new Schema<Ingrediente>({
@@ -51,6 +56,13 @@ const RecetaSchema = new Schema<IReceta>(
         userId: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
         rating: { type: Number, required: true },
         comment: String,
+      },
+    ],
+    comments: [
+      {
+        userId: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
+        alias: { type: String, required: true },
+        comment: { type: String, required: true },
       },
     ],
   },

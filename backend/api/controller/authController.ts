@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import Usuario from '../model/Usuario';
+import { sendRecoveryEmail } from '../utils/mailer';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'cambiá_este_secreto_en_prod';
 
@@ -48,31 +49,59 @@ export async function login(req: Request, res: Response) {
   });
 }
 
-// Recover password: generar código y “enviar”
+// Recover password: generar código y enviar por Mailersend
 export async function recoverPassword(req: Request, res: Response) {
   const { email } = req.body;
-  const user = await Usuario.findOne({ email });
-  if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  user.recoveryCode = code;
-  await user.save();
+  try {
+    const user = await Usuario.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-  // Aquí podrías enviar el código por email con tu servicio real
-  console.log(`Código de recuperación para ${email}: ${code}`);
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    user.recoveryCode = code;
+    user.recoveryCodeExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // vence en 15 min
+    await user.save();
 
-  return res.status(200).json({ message: 'Código de recuperación enviado' });
+    await sendRecoveryEmail(email, code);
+
+    return res.status(200).json({ message: 'Código de recuperación enviado por correo' });
+
+  } catch (err) {
+    console.error('❌ Error en recuperación de contraseña:', err);
+    return res.status(500).json({ message: 'Error al enviar el correo de recuperación' });
+  }
 }
 
 // Reset password: validar código y actualizar
 export async function resetPassword(req: Request, res: Response) {
   const { email, code, newPassword } = req.body;
-  const user = await Usuario.findOne({ email });
-  user.password = await bcrypt.hash(newPassword, 10);
-  user.recoveryCode = undefined;
-  await user.save();
-  return res.status(200).json({ message: 'Clave cambiada exitosamente' });
+
+  try {
+    const user = await Usuario.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    // Validar código
+    const codeExpired = !user.recoveryCodeExpiresAt || user.recoveryCodeExpiresAt < new Date();
+    const codeMismatch = user.recoveryCode !== code;
+
+    if (codeMismatch || codeExpired) {
+      return res.status(400).json({ message: 'Código inválido o expirado' });
+    }
+
+    // Cambiar contraseña
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.recoveryCode = undefined;
+    user.recoveryCodeExpiresAt = undefined;
+    await user.save();
+
+    return res.status(200).json({ message: 'Clave cambiada exitosamente' });
+
+  } catch (err) {
+    console.error('❌ Error al cambiar contraseña:', err);
+    return res.status(500).json({ message: 'Error interno al cambiar la clave' });
+  }
 }
+
 
 // Check alias and email availability without saving
 export async function checkAvailability(req: Request, res: Response) {
