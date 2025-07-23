@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeOut } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AnimatedLoading from '../../AnimatedLoading';
@@ -247,7 +247,10 @@ export default function Home() {
                                     onPress={() => router.push(`/recommendations/${recipe._id}`)}
                                     style={styles.foodItem}
                                 >
-                                    <View style={[styles.foodImage, styles.imagePlaceholder]} />
+                                    <Image
+                                        source={{ uri: recipe.multimedia?.[0] }}
+                                        style={styles.foodImage}
+                                    />
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginTop: 4 }}>
                                         <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold', color: '#333' }}>{recipe.nombre}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>

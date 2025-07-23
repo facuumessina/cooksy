@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import { CameraType, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -56,6 +57,30 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCAN_AREA_SIZE = SCREEN_WIDTH * 0.7;
 
 export default function CreateRecipe() {
+  const [imagen, setImagen] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const seleccionarImagen = async () => {
+    console.log("📸 handleImagePick se ejecutó");
+    const resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!resultado.canceled) {
+      // Log de la imagen seleccionada
+      console.log('🖼️ Imagen seleccionada:', resultado.assets[0].uri);
+      const imageUri = resultado.assets[0].uri;
+      setImagen(imageUri);
+      const url = await uploadToCloudinary(imageUri);
+      if (url) {
+        setImageUrl(url);
+        // Log de la URL de la imagen subida a Cloudinary
+        console.log('URL de la imagen subida a Cloudinary:', url);
+      }
+    }
+  };
   // Ingredient and instruction state/handlers for recipe creation
   const [recipeName, setRecipeName] = useState('');
   const [recipeType, setRecipeType] = useState('');
@@ -72,6 +97,7 @@ export default function CreateRecipe() {
 
   // Handler para crear la receta y enviarla al backend, con validaciones
   const handleCreateRecipe = async () => {
+    console.log("📤 Entrando en submitRecipe...");
     if (isGuest) {
       alert('Funcionalidad solo disponible para usuarios registrados.');
       return;
@@ -112,31 +138,32 @@ export default function CreateRecipe() {
         cantidad: `${item.amount} ${item.unit}`
       }));
 
+      // --- Subir imagen a Cloudinary antes de armar el objeto receta ---
+      const selectedImage = imagen;
+      const imageUrl = selectedImage ? await uploadImageToCloudinary(selectedImage) : '';
+
       const instruccionesMapped = instructionsList.map((desc, idx) => ({
         paso: idx + 1,
         descripcion: desc,
-        multimedia: []
+        multimedia: imageUrl ? [imageUrl] : [],
       }));
 
-      console.log('Payload que se enviará:', {
+      const receta = {
         nombre: recipeName,
         tipo: recipeType,
         ingredientes: ingredientesMapped,
         instrucciones: instruccionesMapped,
         porciones,
-        autor: userId
-      });
+        autor: userId,
+        multimedia: imageUrl ? [imageUrl] : [],
+      };
+
+      // Log de los datos que se enviarán al backend
+      console.log('Datos que se enviarán al backend:', receta);
 
       await axios.post(
         'http://10.0.2.2:3000/recipes',
-        {
-          nombre: recipeName,
-          tipo: recipeType,
-          ingredientes: ingredientesMapped,
-          instrucciones: instruccionesMapped,
-          porciones, // Make sure this is included
-          autor: userId
-        },
+        receta,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -144,6 +171,7 @@ export default function CreateRecipe() {
 
       router.push('/(logged)/(tabs)');
     } catch (error: any) {
+      console.log("❌ Error en el proceso:", error.message);
       console.error('Error al crear receta:', error.response?.data || error.message);
       alert('No se pudo crear la receta.');
     }
@@ -614,12 +642,15 @@ export default function CreateRecipe() {
         />
 
         <View style={{ marginBottom: 24, alignItems: 'center' }}>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="image-outline" size={28} color="#FF6F00" />
-            <Text style={{ marginLeft: 12, color: '#666', fontSize: 16 }}>
-              Subí tu multimedia de la receta
-            </Text>
+          <TouchableOpacity onPress={seleccionarImagen}>
+            <Text style={{ color: '#777' }}>📸 Subí tu multimedia de la receta</Text>
           </TouchableOpacity>
+          {imagen && (
+            <Image
+              source={{ uri: imagen }}
+              style={{ width: 100, height: 100, borderRadius: 10, marginTop: 10 }}
+            />
+          )}
         </View>
 
         {/* Removed "Crear Receta" button */}
@@ -883,3 +914,37 @@ const styles = StyleSheet.create({
   },
 });
 
+
+// Función para subir imágenes a Cloudinary
+const uploadImageToCloudinary = async (image) => {
+  if (!image) return '';
+
+  // Confirmar que image es una URI de archivo local tipo "file://..."
+  try {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'receta.jpg',
+    });
+    formData.append('upload_preset', 'unsigned_preset');
+
+    try {
+      console.log("📸 Subiendo imagen a Cloudinary...");
+      const response = await fetch('https://api.cloudinary.com/v1_1/driu8oq5s/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      console.log('✅ Imagen subida correctamente:', data.secure_url);
+      return data.secure_url;
+    } catch (error) {
+      console.error('❌ Error al subir la imagen a Cloudinary:', error);
+      return '';
+    }
+  } catch (error) {
+    console.error('❌ Error al preparar la imagen para Cloudinary:', error);
+    return '';
+  }
+};
