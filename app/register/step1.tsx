@@ -1,7 +1,7 @@
 import logo from "@/assets/images/logo.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -23,7 +23,7 @@ const StepOne = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const checkScale = useRef(new Animated.Value(0)).current;
-
+  
   const spinAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0.3)).current;
 
