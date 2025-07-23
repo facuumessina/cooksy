@@ -152,6 +152,29 @@ const MyRecipesInfoItem = () => {
     if (user?._id) fetchMyRecipes();
   }, [user]);
 
+  // Manejar borrado de receta
+  const handleDelete = async (id: string) => {
+    Alert.alert(
+      'Eliminar receta',
+      '¿Estás seguro de que querés eliminar esta receta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await fetch(`http://10.0.2.2:3000/recipes/${id}`, { method: 'DELETE' });
+              setMyRecipes(prev => prev.filter((r: any) => r._id !== id));
+            } catch (err) {
+              console.error('❌ Error al eliminar receta:', err);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   if (!myRecipes || myRecipes.length === 0) {
     return (
       <View style={styles.infoContainer}>
@@ -162,45 +185,46 @@ const MyRecipesInfoItem = () => {
 
   return (
     <View>
-      {Array.isArray(myRecipes) &&
-        myRecipes.map((recipe, index) => (
+      {Array.isArray(myRecipes) && myRecipes.map((recipe, index) => (
+        <View
+          key={index}
+          style={[styles.recipeContainer, { justifyContent: 'space-between' }]}
+        >
           <TouchableOpacity
-            key={index}
-            style={styles.recipeContainer}
-            onPress={() =>
-              router.push({
-                pathname: "/recommendations/[id]",
-                params: {
-                  id: recipe._id?.$oid || recipe._id || recipe.id,
-                  fromSearch: "true",
-                },
-              })
-            }
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+            onPress={() => router.push({
+              pathname: '/recommendations/[id]',
+              params: { id: recipe._id?.$oid || recipe._id || recipe.id, fromSearch: 'true' }
+            })}
           >
-            {recipe.image && (
-              <Image
-                source={{
-                  uri: `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image?.filename || recipe.image}`,
-                }}
-                resizeMode="contain"
-                style={styles.recipeImage}
-              />
-            )}
-            <View style={styles.recipeContainerInfo}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Ionicons
-                  name="restaurant"
-                  size={16}
-                  color="#FB8C00"
-                  style={{ marginRight: 6 }}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {recipe.image && (
+                <Image
+                  source={{ uri: `${envConfig.IMAGE_SERVER_URL}/recipes/${recipe.image?.filename || recipe.image}` }}
+                  resizeMode="contain"
+                  style={styles.recipeImage}
                 />
-                <Text style={styles.recipeName}>
-                  {recipe.name || recipe.nombre}
-                </Text>
-              </View>
+              )}
+              <Ionicons name="restaurant" size={16} color="#FB8C00" style={{ marginRight: 6 }} />
+              <Text style={styles.recipeName}>{recipe.name || recipe.nombre}</Text>
             </View>
           </TouchableOpacity>
-        ))}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => router.push({ pathname: '/recipes/editRecipe', params: { id: recipe._id } })}
+              style={{ marginHorizontal: 6 }}
+            >
+              <Ionicons name="create-outline" size={20} color="#FB8C00" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleDelete(recipe._id)}
+              style={{ marginHorizontal: 6 }}
+            >
+              <Ionicons name="close-outline" size={24} color="#FB8C00" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      ))}
     </View>
   );
 };
