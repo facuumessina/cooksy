@@ -14,13 +14,12 @@ import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
-import axios from 'axios';
 import { CameraType, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 
 
 interface ScannedProduct {
@@ -62,6 +61,7 @@ export default function CreateRecipe() {
   const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'g' }]);
   const [instructionsList, setInstructionsList] = useState(['']);
   const [isGuest, setIsGuest] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem('isGuestMode').then(val => {
@@ -78,44 +78,35 @@ export default function CreateRecipe() {
     try {
       const token = await AsyncStorage.getItem('token');
       const userId = await AsyncStorage.getItem('userId');
-
-      const ingredientesMapped = ingredientsList.map(item => ({
-        nombre: item.name,
-        cantidad: item.amount,
-        unidad: item.unit
-      }));
-
-      const instruccionesMapped = instructionsList.map((desc, idx) => ({
-        paso: idx + 1,
-        descripcion: desc,
-        multimedia: []
-      }));
-
-      console.log('Payload que se enviará:', {
-        nombre: recipeName,
-        tipo: recipeType,
-        ingredientes: ingredientesMapped,
-        instrucciones: instruccionesMapped,
-        autor: userId
-      });
-
-      await axios.post(
-        'http://10.0.2.2:3000/recipes',
-        {
-          nombre: recipeName,
-          tipo: recipeType,
-          ingredientes: ingredientesMapped,
-          instrucciones: instruccionesMapped,
-          autor: userId
+      const formData = new FormData();
+      formData.append('nombre', recipeName);
+      formData.append('tipo', recipeType);
+      formData.append('ingredientes', JSON.stringify(ingredientsList));
+      formData.append('instrucciones', JSON.stringify(instructionsList));
+      formData.append('autor', userId);
+      if (image) {
+        const filename = image.split('/').pop();
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image`;
+        formData.append('imagen', {
+          uri: image,
+          name: filename,
+          type,
+        });
+      }
+      const response = await fetch('https://TU_BACKEND_URL/api/recetas/crear-receta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
+        body: formData,
+      });
+      const data = await response.json();
+      // Maneja la respuesta...
       router.push('/(logged)/(tabs)');
-    } catch (error: any) {
-      console.error('Error al crear receta:', error.response?.data || error.message);
+    } catch (error) {
+      console.error('Error al crear receta:', error);
       alert('No se pudo crear la receta.');
     }
   };
@@ -430,6 +421,17 @@ export default function CreateRecipe() {
     { label: 'onzas líquidas (oz)', value: 'oz', short: 'oz' },
   ];
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.7,
+    });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -545,12 +547,18 @@ export default function CreateRecipe() {
         </TouchableOpacity>
 
         <View style={{ marginBottom: 24, alignItems: 'center' }}>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={pickImage}>
             <Ionicons name="image-outline" size={28} color="#FF6F00" />
             <Text style={{ marginLeft: 12, color: '#666', fontSize: 16 }}>
               Subí tu multimedia de la receta
             </Text>
           </TouchableOpacity>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 120, height: 120, marginTop: 10, borderRadius: 8 }}
+            />
+          )}
         </View>
 
         {/* Removed "Crear Receta" button */}
