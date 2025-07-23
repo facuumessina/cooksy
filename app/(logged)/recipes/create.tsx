@@ -61,6 +61,7 @@ export default function CreateRecipe() {
   const [recipeType, setRecipeType] = useState('');
   const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'u' }]);
   const [instructionsList, setInstructionsList] = useState(['']);
+  const [porciones, setPorciones] = useState('');
   const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
@@ -69,10 +70,37 @@ export default function CreateRecipe() {
     });
   }, []);
 
-  // Handler para crear la receta y enviarla al backend
+  // Handler para crear la receta y enviarla al backend, con validaciones
   const handleCreateRecipe = async () => {
     if (isGuest) {
       alert('Funcionalidad solo disponible para usuarios registrados.');
+      return;
+    }
+    // Validaciones antes de enviar
+    if (!recipeName.trim()) {
+      alert('El nombre de la receta es obligatorio');
+      return;
+    }
+    if (!recipeType.trim()) {
+      alert('Debes seleccionar un tipo de receta');
+      return;
+    }
+    if (
+      ingredientsList.length === 0 ||
+      ingredientsList.some(ing => !ing.name.trim() || !ing.amount.trim() || !ing.unit.trim())
+    ) {
+      alert('Debes agregar al menos un ingrediente con todos sus campos completos');
+      return;
+    }
+    if (
+      instructionsList.length === 0 ||
+      instructionsList.some(step => !step.trim())
+    ) {
+      alert('Debes agregar al menos un paso con descripción');
+      return;
+    }
+    if (!porciones.trim()) {
+      alert('Debes ingresar para cuántas personas es la receta');
       return;
     }
     try {
@@ -95,6 +123,7 @@ export default function CreateRecipe() {
         tipo: recipeType,
         ingredientes: ingredientesMapped,
         instrucciones: instruccionesMapped,
+        porciones,
         autor: userId
       });
 
@@ -105,6 +134,7 @@ export default function CreateRecipe() {
           tipo: recipeType,
           ingredientes: ingredientesMapped,
           instrucciones: instruccionesMapped,
+          porciones, // Make sure this is included
           autor: userId
         },
         {
@@ -499,9 +529,13 @@ export default function CreateRecipe() {
             />
             <TextInput
               value={item.amount}
-              onChangeText={(text) => updateIngredientAmount(index, text)}
-              placeholder="Cant."
+              onChangeText={(text) => {
+                // Allow only numbers and one optional decimal point
+                const cleanedText = text.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                updateIngredientAmount(index, cleanedText);
+              }}
               keyboardType="numeric"
+              placeholder="Cant."
               style={{
                 width: 70,
                 borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
@@ -565,6 +599,19 @@ export default function CreateRecipe() {
         <TouchableOpacity onPress={addInstructionRow} style={{ alignSelf: 'flex-start', marginBottom: 24 }}>
           <Ionicons name="add-circle-outline" size={32} color="#FF6F00" />
         </TouchableOpacity>
+
+        {/* Porciones */}
+        <Text style={{ fontSize: 16, marginBottom: 4 }}>¿Para cuántas personas es la receta?</Text>
+        <TextInput
+          style={{
+            borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+            paddingHorizontal: 12, paddingVertical: 8, marginBottom: 24
+          }}
+          placeholder="Ej: 4"
+          keyboardType="numeric"
+          value={porciones}
+          onChangeText={text => setPorciones(text)}
+        />
 
         <View style={{ marginBottom: 24, alignItems: 'center' }}>
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>

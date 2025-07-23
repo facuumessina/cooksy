@@ -78,6 +78,9 @@ export async function createRecipe(req: Request, res: Response) {
     if (!req.body.autor) {
       return res.status(400).json({ message: 'Falta el campo autor en la receta' });
     }
+    if (req.body.porciones == null || isNaN(req.body.porciones)) {
+      return res.status(400).json({ message: 'Falta el campo porciones en la receta' });
+    }
     const receta = new Receta({ ...req.body, estado: 'aprobada' });
     await receta.save();
     // Agregar la receta a myRecipes del usuario
@@ -103,6 +106,9 @@ export async function getRecipeById(req: Request, res: Response) {
 }
 
 export async function updateRecipe(req: Request, res: Response) {
+  if (req.body.porciones != null && isNaN(req.body.porciones)) {
+    return res.status(400).json({ message: 'El campo porciones debe ser un número' });
+  }
   const receta = await Receta.findById(req.params.id);
   if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
   Object.assign(receta, req.body);
@@ -177,7 +183,12 @@ export async function adjustRecipe(req: Request, res: Response) {
   const receta = await Receta.findById(req.params.id);
   if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
 
-  const { porciones, cantidadIngrediente } = req.body as any;
+  const { porciones } = req.body as any;
+  if (!porciones || isNaN(porciones)) {
+    return res.status(400).json({ message: 'Debe especificar un número válido de porciones' });
+  }
+
+  const { cantidadIngrediente } = req.body as any;
   const factor = porciones
     ? porciones
     : cantidadIngrediente

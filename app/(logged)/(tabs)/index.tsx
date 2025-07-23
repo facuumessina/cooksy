@@ -215,11 +215,6 @@ export default function Home() {
                             )}
                         </View>
                     </View>
-                    {!isGuest && (
-                        <TouchableOpacity>
-                            <Ionicons name="notifications-outline" size={24} color="black" />
-                        </TouchableOpacity>
-                    )}
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>

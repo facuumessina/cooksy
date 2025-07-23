@@ -391,27 +391,6 @@ const ProfileScreen = () => {
             end={{ x: 1, y: 1 }}
             style={styles.headerGradient}
           >
-            {/* Edit pencil icon, top right */}
-            <TouchableOpacity
-              style={{
-                position: "absolute",
-                top: 60,
-                right: 20,
-                opacity: isGuest ? 0.5 : 1,
-              }}
-              onPress={() => {
-                if (isGuest) {
-                  alert(
-                    "Funcionalidad solo disponible para usuarios registrados."
-                  );
-                } else {
-                  console.log("Editar perfil");
-                }
-              }}
-              disabled={isGuest}
-            >
-              <Ionicons name="create-outline" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
             <View style={styles.headerContent}>
               <Ionicons
                 name="person-circle-outline"

@@ -3,7 +3,7 @@ import { useData } from '@/context/DataProvider';
 import { Ingredient, Recipe } from '@/types/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dimensions, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
@@ -22,6 +22,12 @@ const RecipeDetailScreen = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  // State for adjusted portions and ingredients
+  const [adjustedPortions, setAdjustedPortions] = useState<number | null>(null);
+  const [adjustedIngredients, setAdjustedIngredients] = useState<string[]>([]);
+  // Modal state for adjusting portions
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newPortionInput, setNewPortionInput] = useState('');
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -76,9 +82,6 @@ const RecipeDetailScreen = () => {
   }
 
 
-
-
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -104,14 +107,14 @@ const RecipeDetailScreen = () => {
 
             const options: RequestInit = isFavorite
               ? {
-                  method: 'DELETE',
-                  headers: { 'Content-Type': 'application/json' },
-                }
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+              }
               : {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ recipeId: recipe._id }),
-                };
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ recipeId: recipe._id }),
+              };
 
             try {
               const response = await fetch(endpoint, options);
@@ -151,17 +154,18 @@ const RecipeDetailScreen = () => {
         </View>
 
         <View style={styles.contentContainer}>
-          <Text style={styles.title}>{recipe.name}</Text>
 
           <View style={styles.section}>
+            <Text style={styles.title}>{recipe.nombre}</Text>
             <Text style={styles.sectionTitle}>Ingredientes</Text>
             <View style={styles.sectionContainer}>
-              {recipe.ingredientes.map((ingredient, index) => (
+              {(adjustedIngredients.length > 0
+                ? adjustedIngredients
+                : recipe.ingredientes.map((ingredient) => `${ingredient.nombre} - ${ingredient.cantidad}`)
+              ).map((text, index) => (
                 <View key={index} style={styles.ingredientRow}>
                   <Ionicons name="ellipse" size={20} color="#333" />
-                  <Text style={styles.ingredientText}>
-                    {ingredient.nombre} - {ingredient.cantidad}
-                  </Text>
+                  <Text style={styles.ingredientText}>{text}</Text>
                 </View>
               ))}
             </View>
@@ -178,6 +182,32 @@ const RecipeDetailScreen = () => {
                   <Text style={styles.stepText}>{step.descripcion}</Text>
                 </View>
               ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <View>
+                <Text style={styles.sectionTitle}>
+                  Comen: <Text style={styles.ingredientText}>
+                    {(adjustedPortions ?? recipe.porciones)} persona{(adjustedPortions ?? recipe.porciones) > 1 ? 's' : ''}
+                  </Text>
+                </Text>
+                <Text style={[styles.sectionTitle, { marginTop: 16 }]}>
+                  Creada por: <Text style={styles.ingredientText}>
+                    {recipe.autor?.alias || 'Desconocido'}
+                  </Text>
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(true);
+                }}
+              >
+                <Text style={{ color: '#FF7F00', textDecorationLine: 'underline', fontSize: 16 }}>
+                  Ajustar porciones
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -340,6 +370,72 @@ const RecipeDetailScreen = () => {
         type="success"
         onHide={() => setToastVisible(false)}
       />
+      {modalVisible && (
+        <View style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 999,
+        }}>
+          <View style={{
+            backgroundColor: 'white',
+            padding: 20,
+            borderRadius: 12,
+            width: '80%',
+          }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12 }}>Ajustar porciones</Text>
+            <Text style={{ marginBottom: 12 }}>¿Para cuántas personas querés ajustar la receta?</Text>
+            <TextInput
+              keyboardType="numeric"
+              value={newPortionInput}
+              onChangeText={setNewPortionInput}
+              placeholder="Ej. 4"
+              style={{
+                borderWidth: 1,
+                borderColor: '#ccc',
+                padding: 8,
+                borderRadius: 8,
+                marginBottom: 12,
+              }}
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text style={{ marginRight: 16, color: 'red' }}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                const newPortions = parseInt(newPortionInput);
+                if (!isNaN(newPortions) && newPortions > 0) {
+                  const factor = newPortions / recipe.porciones;
+                  const newIngredients = recipe.ingredientes.map((ingredient) => {
+                    const match = ingredient.cantidad.match(/([\d.,]+)/);
+                    if (match) {
+                      const originalQty = parseFloat(match[1].replace(',', '.'));
+                      const adjustedQty = (originalQty * factor).toFixed(2).replace('.', ',');
+                      const adjustedText = ingredient.cantidad.replace(match[1], adjustedQty);
+                      return `${ingredient.nombre} - ${adjustedText}`;
+                    }
+                    return `${ingredient.nombre} - ${ingredient.cantidad}`;
+                  });
+
+                  setAdjustedPortions(newPortions);
+                  setAdjustedIngredients(newIngredients);
+                  setModalVisible(false);
+                  setNewPortionInput('');
+                } else {
+                  alert('Por favor, ingresá un número válido.');
+                }
+              }}>
+                <Text style={{ color: '#007AFF' }}>Aceptar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
