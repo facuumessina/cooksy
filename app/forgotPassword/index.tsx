@@ -64,16 +64,12 @@ export default function ForgotPassword() {
 
   useEffect(() => {
   const preloadEmail = async () => {
-    if (user?.email) {
-      setEmail(user.email); // prioridad al email del contexto
-    } else {
       try {
-        const savedEmail = await AsyncStorage.getItem("savedEmail");
+        const savedEmail = await AsyncStorage.getItem("loginEmail");
         if (savedEmail) setEmail(savedEmail);
       } catch (error) {
         console.error("Error al cargar email:", error);
       }
-    }
   };
 
   preloadEmail();
