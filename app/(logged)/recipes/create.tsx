@@ -8,6 +8,7 @@ import { useIngredientMapper } from '@/hooks/useIngredientMapper';
 import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
 import { FoodUnit } from '@/types/enums';
 import { Ingredient } from '@/types/types';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 import { debounce } from '@/utils/debounce';
 import { checkScanArea, processProductData } from '@/utils/scannerUtils';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 
 
@@ -142,7 +144,7 @@ export default function CreateRecipe() {
       // Use imageUrl from state if available, otherwise upload from imagen
       let imageUrlToSend = imageUrl;
       if (!imageUrlToSend && imagen) {
-        imageUrlToSend = await uploadImageToCloudinary(imagen);
+        imageUrlToSend = await uploadToCloudinary(imagen);
         setImageUrl(imageUrlToSend);
       }
 
