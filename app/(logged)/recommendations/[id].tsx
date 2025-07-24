@@ -41,7 +41,7 @@ const RecipeDetailScreen = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await fetch(`https://cooksy-p77y.onrender.co/recipes/${id}`);
+        const response = await fetch(`https://cooksy-p77y.onrender.com/recipes/${id}`);
         if (!response.ok) throw new Error("Error al cargar receta");
         const data = await response.json();
         setRecipe(data);
@@ -113,8 +113,8 @@ const RecipeDetailScreen = () => {
             }
 
             const endpoint = isFavorite
-              ? `https://cooksy-p77y.onrender.co/users/${user._id}/saved-recipes/${recipe._id}`
-              : `https://cooksy-p77y.onrender.co/users/${user._id}/saved-recipes`;
+              ? `https://cooksy-p77y.onrender.com/users/${user._id}/saved-recipes/${recipe._id}`
+              : `https://cooksy-p77y.onrender.com/users/${user._id}/saved-recipes`;
 
             const options: RequestInit = isFavorite
               ? {
@@ -248,7 +248,7 @@ const RecipeDetailScreen = () => {
 
                       try {
                         const response = await fetch(
-                          `https://cooksy-p77y.onrender.co/recipes/${id}/rating`,
+                          `https://cooksy-p77y.onrender.com/recipes/${id}/rating`,
                           {
                             method: "POST",
                             headers: {
@@ -329,7 +329,7 @@ const RecipeDetailScreen = () => {
 
                         try {
                           const response = await fetch(
-                            `https://cooksy-p77y.onrender.co/recipes/${id}/comments`,
+                            `https://cooksy-p77y.onrender.com/recipes/${id}/comments`,
                             {
                               method: "POST",
                               headers: {
@@ -378,7 +378,7 @@ const RecipeDetailScreen = () => {
                               onPress={async () => {
                                 try {
                                   const response = await fetch(
-                                    `https://cooksy-p77y.onrender.co/recipes/${id}/comments/${c._id}?userId=${user?._id}`,
+                                    `https://cooksy-p77y.onrender.com/recipes/${id}/comments/${c._id}?userId=${user?._id}`,
                                     { method: "DELETE" }
                                   );
                                   if (!response.ok)

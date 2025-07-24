@@ -110,7 +110,7 @@ export default function Step3() {
 
     setIsLoading(true);
     try {
-      const response = await fetch("https://cooksy-p77y.onrender.co/auth/register-step2", {
+      const response = await fetch("https://cooksy-p77y.onrender.com/auth/register-step2", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

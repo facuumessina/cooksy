@@ -37,7 +37,7 @@ const recipes = () => {
   const fetchUsersWithRecipes = async () => {
     try {
       setLoadingUsers(true);
-      const res = await fetch('https://cooksy-p77y.onrender.co/recipes/userslist');
+      const res = await fetch('https://cooksy-p77y.onrender.com/recipes/userslist');
       const data = await res.json();
       setUserSuggestions(data);
     } catch (error) {

@@ -17,7 +17,7 @@ export default function EditRecipe() {
     const fetchRecipe = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`https://cooksy-p77y.onrender.co/recipes/${id}`, {
+        const response = await axios.get(`https://cooksy-p77y.onrender.com/recipes/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -68,7 +68,7 @@ export default function EditRecipe() {
       }));
 
       await axios.put(
-        `https://cooksy-p77y.onrender.co/recipes/${id}`,
+        `https://cooksy-p77y.onrender.com/recipes/${id}`,
         {
           nombre: recipeName,
           tipo: recipeType,

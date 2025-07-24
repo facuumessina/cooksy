@@ -31,7 +31,7 @@ export default function ResetPassword() {
     }
 
     try {
-      const response = await fetch('https://cooksy-p77y.onrender.co/auth/reset-password', {
+      const response = await fetch('https://cooksy-p77y.onrender.com/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code, newPassword }),
