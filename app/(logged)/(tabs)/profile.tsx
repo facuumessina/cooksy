@@ -68,7 +68,6 @@ const FavRecipesInfoItem = () => {
         );
         const results = await Promise.all(promises);
         setDetailedFavorites(results);
-        console.log("🔍 Recetas favoritas detalladas:", results);
       } catch (error) {
         console.error("❌ Error al traer detalles de recetas favoritas:", error);
       }
@@ -159,7 +158,6 @@ const MyRecipesInfoItem = () => {
         );
         const data = await response.json();
         setMyRecipes(data);
-        console.log("📒 Recetas propias:", data);
       } catch (error) {
         console.error("❌ Error al traer mis recetas:", error);
       }

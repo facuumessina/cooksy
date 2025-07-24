@@ -2,7 +2,7 @@ import { Cuisine } from '@/types/enums';
 import { translateCuisine } from '@/utils/enum-translations';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const INGREDIENT_RANGES = [
@@ -39,7 +39,6 @@ const recipes = () => {
       setLoadingUsers(true);
       const res = await fetch('http://10.0.2.2:3000/recipes/userslist');
       const data = await res.json();
-      console.log('Usuarios traídos:', data);
       setUserSuggestions(data);
     } catch (error) {
       console.error('Error al obtener usuarios con recetas:', error);
