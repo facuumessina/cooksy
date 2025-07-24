@@ -2,7 +2,6 @@
 import { useData } from '@/context/DataProvider';
 import { Recipe } from '@/types/types';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
 interface FavoriteButtonProps {
@@ -14,9 +13,6 @@ interface FavoriteButtonProps {
 const FavoriteButton = ({ recipe, size = 24, style }: FavoriteButtonProps) => {
     const { favouriteRecipes, toggleFavourite } = useData();
     const isFavourite = favouriteRecipes.includes(recipe._id);
-    console.log('📌 recipe._id (verificación):', recipe._id);
-    console.log('❤️ Renderizando botón favorito para receta con ID:', recipe._id);
-    console.log('📌 favouriteRecipes:', favouriteRecipes);
 
     return (
         <TouchableOpacity
@@ -27,7 +23,6 @@ const FavoriteButton = ({ recipe, size = 24, style }: FavoriteButtonProps) => {
                     return;
                 }
 
-                console.log('💾 toggleFavourite ejecutado con ID:', recipe._id);
                 toggleFavourite(prev => {
                     if (prev.includes(recipe._id)) {
                         return prev.filter(id => id !== recipe._id);

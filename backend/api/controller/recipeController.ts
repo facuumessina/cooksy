@@ -16,6 +16,7 @@ export async function searchRecipes(req: Request, res: Response) {
     const { searchTerm, userSearch, cuisines, ingredients, excludedIngredients } = req.query;
 
     const filter: any = { estado: 'aprobada' };
+    const andConditions: any[] = [];
 
     if (searchTerm) {
       filter.nombre = { $regex: new RegExp(searchTerm as string, 'i') };
@@ -38,27 +39,39 @@ export async function searchRecipes(req: Request, res: Response) {
       filter.tipo = { $in: tipos };
     }
 
-    // ingredients filter (debe ir antes que excludedIngredients)
+    // ✅ Filtro de ingredientes incluidos
     if (ingredients) {
-      const incluidosRaw = Array.isArray(ingredients) ? ingredients : (ingredients as string).split(',');
+      const incluidosRaw = Array.isArray(ingredients)
+        ? ingredients
+        : (ingredients as string).split(',');
       const incluidos = incluidosRaw.map(i => i.trim().toLowerCase());
 
-      filter['ingredientes.nombre'] = { $all: incluidos.map(i => new RegExp(`^${i}$`, 'i')) };
+      andConditions.push({
+        'ingredientes.nombre': {
+          $all: incluidos.map(i => new RegExp(`^${i}$`, 'i'))
+        }
+      });
     }
 
-    // excludedIngredients filter (después de ingredients)
+    // ✅ Filtro de ingredientes excluidos
     if (excludedIngredients) {
       const excluidosRaw = Array.isArray(excludedIngredients)
         ? excludedIngredients
         : (excludedIngredients as string).split(',');
       const excluidos = excluidosRaw.map(i => i.trim().toLowerCase());
 
-      filter['ingredientes.nombre'] = {
-        ...(filter['ingredientes.nombre'] || {}),
-        $not: {
-          $in: excluidos.map(i => new RegExp(`^${i}$`, 'i'))
+      andConditions.push({
+        'ingredientes.nombre': {
+          $not: {
+            $in: excluidos.map(i => new RegExp(`^${i}$`, 'i'))
+          }
         }
-      };
+      });
+    }
+
+    // Si hay condiciones combinadas, agregarlas al filtro
+    if (andConditions.length > 0) {
+      filter.$and = andConditions;
     }
 
     const recetas = await Receta.find(filter)
@@ -71,6 +84,7 @@ export async function searchRecipes(req: Request, res: Response) {
     res.status(500).json({ message: 'Error al buscar recetas' });
   }
 }
+
 
 export async function createRecipe(req: Request, res: Response) {
   try {
@@ -262,7 +276,6 @@ export async function getLatestApprovedRecipes(_req: Request, res: Response) {
 
 export async function getUsersWithRecipes(req: Request, res: Response) {
   try {
-    console.log("getUsersWithRecipes triggered");
     const users = await Receta.aggregate([
       { $match: { estado: 'aprobada' } },
       { $group: { _id: '$autor' } },
@@ -295,11 +308,6 @@ export async function deleteComment(req: Request, res: Response) {
     const { id, commentId } = req.params;
     const userId = req.query.userId as string;
 
-    console.log('Intentando eliminar comentario');
-    console.log('ID de receta:', id);
-    console.log('ID de comentario:', commentId);
-    console.log('ID de usuario:', userId);
-
     const receta = await Receta.findById(id);
     if (!receta) return res.status(404).json({ message: 'Receta no encontrada' });
 
@@ -311,8 +319,6 @@ export async function deleteComment(req: Request, res: Response) {
       return res.status(403).json({ message: 'No autorizado para eliminar este comentario' });
     }
 
-    console.log('Comentarios actuales en la receta:', receta.comments);
-
     const result = await Receta.updateOne(
       { _id: id },
       {
@@ -323,7 +329,6 @@ export async function deleteComment(req: Request, res: Response) {
         }
       }
     );
-    console.log('Resultado del updateOne:', result);
 
     if (result.modifiedCount === 0) {
       console.warn('No se eliminó ningún comentario');

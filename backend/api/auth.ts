@@ -56,7 +56,6 @@ export const resetPassword = async (data: ResetPasswordDTO) => {
 export const checkAvailability = async (data: { email?: string; alias?: string }) => {
   try {
     const res = await api.post<{ emailAvailable: boolean; aliasAvailable: boolean }>('/auth/check-availability', data);
-    console.log('Availability response:', res.data);
     return res.data;
   } catch (error) {
     handleApiError(error, 'checkAvailability');

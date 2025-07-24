@@ -35,7 +35,6 @@ export default function EditRecipe() {
               amount,
               unit
             };
-            console.log('Ingrediente procesado:', ing.cantidad, '→', result);
             return result;
           });
           setIngredientsList(processedIngredients);
@@ -132,7 +131,6 @@ export default function EditRecipe() {
     { label: 'onzas líquidas (oz)', value: 'oz', short: 'oz' },
   ];
 
-  console.log('🔎 Lista final de ingredientes:', ingredientsList);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -173,7 +171,6 @@ export default function EditRecipe() {
         {ingredientsList.map((item, index) => {
           // Forzar que item.unit sea una cadena válida
           const unitValue = typeof item.unit === 'string' ? item.unit : '';
-          console.log(`🧪 Ingrediente ${index} unit:`, item.unit);
           return (
             <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 8 }}>
               <TextInput

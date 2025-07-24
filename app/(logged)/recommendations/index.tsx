@@ -96,7 +96,6 @@ const RecommendationScreen = () => {
             }),
           });
           const text = await response.text();
-          console.log('🔴 Response text:', text);
           const data = JSON.parse(text);
           setApiRecipes(data);
         } catch (error) {

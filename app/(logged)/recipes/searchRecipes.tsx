@@ -25,13 +25,7 @@ const SearchResultsScreen = () => {
           ingredients: Array.isArray(selectedIngredients) ? selectedIngredients.join(',') : '',
           excludedIngredients: Array.isArray(selectedExcludedIngredients) ? selectedExcludedIngredients.join(',') : '',
         }).toString();
-        console.log('Query params:', {
-          searchTerm,
-          userSearch,
-          cuisines: Array.isArray(selectedCuisines) ? selectedCuisines.join(',') : '',
-          ingredients: Array.isArray(selectedIngredients) ? selectedIngredients.join(',') : '',
-          excludedIngredients: Array.isArray(selectedExcludedIngredients) ? selectedExcludedIngredients.join(',') : '',
-        });
+      
         const response = await fetch(`http://10.0.2.2:3000/recipes/search?${queryParams}`, {
           method: 'GET',
         });

@@ -34,5 +34,4 @@ export async function sendRecoveryEmail(to: string, code: string) {
     ],
   });
 
-  console.log('📬 Correo enviado: %s', info.messageId);
 }

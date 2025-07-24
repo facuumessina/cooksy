@@ -1,30 +1,36 @@
-import BottomSheetComponent from '@/components/recipes/create/BottomSheet';
-import ScanLoader from '@/components/recipes/create/ScanLoader';
-import SearchIngredientModal from '@/components/SearchIngredientSheet';
-import { envConfig } from '@/configs/envConfig';
-import { useData } from '@/context/DataProvider';
-import { useFetch } from '@/hooks/useFetch';
-import { useIngredientMapper } from '@/hooks/useIngredientMapper';
-import { RecipeRecommender } from '@/hooks/useRecipeRecommender';
-import { FoodUnit } from '@/types/enums';
-import { Ingredient } from '@/types/types';
-import { uploadToCloudinary } from '@/utils/cloudinary';
-import { debounce } from '@/utils/debounce';
-import { checkScanArea, processProductData } from '@/utils/scannerUtils';
-import { Ionicons } from '@expo/vector-icons';
-import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Picker } from '@react-native-picker/picker';
-import axios from 'axios';
-import { CameraType, useCameraPermissions } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
-import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-
-
+import BottomSheetComponent from "@/components/recipes/create/BottomSheet";
+import ScanLoader from "@/components/recipes/create/ScanLoader";
+import SearchIngredientModal from "@/components/SearchIngredientSheet";
+import { envConfig } from "@/configs/envConfig";
+import { useData } from "@/context/DataProvider";
+import { useFetch } from "@/hooks/useFetch";
+import { useIngredientMapper } from "@/hooks/useIngredientMapper";
+import { RecipeRecommender } from "@/hooks/useRecipeRecommender";
+import { FoodUnit } from "@/types/enums";
+import { Ingredient } from "@/types/types";
+import { uploadToCloudinary } from "@/utils/cloudinary";
+import { debounce } from "@/utils/debounce";
+import { checkScanArea, processProductData } from "@/utils/scannerUtils";
+import { Ionicons } from "@expo/vector-icons";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
+import { CameraType, useCameraPermissions } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ScannedProduct {
   product_name: string;
@@ -50,12 +56,12 @@ interface BarcodeScanningResult {
 }
 
 interface DetectionArea {
-  id: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+  id: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
   color: string;
 }
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCAN_AREA_SIZE = SCREEN_WIDTH * 0.7;
 
 export default function CreateRecipe() {
@@ -63,7 +69,6 @@ export default function CreateRecipe() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const seleccionarImagen = async () => {
-    console.log("📸 handleImagePick se ejecutó");
     const resultado = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -72,72 +77,83 @@ export default function CreateRecipe() {
 
     if (!resultado.canceled) {
       // Log de la imagen seleccionada
-      console.log('🖼️ Imagen seleccionada:', resultado.assets[0].uri);
       const imageUri = resultado.assets[0].uri;
+
+      // Validar extensión
+      const extension = imageUri.split(".").pop()?.toLowerCase();
+      if (!["jpg", "jpeg", "png"].includes(extension || "")) {
+        alert("Solo se permiten archivos JPG, JPEG o PNG.");
+        return;
+      }
+
       setImagen(imageUri);
       // const url = await uploadToCloudinary(imageUri); // Eliminado para evitar warning
       // if (url) {
       //   setImageUrl(url);
       //   // Log de la URL de la imagen subida a Cloudinary
-      //   console.log('URL de la imagen subida a Cloudinary:', url);
       // }
     }
   };
   // Ingredient and instruction state/handlers for recipe creation
-  const [recipeName, setRecipeName] = useState('');
-  const [recipeType, setRecipeType] = useState('');
-  const [ingredientsList, setIngredientsList] = useState([{ name: '', amount: '', unit: 'u' }]);
-  const [instructionsList, setInstructionsList] = useState(['']);
-  const [porciones, setPorciones] = useState('');
+  const [recipeName, setRecipeName] = useState("");
+  const [recipeType, setRecipeType] = useState("");
+  const [ingredientsList, setIngredientsList] = useState([
+    { name: "", amount: "", unit: "u" },
+  ]);
+  const [instructionsList, setInstructionsList] = useState([""]);
+  const [porciones, setPorciones] = useState("");
   const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem('isGuestMode').then(val => {
-      setIsGuest(val === 'true');
+    AsyncStorage.getItem("isGuestMode").then((val) => {
+      setIsGuest(val === "true");
     });
   }, []);
 
   // Handler para crear la receta y enviarla al backend, con validaciones
   const handleCreateRecipe = async () => {
-    console.log("📤 Entrando en submitRecipe...");
     if (isGuest) {
-      alert('Funcionalidad solo disponible para usuarios registrados.');
+      alert("Funcionalidad solo disponible para usuarios registrados.");
       return;
     }
     // Validaciones antes de enviar
     if (!recipeName.trim()) {
-      alert('El nombre de la receta es obligatorio');
+      alert("El nombre de la receta es obligatorio");
       return;
     }
     if (!recipeType.trim()) {
-      alert('Debes seleccionar un tipo de receta');
+      alert("Debes seleccionar un tipo de receta");
       return;
     }
     if (
       ingredientsList.length === 0 ||
-      ingredientsList.some(ing => !ing.name.trim() || !ing.amount.trim() || !ing.unit.trim())
+      ingredientsList.some(
+        (ing) => !ing.name.trim() || !ing.amount.trim() || !ing.unit.trim()
+      )
     ) {
-      alert('Debes agregar al menos un ingrediente con todos sus campos completos');
+      alert(
+        "Debes agregar al menos un ingrediente con todos sus campos completos"
+      );
       return;
     }
     if (
       instructionsList.length === 0 ||
-      instructionsList.some(step => !step.trim())
+      instructionsList.some((step) => !step.trim())
     ) {
-      alert('Debes agregar al menos un paso con descripción');
+      alert("Debes agregar al menos un paso con descripción");
       return;
     }
     if (!porciones.trim()) {
-      alert('Debes ingresar para cuántas personas es la receta');
+      alert("Debes ingresar para cuántas personas es la receta");
       return;
     }
     try {
-      const token = await AsyncStorage.getItem('token');
-      const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("userId");
 
-      const ingredientesMapped = ingredientsList.map(item => ({
+      const ingredientesMapped = ingredientsList.map((item) => ({
         nombre: item.name,
-        cantidad: `${item.amount} ${item.unit}`
+        cantidad: `${item.amount} ${item.unit}`,
       }));
 
       // --- Subir imagen a Cloudinary antes de armar el objeto receta ---
@@ -166,26 +182,26 @@ export default function CreateRecipe() {
       };
 
       // Log de los datos que se enviarán al backend
-      console.log('Datos que se enviarán al backend:', receta);
 
-      await axios.post(
-        'http://10.0.2.2:3000/recipes',
-        receta,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      await axios.post("http://10.0.2.2:3000/recipes", receta, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      router.push('/(logged)/(tabs)');
+      router.push("/(logged)/(tabs)");
     } catch (error: any) {
-      console.log("❌ Error en el proceso:", error.message);
-      console.error('Error al crear receta:', error.response?.data || error.message);
-      alert('No se pudo crear la receta.');
+      console.error(
+        "Error al crear receta:",
+        error.response?.data || error.message
+      );
+      alert("No se pudo crear la receta.");
     }
   };
 
   const addIngredientRow = () => {
-    setIngredientsList([...ingredientsList, { name: '', amount: '', unit: 'g' }]);
+    setIngredientsList([
+      ...ingredientsList,
+      { name: "", amount: "", unit: "g" },
+    ]);
   };
 
   const updateIngredientName = (index, text) => {
@@ -207,7 +223,7 @@ export default function CreateRecipe() {
   };
 
   const addInstructionRow = () => {
-    setInstructionsList([...instructionsList, '']);
+    setInstructionsList([...instructionsList, ""]);
   };
 
   const updateInstruction = (index, text) => {
@@ -217,9 +233,13 @@ export default function CreateRecipe() {
   };
   const [scanning, setScanning] = useState(false);
   const [isProcessingBarcode, setIsProcessingBarcode] = useState(false);
-  const [facing, setFacing] = useState<CameraType>('back');
-  const [scannedProduct, setScannedProduct] = useState<ScannedProduct | null>(null);
-  const [mappedIngredient, setMappedIngredient] = useState<Ingredient | null>(null);
+  const [facing, setFacing] = useState<CameraType>("back");
+  const [scannedProduct, setScannedProduct] = useState<ScannedProduct | null>(
+    null
+  );
+  const [mappedIngredient, setMappedIngredient] = useState<Ingredient | null>(
+    null
+  );
   const [permission, requestPermission] = useCameraPermissions();
 
   const {
@@ -229,14 +249,14 @@ export default function CreateRecipe() {
     ingredients,
     currentRecipeIngredients,
     setCurrentRecipeIngredientsState,
-    setCurrentRecommendations
+    setCurrentRecommendations,
   } = useData();
 
   const [detectionAreas, setDetectionAreas] = useState<DetectionArea[]>([
-    { id: 'topLeft', color: 'white' },
-    { id: 'topRight', color: 'white' },
-    { id: 'bottomLeft', color: 'white' },
-    { id: 'bottomRight', color: 'white' },
+    { id: "topLeft", color: "white" },
+    { id: "topRight", color: "white" },
+    { id: "bottomLeft", color: "white" },
+    { id: "bottomRight", color: "white" },
   ]);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -279,94 +299,120 @@ export default function CreateRecipe() {
     setScanning(true);
   }, [permission, requestPermission]);
 
-  const debouncedBarcodeHandler = useCallback((result: BarcodeScanningResult) => {
-    if (!scanning || isProcessingBarcode) return;
+  const debouncedBarcodeHandler = useCallback(
+    (result: BarcodeScanningResult) => {
+      if (!scanning || isProcessingBarcode) return;
 
-    debounce(async () => {
-      try {
-        const isWithinScanArea = checkScanArea(result.cornerPoints);
-        if (!isWithinScanArea) return;
+      debounce(async () => {
+        try {
+          const isWithinScanArea = checkScanArea(result.cornerPoints);
+          if (!isWithinScanArea) return;
 
-        setIsProcessingBarcode(true);
-        setDetectionAreas(prev => prev.map(area => ({ ...area, color: '#15CF77' })));
+          setIsProcessingBarcode(true);
+          setDetectionAreas((prev) =>
+            prev.map((area) => ({ ...area, color: "#15CF77" }))
+          );
 
-        const fetchedData = await fetchData(
-          `${envConfig.OPEN_FOOD_FACTS_API_URL}/${result.data}`,
-          { method: 'GET', cache: 'force-cache' }
+          const fetchedData = await fetchData(
+            `${envConfig.OPEN_FOOD_FACTS_API_URL}/${result.data}`,
+            { method: "GET", cache: "force-cache" }
+          );
+
+          if (fetchedData?.status === 1 && fetchedData.product) {
+            const product = processProductData(fetchedData.product);
+            setScannedProduct(product);
+            const ingredient = mapIngredientByName({
+              product: {
+                product_name: product.product_name,
+                categories_tags: product.categories_tags,
+                nutriments: product.nutriments,
+              },
+            });
+
+            if (ingredient) {
+              setMappedIngredient(ingredient);
+              setScanning(false);
+            }
+          }
+        } catch (error) {
+          console.error("Error processing barcode:", error);
+        } finally {
+          bottomSheetRef.current?.expand();
+          setTimeout(() => {
+            setDetectionAreas((prev) =>
+              prev.map((area) => ({ ...area, color: "white" }))
+            );
+          }, 1000);
+        }
+      }, 1000)();
+    },
+    [scanning, isProcessingBarcode, fetchData, mapIngredientByName]
+  );
+
+  const handleBarcodeScanned = useCallback(
+    (result: BarcodeScanningResult) => {
+      debouncedBarcodeHandler(result);
+    },
+    [debouncedBarcodeHandler]
+  );
+
+  const handleAddIngredient = useCallback(
+    (ingredient: any) => {
+      if (!mappedIngredient) return;
+
+      setCurrentRecipeIngredientsState((prevIngredients: Ingredient[]) => {
+        const existingIndex = prevIngredients.findIndex(
+          (item) => item.id === mappedIngredient.id
         );
 
-        if (fetchedData?.status === 1 && fetchedData.product) {
-          const product = processProductData(fetchedData.product);
-          setScannedProduct(product);
-          const ingredient = mapIngredientByName({
-            product: {
-              product_name: product.product_name,
-              categories_tags: product.categories_tags,
-              nutriments: product.nutriments
+        if (existingIndex >= 0) {
+          return prevIngredients.map((item, index) => {
+            if (index === existingIndex) {
+              return {
+                ...item,
+                quantity: Math.min((item.quantity || 0) + 1, 20),
+              };
             }
+            return item;
           });
-
-          if (ingredient) {
-            setMappedIngredient(ingredient);
-            setScanning(false);
-          }
         }
-      } catch (error) {
-        console.error('Error processing barcode:', error);
-      } finally {
-        bottomSheetRef.current?.expand();
-        setTimeout(() => {
-          setDetectionAreas(prev => prev.map(area => ({ ...area, color: 'white' })));
-        }, 1000);
-      }
-    }, 1000)();
-  }, [scanning, isProcessingBarcode, fetchData, mapIngredientByName]);
 
-  const handleBarcodeScanned = useCallback((result: BarcodeScanningResult) => {
-    debouncedBarcodeHandler(result);
-  }, [debouncedBarcodeHandler]);
+        const newIngredient: Ingredient = {
+          ...ingredient,
+          id: mappedIngredient.id,
+          name: mappedIngredient.name,
+          category: mappedIngredient.category,
+          keywords: [
+            ...(mappedIngredient.keywords || []),
+            ...(ingredient._keywords || []),
+          ],
+          image: ingredient.image_url
+            ? ingredient.image_url
+            : mappedIngredient.image,
+          nutritionalProperties:
+            ingredient?.nutriments || mappedIngredient.nutritionalProperties,
+          calories: ingredient?.nutriments?.energy_value || 0,
+          quantity: 1,
+          unit:
+            ingredient.product_quantity_unit ??
+            mappedIngredient.unit ??
+            FoodUnit.GRAM,
+        };
 
-  const handleAddIngredient = useCallback((ingredient: any) => {
-    if (!mappedIngredient) return;
+        return [...prevIngredients, newIngredient];
+      });
 
-    setCurrentRecipeIngredientsState((prevIngredients: Ingredient[]) => {
-      const existingIndex = prevIngredients.findIndex(item => item.id === mappedIngredient.id);
-
-      if (existingIndex >= 0) {
-        return prevIngredients.map((item, index) => {
-          if (index === existingIndex) {
-            return {
-              ...item,
-              quantity: Math.min((item.quantity || 0) + 1, 20)
-            };
-          }
-          return item;
-        });
-      }
-
-      const newIngredient: Ingredient = {
-        ...ingredient,
-        id: mappedIngredient.id,
-        name: mappedIngredient.name,
-        category: mappedIngredient.category,
-        keywords: [...(mappedIngredient.keywords || []), ...(ingredient._keywords || [])],
-        image: ingredient.image_url ? ingredient.image_url : mappedIngredient.image,
-        nutritionalProperties: ingredient?.nutriments || mappedIngredient.nutritionalProperties,
-        calories: ingredient?.nutriments?.energy_value || 0,
-        quantity: 1,
-        unit: ingredient.product_quantity_unit ?? mappedIngredient.unit ?? FoodUnit.GRAM
-      };
-
-      return [...prevIngredients, newIngredient];
-    });
-
-    setScannedProduct(null);
-    bottomSheetRef.current?.close();
-  }, [mappedIngredient, setCurrentRecipeIngredientsState]);
+      setScannedProduct(null);
+      bottomSheetRef.current?.close();
+    },
+    [mappedIngredient, setCurrentRecipeIngredientsState]
+  );
 
   const handleAddIngredientFromSearch = (ingredient: Ingredient) => {
     setCurrentRecipeIngredientsState((prevIngredients) => {
-      const existingIndex = prevIngredients.findIndex((item) => item.id === ingredient.id);
+      const existingIndex = prevIngredients.findIndex(
+        (item) => item.id === ingredient.id
+      );
 
       if (existingIndex >= 0) {
         return prevIngredients.map((item, index) => {
@@ -395,134 +441,172 @@ export default function CreateRecipe() {
 
   const handleRecommendation = useCallback(() => {
     if (!mappedIngredient) return;
-    const recommender = new RecipeRecommender(recipes, user, [mappedIngredient]);
+    const recommender = new RecipeRecommender(recipes, user, [
+      mappedIngredient,
+    ]);
     const recommendations = recommender.getSingleIngredientRecommendations(3);
     setCurrentRecommendations(recommendations);
-    router.push('/(logged)/recommendations');
+    router.push("/(logged)/recommendations");
   }, [mappedIngredient, setCurrentRecommendations]);
 
   const handleFullRecommendation = useCallback(() => {
     if (!currentRecipeIngredients.length) return;
-    const recommender = new RecipeRecommender(recipes, user, currentRecipeIngredients);
+    const recommender = new RecipeRecommender(
+      recipes,
+      user,
+      currentRecipeIngredients
+    );
     const recommendations = recommender.getMultiIngredientRecommendations(3);
     setCurrentRecommendations(recommendations);
-    router.push('/(logged)/recommendations');
+    router.push("/(logged)/recommendations");
   }, [currentRecipeIngredients, setCurrentRecommendations]);
 
-  const updateQuantity = useCallback((id: number, increment: number) => {
-    setCurrentRecipeIngredientsState((prevIngredients: Ingredient[]) =>
-      prevIngredients.map(ing => {
-        if (ing.id === id) {
-          const newQuantity = Math.max(0, Math.min(20, (ing.quantity || 0) + increment));
-          return newQuantity === 0 ? null : { ...ing, quantity: newQuantity };
-        }
-        return ing;
-      }).filter(Boolean) as Ingredient[]
-    );
-  }, [setCurrentRecipeIngredientsState]);
+  const updateQuantity = useCallback(
+    (id: number, increment: number) => {
+      setCurrentRecipeIngredientsState(
+        (prevIngredients: Ingredient[]) =>
+          prevIngredients
+            .map((ing) => {
+              if (ing.id === id) {
+                const newQuantity = Math.max(
+                  0,
+                  Math.min(20, (ing.quantity || 0) + increment)
+                );
+                return newQuantity === 0
+                  ? null
+                  : { ...ing, quantity: newQuantity };
+              }
+              return ing;
+            })
+            .filter(Boolean) as Ingredient[]
+      );
+    },
+    [setCurrentRecipeIngredientsState]
+  );
 
-  const ListEmptyComponent = useMemo(() => (
-    <View style={styles.emptyState}>
-      <Text style={styles.emptyStateText}>
-        No hay ingredientes agregados
-      </Text>
-      <Text style={styles.emptyStateSubtext}>
-        Escanea productos o agrégalos manualmente
-      </Text>
-    </View>
-  ), []);
-
-  const HeaderComponent = useMemo(() => (
-    <View style={styles.header}>
-      <View style={styles.leftHeader}>
-        <Text style={styles.title}>Ingredientes</Text>
+  const ListEmptyComponent = useMemo(
+    () => (
+      <View style={styles.emptyState}>
+        <Text style={styles.emptyStateText}>No hay ingredientes agregados</Text>
+        <Text style={styles.emptyStateSubtext}>
+          Escanea productos o agrégalos manualmente
+        </Text>
       </View>
-      <View style={styles.rightHeader}>
-        <TouchableOpacity onPress={handleScan}>
-          <Ionicons name='barcode-outline' size={32} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleOpenSearch}>
-          <Ionicons name="add-outline" size={32} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  ), [handleScan, handleOpenSearch]);
+    ),
+    []
+  );
 
-  const renderItem = useCallback(({ item }: { item: Ingredient }) => {
-    const imageUrl = item.image.includes("http")
-      ? item.image
-      : `${envConfig.IMAGE_SERVER_URL}/ingredients/${item.image}`;
-
-    return (
-      <View style={styles.ingredientItem}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.ingredientImage}
-        />
-        <Text style={styles.ingredientName}>{item.name}</Text>
-        <View style={styles.quantityControl}>
-          <TouchableOpacity
-            onPress={() => updateQuantity(item.id!, -1)}
-            style={styles.button}
-          >
-            <Ionicons name="remove" size={16} color="#5EEAD4" />
+  const HeaderComponent = useMemo(
+    () => (
+      <View style={styles.header}>
+        <View style={styles.leftHeader}>
+          <Text style={styles.title}>Ingredientes</Text>
+        </View>
+        <View style={styles.rightHeader}>
+          <TouchableOpacity onPress={handleScan}>
+            <Ionicons name="barcode-outline" size={32} />
           </TouchableOpacity>
-          <Text style={styles.buttonText}>
-            {item.quantity}
-          </Text>
-          <TouchableOpacity
-            onPress={() => updateQuantity(item.id!, 1)}
-            style={styles.button}
-          >
-            <Ionicons name="add" size={16} color="#5EEAD4" />
+          <TouchableOpacity onPress={handleOpenSearch}>
+            <Ionicons name="add-outline" size={32} />
           </TouchableOpacity>
         </View>
       </View>
-    );
-  }, [updateQuantity]);
+    ),
+    [handleScan, handleOpenSearch]
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: Ingredient }) => {
+      const imageUrl = item.image.includes("http")
+        ? item.image
+        : `${envConfig.IMAGE_SERVER_URL}/ingredients/${item.image}`;
+
+      return (
+        <View style={styles.ingredientItem}>
+          <Image source={{ uri: imageUrl }} style={styles.ingredientImage} />
+          <Text style={styles.ingredientName}>{item.name}</Text>
+          <View style={styles.quantityControl}>
+            <TouchableOpacity
+              onPress={() => updateQuantity(item.id!, -1)}
+              style={styles.button}
+            >
+              <Ionicons name="remove" size={16} color="#5EEAD4" />
+            </TouchableOpacity>
+            <Text style={styles.buttonText}>{item.quantity}</Text>
+            <TouchableOpacity
+              onPress={() => updateQuantity(item.id!, 1)}
+              style={styles.button}
+            >
+              <Ionicons name="add" size={16} color="#5EEAD4" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    },
+    [updateQuantity]
+  );
 
   // Define units array
   const UNITS = [
-    { label: 'unidades (u)', value: 'u', short: 'u' },
-    { label: 'gramos (g)', value: 'g', short: 'g' },
-    { label: 'kilogramos (kg)', value: 'kg', short: 'kg' },
-    { label: 'tazas', value: 'taza', short: 'taza' },
-    { label: 'cucharadita (cdta)', value: 'cdta', short: 'cdta' },
-    { label: 'cucharadas soperas (cda)', value: 'cda', short: 'cda' },
-    { label: 'mililitros (ml)', value: 'ml', short: 'ml' },
-    { label: 'centímetros cúbicos (cm3)', value: 'cm3', short: 'cm3' },
-    { label: 'litros (l)', value: 'l', short: 'l' },
-    { label: 'onzas líquidas (oz)', value: 'oz', short: 'oz' },
+    { label: "unidades (u)", value: "u", short: "u" },
+    { label: "gramos (g)", value: "g", short: "g" },
+    { label: "kilogramos (kg)", value: "kg", short: "kg" },
+    { label: "tazas", value: "taza", short: "taza" },
+    { label: "cucharadita (cdta)", value: "cdta", short: "cdta" },
+    { label: "cucharadas soperas (cda)", value: "cda", short: "cda" },
+    { label: "mililitros (ml)", value: "ml", short: "ml" },
+    { label: "centímetros cúbicos (cm3)", value: "cm3", short: "cm3" },
+    { label: "litros (l)", value: "l", short: "l" },
+    { label: "onzas líquidas (oz)", value: "oz", short: "oz" },
   ];
-
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <TouchableOpacity onPress={() => router.replace('/(logged)/(tabs)')} style={{ marginBottom: 8 }}>
+        <TouchableOpacity
+          onPress={() => router.replace("/(logged)/(tabs)")}
+          style={{ marginBottom: 8 }}
+        >
           <Ionicons name="arrow-back" size={28} color="#FF6F00" />
         </TouchableOpacity>
-        <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>Nueva Receta</Text>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "bold",
+            marginBottom: 16,
+            textAlign: "center",
+          }}
+        >
+          Nueva Receta
+        </Text>
 
-        <Text style={{ fontSize: 16, marginBottom: 4 }}>Nombre de la receta</Text>
+        <Text style={{ fontSize: 16, marginBottom: 4 }}>
+          Nombre de la receta
+        </Text>
         <TextInput
           value={recipeName}
           onChangeText={setRecipeName}
           style={{
-            borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-            paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            marginBottom: 16,
           }}
           placeholder="Ingresa el nombre de la receta"
         />
 
         <Text style={{ fontSize: 16, marginBottom: 4 }}>Tipo de receta</Text>
-        <View style={{
-          borderWidth: 1,
-          borderColor: '#ccc',
-          borderRadius: 8,
-          marginBottom: 16,
-          overflow: 'hidden'
-        }}>
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 8,
+            marginBottom: 16,
+            overflow: "hidden",
+          }}
+        >
           <Picker
             selectedValue={recipeType}
             onValueChange={(value) => setRecipeType(value)}
@@ -551,66 +635,114 @@ export default function CreateRecipe() {
         {/* Ingredientes */}
         <Text style={{ fontSize: 18, marginBottom: 8 }}>Ingredientes</Text>
         {ingredientsList.map((item, index) => (
-          <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+          <View
+            key={index}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
             <TextInput
               value={item.name}
               onChangeText={(text) => updateIngredientName(index, text)}
               placeholder="Ingrediente"
               style={{
                 flex: 1,
-                borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-                paddingHorizontal: 12, paddingVertical: 8, marginRight: 8
+                borderWidth: 1,
+                borderColor: "#ccc",
+                borderRadius: 8,
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                marginRight: 8,
               }}
             />
             <TextInput
               value={item.amount}
               onChangeText={(text) => {
                 // Allow only numbers and one optional decimal point
-                const cleanedText = text.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                const cleanedText = text
+                  .replace(/[^0-9.]/g, "")
+                  .replace(/(\..*?)\..*/g, "$1");
                 updateIngredientAmount(index, cleanedText);
               }}
               keyboardType="numeric"
               placeholder="Cant."
               style={{
                 width: 70,
-                borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-                paddingHorizontal: 12, paddingVertical: 8, marginRight: 8
+                borderWidth: 1,
+                borderColor: "#ccc",
+                borderRadius: 8,
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                marginRight: 8,
               }}
             />
-            <View style={{ width: 110, marginRight: 8, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, overflow: 'hidden', height: 44, justifyContent: 'center' }}>
+            <View
+              style={{
+                width: 110,
+                marginRight: 8,
+                borderWidth: 1,
+                borderColor: "#ccc",
+                borderRadius: 8,
+                overflow: "hidden",
+                height: 44,
+                justifyContent: "center",
+              }}
+            >
               {/* Show abbreviation as selected value */}
-              <Text style={{ position: 'absolute', left: 12, color: '#333', fontSize: 16, zIndex: 1 }}>
-                {UNITS.find(u => u.value === item.unit)?.short || ''}
+              <Text
+                style={{
+                  position: "absolute",
+                  left: 12,
+                  color: "#333",
+                  fontSize: 16,
+                  zIndex: 1,
+                }}
+              >
+                {UNITS.find((u) => u.value === item.unit)?.short || ""}
               </Text>
               <Picker
                 selectedValue={item.unit}
                 onValueChange={(value) => updateIngredientUnit(index, value)}
-                style={{ height: 44, color: 'transparent' }}
-                itemStyle={{ height: 44, color: '#333' }}
+                style={{ height: 44, color: "transparent" }}
+                itemStyle={{ height: 44, color: "#333" }}
                 mode="dropdown"
               >
-                {UNITS.map(u => (
+                {UNITS.map((u) => (
                   <Picker.Item key={u.value} label={u.label} value={u.value} />
                 ))}
               </Picker>
             </View>
-            <TouchableOpacity onPress={() => {
-              const updated = [...ingredientsList];
-              updated.splice(index, 1);
-              setIngredientsList(updated);
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                const updated = [...ingredientsList];
+                updated.splice(index, 1);
+                setIngredientsList(updated);
+              }}
+            >
               <Ionicons name="trash-outline" size={24} color="#FF6F00" />
             </TouchableOpacity>
           </View>
         ))}
-        <TouchableOpacity onPress={addIngredientRow} style={{ alignSelf: 'flex-start', marginBottom: 16 }}>
+        <TouchableOpacity
+          onPress={addIngredientRow}
+          style={{ alignSelf: "flex-start", marginBottom: 16 }}
+        >
           <Ionicons name="add-circle-outline" size={32} color="#FF6F00" />
         </TouchableOpacity>
 
         {/* Instrucciones */}
         <Text style={{ fontSize: 18, marginBottom: 8 }}>Instrucciones</Text>
         {instructionsList.map((step, index) => (
-          <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+          <View
+            key={index}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
             <TextInput
               value={step}
               onChangeText={(text) => updateInstruction(index, text)}
@@ -618,44 +750,70 @@ export default function CreateRecipe() {
               multiline
               style={{
                 flex: 1,
-                borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-                paddingHorizontal: 12, paddingVertical: 8
+                borderWidth: 1,
+                borderColor: "#ccc",
+                borderRadius: 8,
+                paddingHorizontal: 12,
+                paddingVertical: 8,
               }}
             />
-            <TouchableOpacity onPress={() => {
-              const updated = [...instructionsList];
-              updated.splice(index, 1);
-              setInstructionsList(updated);
-            }}>
-              <Ionicons name="trash-outline" size={24} color="#FF6F00" style={{ marginLeft: 8 }} />
+            <TouchableOpacity
+              onPress={() => {
+                const updated = [...instructionsList];
+                updated.splice(index, 1);
+                setInstructionsList(updated);
+              }}
+            >
+              <Ionicons
+                name="trash-outline"
+                size={24}
+                color="#FF6F00"
+                style={{ marginLeft: 8 }}
+              />
             </TouchableOpacity>
           </View>
         ))}
-        <TouchableOpacity onPress={addInstructionRow} style={{ alignSelf: 'flex-start', marginBottom: 24 }}>
+        <TouchableOpacity
+          onPress={addInstructionRow}
+          style={{ alignSelf: "flex-start", marginBottom: 24 }}
+        >
           <Ionicons name="add-circle-outline" size={32} color="#FF6F00" />
         </TouchableOpacity>
 
         {/* Porciones */}
-        <Text style={{ fontSize: 16, marginBottom: 4 }}>¿Para cuántas personas es la receta?</Text>
+        <Text style={{ fontSize: 16, marginBottom: 4 }}>
+          ¿Para cuántas personas es la receta?
+        </Text>
         <TextInput
           style={{
-            borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-            paddingHorizontal: 12, paddingVertical: 8, marginBottom: 24
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            marginBottom: 24,
           }}
           placeholder="Ej: 4"
           keyboardType="numeric"
           value={porciones}
-          onChangeText={text => setPorciones(text)}
+          onChangeText={(text) => setPorciones(text)}
         />
 
-        <View style={{ marginBottom: 24, alignItems: 'center' }}>
+        <View style={{ marginBottom: 24, alignItems: "center" }}>
           <TouchableOpacity onPress={seleccionarImagen}>
-            <Text style={{ color: '#777' }}>📸 Subí tu multimedia de la receta</Text>
+            <Text style={{ color: "#777" }}>
+              📸 Subí tu multimedia de la receta
+            </Text>
           </TouchableOpacity>
           {imagen && (
             <Image
               source={{ uri: imagen }}
-              style={{ width: 100, height: 100, borderRadius: 10, marginTop: 10 }}
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius: 10,
+                marginTop: 10,
+              }}
             />
           )}
         </View>
@@ -665,16 +823,18 @@ export default function CreateRecipe() {
         <TouchableOpacity
           onPress={handleCreateRecipe}
           style={{
-            backgroundColor: isGuest ? '#ccc' : '#FF6F00',
+            backgroundColor: isGuest ? "#ccc" : "#FF6F00",
             padding: 16,
             borderRadius: 18,
-            alignItems: 'center',
+            alignItems: "center",
             marginBottom: 40,
             opacity: isGuest ? 0.6 : 1,
           }}
           disabled={isGuest}
         >
-          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Enviar para aprobación</Text>
+          <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+            Enviar para aprobación
+          </Text>
         </TouchableOpacity>
       </ScrollView>
       <BottomSheetComponent
@@ -704,11 +864,11 @@ export default function CreateRecipe() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: "#F8F9FA",
     paddingTop: 16,
   },
   message: {
-    textAlign: 'center',
+    textAlign: "center",
     paddingBottom: 10,
     fontSize: 16,
   },
@@ -719,17 +879,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scanArea: {
-    position: 'absolute',
+    position: "absolute",
     top: (SCREEN_HEIGHT - SCAN_AREA_SIZE) / 2,
     left: (SCREEN_WIDTH - SCAN_AREA_SIZE) / 2,
     width: SCAN_AREA_SIZE,
     height: SCAN_AREA_SIZE,
     borderWidth: 2,
-    borderColor: 'white',
-    backgroundColor: 'transparent',
+    borderColor: "white",
+    backgroundColor: "transparent",
   },
   scanAreaCorner: {
-    position: 'absolute',
+    position: "absolute",
     width: 20,
     height: 20,
     borderWidth: 4,
@@ -761,51 +921,51 @@ const styles = StyleSheet.create({
   handle: {
     width: 40,
     height: 4,
-    backgroundColor: '#e1e1e1',
+    backgroundColor: "#e1e1e1",
     borderRadius: 2,
   },
   iconContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 40,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
   },
   icon: {
     marginHorizontal: 10,
   },
   closeButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 40,
     right: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginHorizontal: 16,
     marginTop: 16,
   },
   leftHeader: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   rightHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 36,
   },
   title: {
     fontSize: 20,
-    fontFamily: 'Roboto',
+    fontFamily: "Roboto",
   },
   createRecipeText: {
-    color: '#2196F3',
+    color: "#2196F3",
     fontSize: 16,
   },
   itemCount: {
     fontSize: 16,
-    color: 'gray',
+    color: "gray",
     marginHorizontal: 16,
   },
   list: {
@@ -815,17 +975,17 @@ const styles = StyleSheet.create({
   },
   ingredientItem: {
     margin: 4,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.015,
     shadowRadius: 1,
     elevation: 0.3,
     borderRadius: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   ingredientImage: {
     width: 40,
@@ -836,11 +996,11 @@ const styles = StyleSheet.create({
   ingredientName: {
     flex: 1,
     fontSize: 16,
-    color: '#000000',
+    color: "#000000",
   },
   quantityControl: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   button: {
@@ -848,29 +1008,29 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#5EEAD4',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
+    borderColor: "#5EEAD4",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
   },
   buttonText: {
     fontSize: 16,
-    color: 'black',
+    color: "black",
     includeFontPadding: false,
-    textAlignVertical: 'center',
+    textAlignVertical: "center",
     lineHeight: 20,
   },
   addButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     borderRadius: 18,
     margin: 16,
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   addButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   bottomSheetContent: {
     flex: 1,
@@ -878,13 +1038,13 @@ const styles = StyleSheet.create({
   },
   bottomSheetTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
-    color: '#000000',
+    color: "#000000",
   },
   scannedProductInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   scannedProductImage: {
     width: 60,
@@ -894,32 +1054,31 @@ const styles = StyleSheet.create({
   },
   scannedProductName: {
     fontSize: 18,
-    color: '#000000',
+    color: "#000000",
   },
   emptyState: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 32,
   },
   emptyStateText: {
     fontSize: 18,
-    color: '#666',
+    color: "#666",
     marginTop: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: '#999',
+    color: "#999",
     marginTop: 8,
   },
   addButtonDisabled: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   addButtonTextDisabled: {
-    color: '#999',
+    color: "#999",
   },
 });
-
 
 // (Función uploadImageToCloudinary eliminada. Ahora se usa uploadToCloudinary importada.)
