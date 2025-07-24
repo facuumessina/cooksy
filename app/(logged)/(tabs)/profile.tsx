@@ -6,8 +6,8 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, useFocusEffect } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -48,12 +48,19 @@ const InfoItem = ({ label, value }: any) => (
 
 const FavRecipesInfoItem = () => {
   const { user } = useData();
-  const favouriteRecipes = user?.savedRecipes ?? [];
-  console.log("🧡 Recetas favoritas (user.savedRecipes):", favouriteRecipes);
-
+  const [isGuest, setIsGuest] = useState(false);
   const [detailedFavorites, setDetailedFavorites] = useState([]);
+  const favouriteRecipes = user?.savedRecipes ?? [];
 
   useEffect(() => {
+    AsyncStorage.getItem('isGuestMode').then(val => {
+      setIsGuest(val === 'true');
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isGuest || !user || !user.savedRecipes) return;
+
     const fetchFavoritesDetails = async () => {
       try {
         const promises = favouriteRecipes.map((id: string) =>
@@ -63,10 +70,7 @@ const FavRecipesInfoItem = () => {
         setDetailedFavorites(results);
         console.log("🔍 Recetas favoritas detalladas:", results);
       } catch (error) {
-        console.error(
-          "❌ Error al traer detalles de recetas favoritas:",
-          error
-        );
+        console.error("❌ Error al traer detalles de recetas favoritas:", error);
       }
     };
 
@@ -78,9 +82,11 @@ const FavRecipesInfoItem = () => {
     } else {
       setDetailedFavorites(favouriteRecipes);
     }
-  }, [favouriteRecipes]);
+  }, [favouriteRecipes, isGuest]);
 
-  if (!favouriteRecipes || favouriteRecipes.length === 0) {
+  if (isGuest || !user || !user.savedRecipes) return null;
+
+  if (favouriteRecipes.length === 0) {
     return (
       <View style={styles.infoContainer}>
         <Text style={styles.infoValue}>{"No tenés recetas favoritas aún"}</Text>
@@ -131,15 +137,25 @@ const FavRecipesInfoItem = () => {
   );
 };
 
+
 const MyRecipesInfoItem = () => {
   const { user } = useData();
   const [myRecipes, setMyRecipes] = useState([]);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
+    AsyncStorage.getItem('isGuestMode').then(val => {
+      setIsGuest(val === 'true');
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isGuest || !user?._id) return;
+
     const fetchMyRecipes = async () => {
       try {
         const response = await fetch(
-          `http://10.0.2.2:3000/users/${user?._id}/my-recipes`
+          `http://10.0.2.2:3000/users/${user._id}/my-recipes`
         );
         const data = await response.json();
         setMyRecipes(data);
@@ -149,10 +165,9 @@ const MyRecipesInfoItem = () => {
       }
     };
 
-    if (user?._id) fetchMyRecipes();
-  }, [user]);
+    fetchMyRecipes();
+  }, [user, isGuest]);
 
-  // Manejar borrado de receta
   const handleDelete = async (id: string) => {
     Alert.alert(
       'Eliminar receta',
@@ -174,6 +189,8 @@ const MyRecipesInfoItem = () => {
       ]
     );
   };
+
+  if (isGuest || !user || Object.keys(user).length === 0) return null;
 
   if (!myRecipes || myRecipes.length === 0) {
     return (
@@ -229,76 +246,44 @@ const MyRecipesInfoItem = () => {
   );
 };
 
+
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { user, updateUser } = useData();
   const [isGuest, setIsGuest] = useState(false);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const userId = await AsyncStorage.getItem("userId");
-        console.log("USER ID desde AsyncStorage:", userId);
+useEffect(() => {
+  const init = async () => {
+    try {
+      const isGuestMode = await AsyncStorage.getItem("isGuestMode");
+      const guest = isGuestMode === "true";
+      setIsGuest(guest);
 
-        const userEmail = user?.email ?? "";
-        await AsyncStorage.setItem("loginEmail", userEmail);
+      if (guest) return;
 
-        if (!userId) throw new Error("No se encontró el ID del usuario");
+      const userId = await AsyncStorage.getItem("userId");
+      if (!userId) throw new Error("No se encontró el ID del usuario");
 
-        const url = `http://10.0.2.2:3000/users/${userId}`;
-        console.log("Haciendo fetch a:", url);
+      const url = `http://10.0.2.2:3000/users/${userId}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Error al cargar perfil");
 
-        const response = await fetch(url);
-        console.log("STATUS DEL RESPONSE:", response.status);
+      const data = await response.json();
+      updateUser(data);
 
-        if (!response.ok) throw new Error("Error al cargar perfil");
-
-        const data = await response.json();
-        console.log("DATA DEL PERFIL:", data);
-        updateUser(data);
-      } catch (err) {
-        console.error("Error al traer perfil:", err);
+      // Guardar email para auto-login (solo si existe)
+      if (data?.email) {
+        await AsyncStorage.setItem("loginEmail", data.email);
       }
-    };
 
-    fetchProfile();
-  }, []);
+    } catch (err) {
+      console.error("❌ Error al traer perfil:", err);
+    }
+  };
 
-  useEffect(() => {
-    AsyncStorage.getItem("isGuestMode").then((val) => {
-      setIsGuest(val === "true");
-    });
-  }, []);
+  init();
+}, []);
 
-  // Recargar perfil cada vez que se vuelve a la pantalla
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchProfile = async () => {
-        try {
-          const userId = await AsyncStorage.getItem("userId");
-          console.log("USER ID desde AsyncStorage:", userId);
-
-          if (!userId) throw new Error("No se encontró el ID del usuario");
-
-          const url = `http://10.0.2.2:3000/users/${userId}`;
-          console.log("Haciendo fetch a:", url);
-
-          const response = await fetch(url);
-          console.log("STATUS DEL RESPONSE:", response.status);
-
-          if (!response.ok) throw new Error("Error al cargar perfil");
-
-          const data = await response.json();
-          console.log("DATA DEL PERFIL:", data);
-          updateUser(data);
-        } catch (err) {
-          console.error("Error al traer perfil:", err);
-        }
-      };
-
-      fetchProfile();
-    }, [])
-  );
 
   const handleLogout = async () => {
     try {

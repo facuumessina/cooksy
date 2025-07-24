@@ -138,14 +138,27 @@ export default function Home() {
     };
 
     useEffect(() => {
-        fetchUserProfile();
-        loadRecommendations();
-        return () => {
-            setCurrentRecommendations([]);
-            setRecommendations([]);
-            setFilteredRecipes([]);
-        };
-    }, []);
+  const init = async () => {
+    const isGuestMode = await AsyncStorage.getItem('isGuestMode');
+    const guest = isGuestMode === 'true';
+    setIsGuest(guest);
+
+    if (!guest) {
+      await fetchUserProfile(); // solo usuarios registrados
+    }
+
+    await loadRecommendations(); // ambos pueden verlas
+  };
+
+  init();
+
+  return () => {
+    setCurrentRecommendations([]);
+    setRecommendations([]);
+    setFilteredRecipes([]);
+  };
+}, []);
+
 
     useFocusEffect(
         React.useCallback(() => {
