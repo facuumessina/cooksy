@@ -73,12 +73,12 @@ export default function CreateRecipe() {
       console.log('🖼️ Imagen seleccionada:', resultado.assets[0].uri);
       const imageUri = resultado.assets[0].uri;
       setImagen(imageUri);
-      const url = await uploadToCloudinary(imageUri);
-      if (url) {
-        setImageUrl(url);
-        // Log de la URL de la imagen subida a Cloudinary
-        console.log('URL de la imagen subida a Cloudinary:', url);
-      }
+      // const url = await uploadToCloudinary(imageUri); // Eliminado para evitar warning
+      // if (url) {
+      //   setImageUrl(url);
+      //   // Log de la URL de la imagen subida a Cloudinary
+      //   console.log('URL de la imagen subida a Cloudinary:', url);
+      // }
     }
   };
   // Ingredient and instruction state/handlers for recipe creation
@@ -920,52 +920,4 @@ const styles = StyleSheet.create({
 });
 
 
-// Cloudinary config
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dsn0bdvyi/image/upload';
-const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
-const CLOUDINARY_API_KEY = '176694265586641';
-
-// Función para subir imágenes a Cloudinary
-const uploadImageToCloudinary = async (selectedImage) => {
-  if (!selectedImage) return null;
-
-  // Debugging logs as requested
-  console.log('📤 Entrando en submitRecipe...');
-  console.log('📸 Subiendo imagen a Cloudinary...');
-  console.log('🔍 Validando credenciales Cloudinary:');
-  console.log('Cloud Name:', CLOUDINARY_URL);
-  console.log('API Key:', CLOUDINARY_API_KEY);
-
-  const formData = new FormData();
-  formData.append('file', {
-    uri: selectedImage,
-    type: 'image/jpeg',
-    name: 'receta.jpg',
-  } as any);
-  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-  console.log('📦 formData para Cloudinary:', formData);
-
-  try {
-    const response = await fetch(CLOUDINARY_URL, {
-      method: 'POST',
-      body: formData,
-    });
-
-    const text = await response.text();
-    let responseJson;
-    try {
-      responseJson = JSON.parse(text);
-    } catch (e) {
-      responseJson = text;
-    }
-    const imageUrl = responseJson.secure_url;
-    console.log('📄 Respuesta cruda de Cloudinary:', responseJson);
-    console.log('✅ Imagen subida correctamente:', imageUrl);
-
-    return imageUrl;
-  } catch (error) {
-    console.error('❌ Error al subir la imagen a Cloudinary:', error);
-    return null;
-  }
-};
+// (Función uploadImageToCloudinary eliminada. Ahora se usa uploadToCloudinary importada.)

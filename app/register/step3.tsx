@@ -1,18 +1,17 @@
 import logo from "@/assets/images/logo.png";
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
     Animated,
     Easing,
-    FlatList,
-    Modal,
     SafeAreaView,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
 
 export default function Step3() {
@@ -32,14 +31,6 @@ export default function Step3() {
     password: "",
     repeat: "",
   });
-
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const years = Array.from({ length: 80 }, (_, i) => 2025 - i);
-
-  const [selectedDay, setSelectedDay] = useState(1);
-  const [selectedMonth, setSelectedMonth] = useState(1);
-  const [selectedYear, setSelectedYear] = useState(2000);
 
   const [isLoading, setIsLoading] = useState(false);
   const spinAnim = useRef(new Animated.Value(0)).current;
@@ -80,13 +71,6 @@ export default function Step3() {
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],
   });
-
-  const confirmDate = () => {
-    setFechaNacimiento(
-      `${selectedDay.toString().padStart(2, "0")}/${selectedMonth.toString().padStart(2, "0")}/${selectedYear}`
-    );
-    setShowPicker(false);
-  };
 
   const validateAndSubmit = async () => {
     let newErrors = {
@@ -233,71 +217,24 @@ export default function Step3() {
         <Text>{fechaNacimiento || "DD/MM/AAAA"}</Text>
         <Ionicons name="calendar-outline" size={20} color="#555" />
       </TouchableOpacity>
+      {showPicker && (
+        <DateTimePicker
+          value={new Date()}
+          mode="date"
+          display="default"
+          maximumDate={new Date()}
+          onChange={(event, selectedDate) => {
+            setShowPicker(false);
+            if (selectedDate) {
+              const day = selectedDate.getDate().toString().padStart(2, "0");
+              const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+              const year = selectedDate.getFullYear();
+              setFechaNacimiento(`${day}/${month}/${year}`);
+            }
+          }}
+        />
+      )}
       {errors.fecha ? <Text style={styles.error}>{errors.fecha}</Text> : null}
-
-      <Modal visible={showPicker} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.pickerContainer}>
-            <FlatList
-              horizontal
-              data={days}
-              keyExtractor={(i) => i.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => setSelectedDay(item)}
-                  style={[
-                    styles.pickerItem,
-                    selectedDay === item && styles.selected,
-                  ]}
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <FlatList
-              horizontal
-              data={months}
-              keyExtractor={(i) => i.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => setSelectedMonth(item)}
-                  style={[
-                    styles.pickerItem,
-                    selectedMonth === item && styles.selected,
-                  ]}
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <FlatList
-              horizontal
-              data={years}
-              keyExtractor={(i) => i.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => setSelectedYear(item)}
-                  style={[
-                    styles.pickerItem,
-                    selectedYear === item && styles.selected,
-                  ]}
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity style={styles.button} onPress={confirmDate}>
-              <Text style={styles.buttonText}>Confirmar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setShowPicker(false)}
-              style={{ marginTop: 10 }}
-            >
-              <Text style={{ color: "red" }}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
 
       <Text style={styles.label}>Contraseña</Text>
       <TextInput
