@@ -91,7 +91,7 @@ export default function ForgotPassword() {
 
     try {
       const response = await fetch(
-        "http://10.0.2.2:3000/auth/recover-password",
+        "https://cooksy-p77y.onrender.co/auth/recover-password",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -26,7 +26,7 @@ const SearchResultsScreen = () => {
           excludedIngredients: Array.isArray(selectedExcludedIngredients) ? selectedExcludedIngredients.join(',') : '',
         }).toString();
       
-        const response = await fetch(`http://10.0.2.2:3000/recipes/search?${queryParams}`, {
+        const response = await fetch(`https://cooksy-p77y.onrender.co/recipes/search?${queryParams}`, {
           method: 'GET',
         });
         const text = await response.text();

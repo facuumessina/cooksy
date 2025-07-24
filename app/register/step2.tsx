@@ -1,7 +1,7 @@
 import logo from '@/assets/images/logo.png'; // Ajustá si tu alias @ no está bien configurado
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
     Alert,
     Animated,
@@ -74,7 +74,7 @@ export default function Step2() {
 
         setIsLoading(true);
         try {
-            const response = await fetch('http://10.0.2.2:3000/auth/register-step1', {
+            const response = await fetch('https://cooksy-p77y.onrender.co/auth/register-step1', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, alias })

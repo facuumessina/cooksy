@@ -81,7 +81,7 @@ const RecommendationScreen = () => {
     } else {
       const fetchAllRecipes = async () => {
         try {
-          const response = await fetch(`http://10.0.2.2:3000/recetas/search`, {
+          const response = await fetch(`https://cooksy-p77y.onrender.co/recetas/search`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

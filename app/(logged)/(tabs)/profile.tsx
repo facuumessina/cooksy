@@ -64,7 +64,7 @@ const FavRecipesInfoItem = () => {
     const fetchFavoritesDetails = async () => {
       try {
         const promises = favouriteRecipes.map((id: string) =>
-          fetch(`http://10.0.2.2:3000/recipes/${id}`).then((res) => res.json())
+          fetch(`https://cooksy-p77y.onrender.co/recipes/${id}`).then((res) => res.json())
         );
         const results = await Promise.all(promises);
         setDetailedFavorites(results);
@@ -154,7 +154,7 @@ const MyRecipesInfoItem = () => {
     const fetchMyRecipes = async () => {
       try {
         const response = await fetch(
-          `http://10.0.2.2:3000/users/${user._id}/my-recipes`
+          `https://cooksy-p77y.onrender.co/users/${user._id}/my-recipes`
         );
         const data = await response.json();
         setMyRecipes(data);
@@ -177,7 +177,7 @@ const MyRecipesInfoItem = () => {
           style: 'destructive',
           onPress: async () => {
             try {
-              await fetch(`http://10.0.2.2:3000/recipes/${id}`, { method: 'DELETE' });
+              await fetch(`https://cooksy-p77y.onrender.co/recipes/${id}`, { method: 'DELETE' });
               setMyRecipes(prev => prev.filter((r: any) => r._id !== id));
             } catch (err) {
               console.error('❌ Error al eliminar receta:', err);
@@ -262,7 +262,7 @@ useEffect(() => {
       const userId = await AsyncStorage.getItem("userId");
       if (!userId) throw new Error("No se encontró el ID del usuario");
 
-      const url = `http://10.0.2.2:3000/users/${userId}`;
+      const url = `https://cooksy-p77y.onrender.co/users/${userId}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error("Error al cargar perfil");
 

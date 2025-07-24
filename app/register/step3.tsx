@@ -4,14 +4,14 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
-    Animated,
-    Easing,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Animated,
+  Easing,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 export default function Step3() {
@@ -110,7 +110,7 @@ export default function Step3() {
 
     setIsLoading(true);
     try {
-      const response = await fetch("http://10.0.2.2:3000/auth/register-step2", {
+      const response = await fetch("https://cooksy-p77y.onrender.co/auth/register-step2", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

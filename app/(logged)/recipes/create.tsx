@@ -183,7 +183,7 @@ export default function CreateRecipe() {
 
       // Log de los datos que se enviarán al backend
 
-      await axios.post("http://10.0.2.2:3000/recipes", receta, {
+      await axios.post("https://cooksy-p77y.onrender.co/recipes", receta, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
