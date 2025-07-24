@@ -91,45 +91,45 @@ const StepOne = () => {
     outputRange: ["0deg", "360deg"],
   });
 
-  // ✅ Login con guardado o limpieza de credenciales
-  const handleLogin = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        "https://cooksy-p77y.onrender.com/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        await AsyncStorage.setItem("token", data.token);
-        await AsyncStorage.setItem("userId", data.id);
-        await AsyncStorage.removeItem("isGuestMode"); // Remove guest mode flag on login
-
-        if (rememberMe) {
-          await AsyncStorage.setItem("savedEmail", email);
-          await AsyncStorage.setItem("savedPassword", password);
-        } else {
-          await AsyncStorage.removeItem("savedEmail");
-          await AsyncStorage.removeItem("savedPassword");
-        }
-
-        router.replace("/(logged)");
-      } else {
-        const error = await response.json();
-        Alert.alert("Error", error.message || "Error al iniciar sesión");
+const handleLogin = async () => {
+  setIsLoading(true);
+  try {
+    const response = await fetch(
+      "https://cooksy-p77y.onrender.com/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       }
-    } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "No se pudo conectar con el servidor.");
-    } finally {
-      setIsLoading(false);
+    );
+
+    const data = await response.json(); // 👈 se lee antes, incluso si da error
+
+    if (response.ok) {
+      await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("userId", data.id);
+      await AsyncStorage.removeItem("isGuestMode");
+
+      if (rememberMe) {
+        await AsyncStorage.setItem("savedEmail", email);
+        await AsyncStorage.setItem("savedPassword", password);
+      } else {
+        await AsyncStorage.removeItem("savedEmail");
+        await AsyncStorage.removeItem("savedPassword");
+      }
+
+      router.replace("/(logged)");
+    } else {
+      Alert.alert("Error", data.message || "Credenciales inválidas");
     }
-  };
+  } catch (err) {
+    console.error("❌ Error de conexión:", err);
+    Alert.alert("Error", "No se pudo conectar con el servidor.");
+  } finally {
+    setIsLoading(false); // 👈 se ejecuta una única vez sin conflictos
+  }
+};
+
 
   const handleGuestLogin = async () => {
     setIsLoading(true);
